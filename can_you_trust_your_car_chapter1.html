@@ -1,0 +1,476 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--night:#0a0e1a;--road:#1a1e2e;--lane:#2a3050;--amber:#f59e0b;--amber-dim:#78450a;--cyan:#22d3ee;--cyan-dim:#0e4a52;--red:#ef4444;--green:#22c55e;--white:#f0f4ff;--gray:#6b7280;--card:#141829;--card-border:#2a3050;--speed:0.3s}
+  #root{font-family:var(--font-sans,system-ui,sans-serif);background:var(--night);color:var(--white);min-height:480px;position:relative;overflow:hidden;border-radius:12px;user-select:none}
+  .scene{display:none;flex-direction:column;height:100%;min-height:480px}
+  .scene.active{display:flex}
+
+  /* TITLE SCENE */
+  #s-title{align-items:center;justify-content:center;text-align:center;padding:2rem;background:radial-gradient(ellipse at 50% 100%,#1a2040 0%,var(--night) 65%)}
+  .title-eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gray);margin-bottom:1rem}
+  .title-main{font-size:clamp(22px,5vw,36px);font-weight:500;line-height:1.2;margin-bottom:.5rem;color:var(--white)}
+  .title-sub{font-size:14px;color:var(--gray);margin-bottom:2rem;line-height:1.6;max-width:340px}
+  .road-preview{width:100%;height:80px;position:relative;overflow:hidden;margin-bottom:2rem;border-radius:8px}
+  .road-strip{position:absolute;inset:0;background:linear-gradient(to bottom,#0d1020,#1a2040)}
+  .road-lane{position:absolute;left:50%;top:0;bottom:0;width:2px;background:repeating-linear-gradient(to bottom,#fbbf24 0px,#fbbf24 20px,transparent 20px,transparent 40px);transform:translateX(-50%);animation:laneScroll 0.6s linear infinite}
+  @keyframes laneScroll{to{background-position:0 40px}}
+  .car-preview{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:28px}
+  .btn-primary{background:var(--amber);color:#000;border:none;padding:.7rem 2rem;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;transition:opacity var(--speed)}
+  .btn-primary:hover{opacity:.85}
+  .chapter-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem}
+
+  /* DRIVING SCENE */
+  #s-drive{position:relative;flex:1}
+  .road-view{width:100%;height:220px;position:relative;overflow:hidden;background:#0a0e18;flex-shrink:0}
+  .perspective-road{position:absolute;inset:0;background:linear-gradient(to bottom,#050810 0%,#0f1425 50%,#1a2040 100%)}
+  .road-surface{position:absolute;bottom:0;left:50%;width:0;transform:translateX(-50%);border-left:140px solid transparent;border-right:140px solid transparent;border-bottom:220px solid #131728}
+  .lane-line{position:absolute;left:50%;transform:translateX(-50%);width:2px;background:repeating-linear-gradient(to bottom,rgba(251,191,36,.7) 0,rgba(251,191,36,.7) 18px,transparent 18px,transparent 36px);animation:lScroll .5s linear infinite}
+  @keyframes lScroll{to{background-position:0 36px}}
+  .lane-line.left{left:35%;width:1px;opacity:.3}
+  .lane-line.right{left:65%;width:1px;opacity:.3}
+  .horizon-glow{position:absolute;top:60px;left:50%;transform:translateX(-50%);width:200px;height:40px;background:radial-gradient(ellipse,rgba(100,120,200,.15),transparent 70%)}
+  .stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 15%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 70% 10%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 40% 25%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 85% 20%,rgba(255,255,255,.2),transparent),radial-gradient(1px 1px at 10% 35%,rgba(255,255,255,.3),transparent)}
+  .car-ego{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:32px;filter:drop-shadow(0 0 8px rgba(34,211,238,.4))}
+  .car-ahead{position:absolute;font-size:26px;top:90px;left:50%;transform:translateX(-50%);transition:top .3s;filter:drop-shadow(0 -4px 6px rgba(239,68,68,.4))}
+  .brake-lights{position:absolute;font-size:10px;top:105px;left:50%;transform:translateX(-50%);color:var(--red);opacity:0;transition:opacity .2s}
+  .hud{display:flex;gap:12px;padding:.75rem 1rem;background:#0d1020;border-bottom:1px solid var(--card-border);flex-shrink:0;flex-wrap:wrap}
+  .hud-item{font-size:12px;color:var(--gray);display:flex;align-items:center;gap:6px}
+  .hud-val{font-size:13px;font-weight:500;color:var(--white)}
+  .hud-val.warn{color:var(--amber);animation:blink 1s infinite}
+  .hud-val.danger{color:var(--red);animation:blink .5s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+  .fatigue-bar{width:60px;height:6px;background:#1f2937;border-radius:3px;overflow:hidden}
+  .fatigue-fill{height:100%;width:70%;background:linear-gradient(to right,var(--green),var(--amber),var(--red));border-radius:3px;transition:width .5s}
+  .phone-notif{position:absolute;top:12px;right:12px;background:rgba(10,14,26,.9);border:1px solid var(--amber);border-radius:8px;padding:.5rem .75rem;font-size:12px;max-width:160px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
+  .phone-notif.show{opacity:1}
+  .phone-icon{font-size:16px;margin-right:4px}
+  .content-area{flex:1;padding:1rem;overflow-y:auto;background:var(--night)}
+  .scene-title{font-size:16px;font-weight:500;margin-bottom:.25rem}
+  .scene-desc{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:1rem}
+  .choices{display:flex;flex-direction:column;gap:.5rem}
+  .choice{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.65rem 1rem;font-size:14px;cursor:pointer;transition:all var(--speed);text-align:left;color:var(--white);display:flex;align-items:center;gap:8px}
+  .choice:hover{border-color:var(--cyan);background:#1a2040;transform:translateX(2px)}
+  .choice-key{background:#1f2937;color:var(--cyan);font-size:11px;font-weight:500;padding:2px 6px;border-radius:4px;min-width:20px;text-align:center}
+
+  /* OUTCOME PANEL */
+  .outcome{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:1rem;margin-top:.75rem;display:none}
+  .outcome.show{display:block}
+  .outcome-stat{display:flex;justify-content:space-between;font-size:13px;padding:.3rem 0;border-bottom:1px solid var(--card-border)}
+  .outcome-stat:last-child{border:none}
+  .stat-label{color:var(--gray)}
+  .stat-val{font-weight:500}
+  .stat-val.bad{color:var(--red)}
+  .stat-val.ok{color:var(--amber)}
+  .stat-val.good{color:var(--green)}
+  .insight{background:#0f1f30;border-left:3px solid var(--cyan);padding:.75rem 1rem;border-radius:0 8px 8px 0;margin-top:.75rem;font-size:13px;line-height:1.6;color:#b0d4e8;display:none}
+  .insight.show{display:block}
+  .insight-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.4rem}
+  .next-btn{background:transparent;border:1px solid var(--cyan);color:var(--cyan);padding:.55rem 1.2rem;border-radius:8px;font-size:14px;cursor:pointer;transition:all var(--speed);margin-top:.75rem;display:none}
+  .next-btn.show{display:inline-flex;align-items:center;gap:6px}
+  .next-btn:hover{background:var(--cyan);color:#000}
+
+  /* L2 SCENE */
+  .l2-status{display:flex;gap:8px;padding:.5rem 1rem;background:#0d1020;flex-shrink:0;flex-wrap:wrap}
+  .sensor-dot{width:8px;height:8px;border-radius:50%;background:#1f2937;display:inline-block}
+  .sensor-dot.active{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+  .sensor-dot.warning{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+  .l2-badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+  .l2-badge.on{background:rgba(34,211,238,.15);color:var(--cyan);border:1px solid rgba(34,211,238,.3)}
+  .l2-badge.off{background:#1f2937;color:var(--gray)}
+  .l2-badge.warn{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+  .l2-badge.alert{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);animation:blink .7s infinite}
+  .takeover-alert{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:rgba(239,68,68,.9);color:#fff;padding:.4rem 1rem;border-radius:6px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;white-space:nowrap;z-index:20}
+  .takeover-alert.show{opacity:1}
+  .construction-overlay{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .5s}
+  .construction-overlay.show{opacity:1}
+
+  /* COMPARE SCENE */
+  #s-compare .content-area{padding:.75rem}
+  .car-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.75rem}
+  .car-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.75rem;cursor:pointer;transition:all var(--speed);text-align:center}
+  .car-card:hover{border-color:var(--cyan);transform:translateY(-2px)}
+  .car-card.selected{border-color:var(--amber);background:#1a1500}
+  .car-card.selected .car-level{color:var(--amber)}
+  .car-emoji{font-size:28px;margin-bottom:.4rem}
+  .car-name{font-size:12px;font-weight:500;margin-bottom:.25rem}
+  .car-level{font-size:10px;color:var(--cyan);letter-spacing:.05em;text-transform:uppercase}
+  .car-feature{font-size:11px;color:var(--gray);margin-top:.4rem;line-height:1.5}
+
+  /* FINAL SCENE */
+  #s-final{align-items:center;justify-content:center;text-align:center;padding:2rem;background:radial-gradient(ellipse at 50% 80%,#0f1f30,var(--night))}
+  .progress-dots{display:flex;gap:8px;margin-bottom:1.5rem}
+  .dot{width:8px;height:8px;border-radius:50%;background:#1f2937}
+  .dot.done{background:var(--cyan)}
+  .dot.current{background:var(--amber)}
+  .final-icon{font-size:48px;margin-bottom:1rem}
+  .final-title{font-size:20px;font-weight:500;margin-bottom:.5rem}
+  .final-sub{font-size:14px;color:var(--gray);line-height:1.6;max-width:360px;margin:0 auto 1.5rem}
+  .tags{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem}
+  .tag{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);color:var(--cyan)}
+  .next-chapter-btn{background:var(--amber);color:#000;border:none;padding:.7rem 1.8rem;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s}
+  .next-chapter-btn:hover{opacity:.85}
+
+  /* PROGRESS BAR */
+  .progress-bar{height:3px;background:#1f2937;flex-shrink:0}
+  .progress-fill{height:100%;background:linear-gradient(to right,var(--cyan),var(--amber));transition:width .5s}
+
+  /* TRANSITION */
+  .fade-overlay{position:absolute;inset:0;background:var(--night);opacity:0;pointer-events:none;transition:opacity .4s;z-index:50}
+  .fade-overlay.fade-in{opacity:1;pointer-events:all}
+</style>
+
+<h2 class="sr-only">Can You Trust Your Car? — An interactive introduction to autonomous driving safety</h2>
+<div id="root">
+  <div class="fade-overlay" id="fade"></div>
+
+  <!-- TITLE SCENE -->
+  <div class="scene active" id="s-title">
+    <div class="chapter-label" style="text-align:center;padding-top:2rem">Chapter 1</div>
+    <div class="road-preview" style="margin:0 2rem">
+      <div class="road-strip"></div>
+      <div class="road-lane"></div>
+      <div class="car-preview">🚗</div>
+    </div>
+    <div style="padding:1.5rem 2rem 2rem;text-align:center;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div class="title-eyebrow">Can You Trust Your Car?</div>
+      <div class="title-main">The Last Human<br>Decision</div>
+      <div class="title-sub">A nighttime drive. A distraction. A choice. Experience what autonomous driving really means — before anyone explains it to you.</div>
+      <button class="btn-primary" onclick="goTo('s-drive1')">Begin driving <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SCENE 1: HUMAN DRIVING -->
+  <div class="scene" id="s-drive1">
+    <div class="progress-bar"><div class="progress-fill" style="width:12%"></div></div>
+    <div class="road-view" id="rv1">
+      <div class="perspective-road"></div>
+      <div class="stars"></div>
+      <div class="horizon-glow"></div>
+      <div class="road-surface"></div>
+      <div class="lane-line" style="top:0;bottom:0"></div>
+      <div class="lane-line left" style="top:0;bottom:0"></div>
+      <div class="lane-line right" style="top:0;bottom:0"></div>
+      <div class="car-ahead" id="ca1">🚙</div>
+      <div class="brake-lights" id="bl1">● BRAKE ●</div>
+      <div class="car-ego">🚗</div>
+      <div class="phone-notif" id="phone1">
+        <span class="phone-icon">📱</span><strong>WeChat</strong><br>
+        <span style="color:var(--gray)">Lin Wei: "Did you see the news about—"</span>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="hud-item">Speed <span class="hud-val" id="spd1">110 km/h</span></div>
+      <div class="hud-item">Fatigue
+        <div class="fatigue-bar"><div class="fatigue-fill" style="width:75%" id="fat1"></div></div>
+        <span class="hud-val warn" id="fatv1">High</span>
+      </div>
+      <div class="hud-item">Attention <span class="hud-val warn" id="att1">Wandering</span></div>
+      <div class="hud-item" style="margin-left:auto">🌙 23:47 · G2 Expressway</div>
+    </div>
+    <div class="content-area">
+      <div class="scene-title">You're almost home.</div>
+      <div class="scene-desc" id="d1">It's nearly midnight. You've been driving for three hours. Your eyes are heavy. The highway stretches ahead — empty, monotonous. Then your phone lights up.</div>
+      <div class="choices" id="ch1">
+        <button class="choice" onclick="driveChoice(1,'A')"><span class="choice-key">A</span>Glance at the phone — just for a second</button>
+        <button class="choice" onclick="driveChoice(1,'B')"><span class="choice-key">B</span>Ignore it. Eyes on the road.</button>
+        <button class="choice" onclick="driveChoice(1,'C')"><span class="choice-key">C</span>Pull over safely before checking</button>
+      </div>
+      <div class="outcome" id="out1">
+        <div class="outcome-stat"><span class="stat-label">Your reaction time</span><span class="stat-val" id="rt1">—</span></div>
+        <div class="outcome-stat"><span class="stat-label">Extra braking distance</span><span class="stat-val" id="bd1">—</span></div>
+        <div class="outcome-stat"><span class="stat-label">Risk level</span><span class="stat-val" id="rl1">—</span></div>
+      </div>
+      <div class="insight" id="ins1">
+        <div class="insight-label">📊 What the data shows</div>
+        <span id="ins1-text"></span>
+      </div>
+      <button class="next-btn" id="nb1" onclick="goTo('s-l2')">Activate driving assistance <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SCENE 2: L2 ASSISTANCE -->
+  <div class="scene" id="s-l2">
+    <div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div>
+    <div class="road-view" id="rv2" style="position:relative">
+      <div class="perspective-road" style="background:linear-gradient(to bottom,#050810,#0f1828,#172035)"></div>
+      <div class="stars"></div>
+      <div class="horizon-glow" style="background:radial-gradient(ellipse,rgba(34,211,238,.12),transparent 70%)"></div>
+      <div class="road-surface"></div>
+      <div class="lane-line" style="top:0;bottom:0"></div>
+      <div class="lane-line left" style="top:0;bottom:0"></div>
+      <div class="lane-line right" style="top:0;bottom:0"></div>
+      <div class="car-ahead" id="ca2" style="top:95px">🚛</div>
+      <div class="car-ego" style="filter:drop-shadow(0 0 10px rgba(34,211,238,.6))">🚗</div>
+      <div style="position:absolute;top:8px;left:8px;display:flex;gap:4px;align-items:center">
+        <div style="width:40px;height:3px;background:rgba(34,211,238,.6);border-radius:2px"></div>
+        <div style="font-size:9px;color:rgba(34,211,238,.6)">LANE</div>
+      </div>
+      <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px;align-items:center">
+        <div style="font-size:9px;color:rgba(34,211,238,.6)">ACC</div>
+        <div style="width:40px;height:3px;background:rgba(34,211,238,.6);border-radius:2px"></div>
+      </div>
+      <div class="takeover-alert" id="tko">⚠ TAKEOVER REQUIRED</div>
+    </div>
+    <div class="l2-status" id="l2bar">
+      <span class="l2-badge on" id="l2-lk">🟢 Lane keep</span>
+      <span class="l2-badge on" id="l2-acc">🟢 ACC</span>
+      <span class="l2-badge on" id="l2-aeb">🟢 Emergency brake</span>
+      <span class="l2-badge off" id="l2-full">◯ Not fully autonomous</span>
+    </div>
+    <div class="content-area">
+      <div class="scene-title" id="l2-title">The car takes over — or does it?</div>
+      <div class="scene-desc" id="l2-desc">You press the button. The steering settles. The car maintains your speed and follows the lane. It feels like the car is driving itself. You relax. The miles pass smoothly.</div>
+      <div class="choices" id="l2-ch">
+        <button class="choice" onclick="l2Choice('A')"><span class="choice-key">A</span>The car is responsible — it's driving itself</button>
+        <button class="choice" onclick="l2Choice('B')"><span class="choice-key">B</span>I'm still responsible — this is just assistance</button>
+        <button class="choice" onclick="l2Choice('C')"><span class="choice-key">C</span>The company is responsible — they built the system</button>
+      </div>
+      <div class="outcome" id="l2-out"></div>
+      <div class="insight" id="l2-ins">
+        <div class="insight-label">⚖️ Legal reality in China (2026)</div>
+        <span id="l2-ins-text"></span>
+      </div>
+      <button class="next-btn" id="l2-nb" onclick="goTo('s-edge')">Continue driving → <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SCENE 3: EDGE CASE -->
+  <div class="scene" id="s-edge">
+    <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+    <div class="road-view" id="rv3" style="position:relative">
+      <div class="perspective-road" style="background:linear-gradient(to bottom,#050810,#0f1525,#1a1f35)"></div>
+      <div class="stars"></div>
+      <div class="road-surface" style="border-bottom-color:#131520"></div>
+      <div class="lane-line" style="top:0;bottom:0;opacity:.3" id="ll-main"></div>
+      <div class="construction-overlay show" id="const-overlay">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:repeating-linear-gradient(45deg,rgba(245,158,11,.08),rgba(245,158,11,.08) 10px,transparent 10px,transparent 20px)"></div>
+        <div style="position:absolute;bottom:85px;left:20%;font-size:18px">🚧</div>
+        <div style="position:absolute;bottom:85px;right:20%;font-size:18px">🚧</div>
+        <div style="position:absolute;bottom:120px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(245,158,11,.7);white-space:nowrap">施工区域 CONSTRUCTION ZONE</div>
+      </div>
+      <div class="car-ego" style="filter:drop-shadow(0 0 8px rgba(34,211,238,.4))">🚗</div>
+      <div class="takeover-alert" id="edge-tko" style="top:50px">⚠ CANNOT DETECT LANE — PLEASE TAKE CONTROL</div>
+    </div>
+    <div class="l2-status">
+      <span class="l2-badge warn" id="e-lk">⚠ Lane keep: uncertain</span>
+      <span class="l2-badge on">🟢 ACC active</span>
+      <span class="l2-badge alert" id="e-alert">⚠ TAKEOVER REQUIRED</span>
+    </div>
+    <div class="content-area">
+      <div class="scene-title">The system meets its limit.</div>
+      <div class="scene-desc" id="e-desc">Without warning, lane markings disappear — a construction zone. The system that was handling everything for 40 minutes suddenly needs you. Right now. You have less than 3 seconds.</div>
+      <div class="choices" id="e-ch">
+        <button class="choice" onclick="edgeChoice('A')"><span class="choice-key">A</span>Take control immediately — you were watching</button>
+        <button class="choice" onclick="edgeChoice('B')"><span class="choice-key">B</span>Hesitate — you were mentally checked out</button>
+        <button class="choice" onclick="edgeChoice('C')"><span class="choice-key">C</span>Trust the system — maybe it'll figure it out</button>
+      </div>
+      <div class="outcome" id="e-out"></div>
+      <div class="insight" id="e-ins">
+        <div class="insight-label">🔬 What engineers call this</div>
+        <span id="e-ins-text"></span>
+      </div>
+      <button class="next-btn" id="e-nb" onclick="goTo('s-compare')">Now choose your car → <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SCENE 4: COMPARE CARS -->
+  <div class="scene" id="s-compare">
+    <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+    <div class="content-area" style="padding-top:1rem">
+      <div class="scene-title">Which car would you trust?</div>
+      <div class="scene-desc">You've felt what driving is like tonight. Now imagine choosing your next vehicle. No one is judging your choice — it shapes your experience in future chapters.</div>
+      <div class="car-cards">
+        <div class="car-card" id="cc-A" onclick="pickCar('A')">
+          <div class="car-emoji">🚗</div>
+          <div class="car-name">Standard vehicle</div>
+          <div class="car-level">L0 — No automation</div>
+          <div class="car-feature">You drive. You decide. No system to fail — or to save you.</div>
+        </div>
+        <div class="car-card" id="cc-B" onclick="pickCar('B')">
+          <div class="car-emoji">🚙</div>
+          <div class="car-name">Highway assist</div>
+          <div class="car-level">L2 — Driver assistance</div>
+          <div class="car-feature">Helps on highways. You stay in control. Like tonight.</div>
+        </div>
+        <div class="car-card" id="cc-C" onclick="pickCar('C')">
+          <div class="car-emoji">🤖</div>
+          <div class="car-name">Robotaxi</div>
+          <div class="car-level">L4 — No driver needed</div>
+          <div class="car-feature">No steering wheel. Works only in mapped zones.</div>
+        </div>
+      </div>
+      <div class="insight show" id="car-insight" style="display:none!important;opacity:0">
+        <div class="insight-label">💡 Your choice</div>
+        <span id="car-insight-text"></span>
+      </div>
+      <button class="next-btn" id="car-nb" onclick="goTo('s-final')">See your chapter summary → <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- FINAL / SUMMARY -->
+  <div class="scene" id="s-final">
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <div style="flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <div class="progress-dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot current"></div>
+      </div>
+      <div class="final-icon">🏁</div>
+      <div class="final-title">Chapter 1 complete</div>
+      <div class="final-sub" id="f-sub">You've felt what human driving actually costs — and what assistance systems promise, and where they fail.</div>
+      <div class="tags" id="f-tags">
+        <span class="tag">Human limitations</span>
+        <span class="tag">L2 ≠ autonomous</span>
+        <span class="tag">Edge cases</span>
+        <span class="tag">Trust calibration</span>
+      </div>
+      <div class="insight show" style="text-align:left;margin-bottom:1rem;max-width:380px">
+        <div class="insight-label">The central question</div>
+        When should humans trust machines — and how much? You've experienced the problem. In Chapter 2, you'll see inside the system that tried to keep you safe.
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center">
+        <button class="next-chapter-btn" onclick="sendPrompt('I finished Chapter 1 of Can You Trust Your Car. Design me the full Chapter 2 experience.')">Continue to Chapter 2 ↗</button>
+        <button class="next-chapter-btn" style="background:transparent;border:1px solid var(--card-border);color:var(--gray)" onclick="restart()">Replay chapter</button>
+      </div>
+      <div style="margin-top:1.5rem;font-size:12px;color:var(--gray);max-width:360px">
+        This is a prototype of a public-interest educational project. Based on interviews with China's autonomous driving industry professionals.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let scene1Choice = null, l2Choice_ = null, edgeChoice_ = null, carChoice = null;
+const fade = document.getElementById('fade');
+
+function goTo(id) {
+  fade.classList.add('fade-in');
+  setTimeout(() => {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    fade.classList.remove('fade-in');
+    if (id === 's-drive1') initDrive1();
+    if (id === 's-l2') initL2();
+    if (id === 's-edge') initEdge();
+  }, 400);
+}
+
+function initDrive1() {
+  setTimeout(() => {
+    document.getElementById('phone1').classList.add('show');
+    const ca = document.getElementById('ca1');
+    ca.style.top = '95px';
+    setTimeout(() => {
+      ca.style.top = '120px';
+      document.getElementById('bl1').style.opacity = '1';
+    }, 2000);
+  }, 1200);
+}
+
+function driveChoice(s, ch) {
+  scene1Choice = ch;
+  document.getElementById('ch1').querySelectorAll('.choice').forEach(b => {b.disabled=true;b.style.opacity='.5'});
+  const out = document.getElementById('out1');
+  const ins = document.getElementById('ins1');
+  out.classList.add('show');
+  ins.classList.add('show');
+  document.getElementById('nb1').classList.add('show');
+
+  const data = {
+    A: {rt:'2.4 sec (×2 normal)', bd:'+68 meters', rl:'Critical', rtc:'bad', bdc:'bad', rlc:'bad',
+        ins:'Glancing at a phone at 110 km/h means you travel ~67 meters blind. At night, with fatigue already slowing your reactions, this is one of the most dangerous things a driver can do. In China, distracted driving contributes to over 10% of fatal highway accidents.'},
+    B: {rt:'0.9 sec (tired)', bd:'+18 meters', rl:'Elevated', rtc:'ok', bdc:'ok', rlc:'ok',
+        ins:'You kept your eyes on the road — but fatigue still slowed you. Alert drivers react in 0.4–0.7 sec; fatigue adds 0.2–0.5 sec. At 110 km/h, every 0.1 second of extra reaction time adds ~3 meters of stopping distance.'},
+    C: {rt:'N/A — pulled over', bd:'None', rl:'Low', rtc:'good', bdc:'good', rlc:'good',
+        ins:'The safest choice — and also the slowest, most inconvenient one. This is the real tension: humans know the right thing to do. They just don\'t always do it. Driver assistance systems exist precisely because correct behavior requires consistent discipline humans rarely sustain.'}
+  };
+  const d = data[ch];
+  document.getElementById('rt1').textContent = d.rt;
+  document.getElementById('rt1').className = 'stat-val ' + d.rtc;
+  document.getElementById('bd1').textContent = d.bd;
+  document.getElementById('bd1').className = 'stat-val ' + d.bdc;
+  document.getElementById('rl1').textContent = d.rl;
+  document.getElementById('rl1').className = 'stat-val ' + d.rlc;
+  document.getElementById('ins1-text').textContent = d.ins;
+}
+
+function initL2() {
+  setTimeout(() => {
+    const tko = document.getElementById('tko');
+    tko.classList.add('show');
+    setTimeout(() => tko.classList.remove('show'), 3000);
+  }, 500);
+}
+
+function l2Choice(ch) {
+  l2Choice_ = ch;
+  document.getElementById('l2-ch').querySelectorAll('.choice').forEach(b => {b.disabled=true;b.style.opacity='.5'});
+  const out = document.getElementById('l2-out');
+  const ins = document.getElementById('l2-ins');
+  out.classList.add('show');
+  ins.classList.add('show');
+  document.getElementById('l2-nb').classList.add('show');
+
+  const data = {
+    A: {html:`<div class="outcome-stat"><span class="stat-label">Legal reality</span><span class="stat-val bad">Incorrect</span></div><div class="outcome-stat"><span class="stat-label">System level</span><span class="stat-val ok">L2 — assistance</span></div>`,
+        ins:'In every country with L2 regulations, the human driver remains fully legally responsible. The car\'s system is a tool, not a driver. Companies name these features ambiguously — "Autopilot," "Navigate on Autopilot," "NOA" — which creates exactly this misunderstanding.'},
+    B: {html:`<div class="outcome-stat"><span class="stat-label">Legal reality</span><span class="stat-val good">Correct</span></div><div class="outcome-stat"><span class="stat-label">System level</span><span class="stat-val ok">L2 — assistance</span></div>`,
+        ins:'Correct. At L2, the driver must remain alert and ready to take over at any moment. The system handles routine inputs, but the human is responsible for monitoring, intervention, and all edge cases. Studies show most drivers disengage cognitively within minutes — which is the core safety problem.'},
+    C: {html:`<div class="outcome-stat"><span class="stat-label">Legal reality</span><span class="stat-val bad">Partially true, rarely applicable</span></div><div class="outcome-stat"><span class="stat-label">System level</span><span class="stat-val ok">L2 — assistance</span></div>`,
+        ins:'Company liability is a genuine legal question — but for L2 systems today, courts consistently hold the driver responsible for failure to monitor. Product liability claims are possible but difficult to win. At L4 and L5, the responsibility question becomes much more complex and unresolved.'}
+  };
+  const d = data[ch];
+  out.innerHTML = d.html;
+  document.getElementById('l2-ins-text').textContent = d.ins;
+}
+
+function initEdge() {
+  setTimeout(() => {
+    document.getElementById('edge-tko').classList.add('show');
+    document.getElementById('e-lk').className = 'l2-badge alert';
+  }, 1500);
+}
+
+function edgeChoice(ch) {
+  edgeChoice_ = ch;
+  document.getElementById('e-ch').querySelectorAll('.choice').forEach(b => {b.disabled=true;b.style.opacity='.5'});
+  const out = document.getElementById('e-out');
+  const ins = document.getElementById('e-ins');
+  out.classList.add('show');
+  ins.classList.add('show');
+  document.getElementById('e-nb').classList.add('show');
+
+  const data = {
+    A: {html:`<div class="outcome-stat"><span class="stat-label">Handover time</span><span class="stat-val good">1.8 sec — safe</span></div><div class="outcome-stat"><span class="stat-label">Outcome</span><span class="stat-val good">Navigated safely</span></div>`,
+        ins:'This is the ideal outcome — but it requires something difficult: sustained attention during boring, automated driving. Studies show humans disengage cognitively within 40 seconds to 3 minutes of L2 engagement. Keeping drivers meaningfully engaged is one of the hardest unsolved problems in L2 and L3 design.'},
+    B: {html:`<div class="outcome-stat"><span class="stat-label">Handover time</span><span class="stat-val bad">4.2 sec — dangerous</span></div><div class="outcome-stat"><span class="stat-label">Outcome</span><span class="stat-val bad">Near-miss</span></div>`,
+        ins:'This is the honest outcome for most drivers. The same automation that reduces fatigue also reduces vigilance. Researchers call this "automation-induced complacency." The 2016 Tesla Autopilot fatality involved a driver who had 7 seconds of warning before the crash — but was not watching. L2 creates a dangerous cognitive gap.'},
+    C: {html:`<div class="outcome-stat"><span class="stat-label">System response</span><span class="stat-val bad">Safe stop (maybe)</span></div><div class="outcome-stat"><span class="stat-label">Outcome</span><span class="stat-val ok">System-dependent</span></div>`,
+        ins:'Some systems will attempt a "minimal risk maneuver" — slowing and stopping safely. But this is not guaranteed, and at highway speed it can cause rear-end collisions. Engineers call scenarios like this "corner cases" or "long-tail scenarios." They\'re rare, but they define the difference between L2 and true autonomy.'}
+  };
+  const d = data[ch];
+  out.innerHTML = d.html;
+  document.getElementById('e-ins-text').textContent = d.ins;
+}
+
+function pickCar(ch) {
+  carChoice = ch;
+  document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('cc-'+ch).classList.add('selected');
+  const ins = document.getElementById('car-insight');
+  ins.style.display = '';
+  ins.style.opacity = '1';
+  ins.classList.add('show');
+  document.getElementById('car-nb').classList.add('show');
+  const data = {
+    A: 'You chose human control — full autonomy, full responsibility, full exposure to human limitations. In Chapter 2, you\'ll see exactly what a human misses that a sensor-equipped car would catch.',
+    B: 'You chose assisted driving — like tonight, but with more experience. In Chapter 2, you\'ll explore exactly how the perception systems behind L2 work, and where they fail.',
+    C: 'You chose to trust a machine you can\'t see inside. Ambitious — and interesting. In Chapter 2, you\'ll discover what it actually takes to build a system safe enough to deserve that trust.'
+  };
+  document.getElementById('car-insight-text').textContent = data[ch];
+}
+
+function restart() { goTo('s-title'); }
+
+initDrive1();
+</script>

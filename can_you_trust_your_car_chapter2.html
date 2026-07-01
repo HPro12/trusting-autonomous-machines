@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Can You Trust Your Car? — Chapter 2</title>
+<style>
+  /* ============================================================
+     CAN YOU TRUST YOUR CAR? — Chapter 2: Inside the Machine
+     Canvas world engine + left-drive cockpit + modern UI chrome.
+     Self-contained: no images, no libraries, no build step.
+     ============================================================ */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;margin:0;background:#0b1020;overflow:hidden}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#eaf0ff}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+  :root{
+    --amber:#f5b13f;--cyan:#3fe0f5;--red:#ff5a6a;--green:#42d98a;--blue:#6ea8ff;
+    --white:#eaf0ff;--muted:#9aa6c2;
+    --surface:rgba(24,32,58,.82);--surface-2:rgba(34,45,78,.9);--line:rgba(150,180,255,.14);
+    --shadow:0 22px 55px rgba(0,0,0,.5);--speed:.2s;
+    --dashH:clamp(180px,30vh,320px);
+  }
+  #root{position:fixed;inset:0;overflow:hidden;background:#05070f}
+  #road{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+  #glass{position:absolute;inset:0;z-index:5;pointer-events:none;
+    background:radial-gradient(130% 90% at 50% 6%,rgba(120,150,220,.10),transparent 55%),
+      radial-gradient(150% 110% at 50% 118%,transparent 42%,rgba(0,0,0,.5) 100%),
+      linear-gradient(105deg,transparent 60%,rgba(180,205,255,.05) 66%,transparent 72%)}
+  /* windshield bezel so the view reads as a screen, not the page */
+  #bezel{position:absolute;inset:0;z-index:6;pointer-events:none;border:clamp(6px,1vw,12px) solid #05070c;border-radius:clamp(10px,1.6vw,22px);box-shadow:inset 0 0 0 1px rgba(150,180,255,.08),inset 0 0 60px rgba(0,0,0,.6)}
+
+  #roof{position:absolute;top:0;left:0;right:0;height:clamp(28px,6.5vh,68px);z-index:20;
+    background:linear-gradient(to bottom,#04050c 0%,#0a0e18 72%,rgba(10,14,24,.15) 100%);box-shadow:0 6px 18px -6px rgba(0,0,0,.8)}
+  #roof::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,transparent,rgba(120,150,220,.25),transparent)}
+  #mirror{position:absolute;top:clamp(18px,4.5vh,50px);left:50%;transform:translateX(-50%);z-index:22;
+    width:clamp(120px,16vw,210px);height:clamp(24px,4vh,42px);border-radius:13px;background:#05070e;border:2px solid #1a2138;box-shadow:0 6px 14px rgba(0,0,0,.6);overflow:hidden}
+  #mirror .reflect{position:absolute;inset:3px;border-radius:10px;background:linear-gradient(to bottom,#0b1222,#060a14)}
+  #mirror .tl{position:absolute;top:42%;width:8%;height:15%;border-radius:3px;background:rgba(255,90,106,.5);box-shadow:0 0 6px rgba(255,90,106,.5);animation:mGlow 3s ease-in-out infinite}
+  #mirror .tl.a{left:33%}#mirror .tl.b{right:33%}
+  @keyframes mGlow{0%,100%{opacity:.3}50%{opacity:.7}}
+
+  .pillar{position:absolute;top:0;bottom:var(--dashH);width:clamp(44px,8.5vw,116px);z-index:19;pointer-events:none;
+    background:linear-gradient(var(--pg,90deg),#04060d,#0c1220 60%,#141b2e 100%)}
+  .pillar.left{left:0;--pg:90deg;clip-path:polygon(0 0,100% 0,40% 100%,0 100%)}
+  .pillar.right{right:0;--pg:270deg;clip-path:polygon(0 0,100% 0,100% 100%,60% 100%)}
+  .pillar .trim{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,rgba(140,170,235,.30),rgba(140,170,235,.05))}
+  .pillar.left .trim{right:60%}
+  .pillar.right .trim{left:60%}
+
+  #hud{position:absolute;left:0;right:0;bottom:calc(var(--dashH) + 8px);z-index:14;
+    display:flex;gap:clamp(8px,1.2vw,16px);justify-content:center;align-items:center;flex-wrap:wrap;padding:0 clamp(60px,10vw,150px);opacity:0;transition:opacity .4s}
+  #hud.show{opacity:1}
+  .hud-badge{display:inline-flex;align-items:center;gap:6px;font-size:clamp(12px,1.4vw,15px);font-weight:600;padding:5px 12px;border-radius:9px;letter-spacing:.02em;color:var(--cyan);
+    background:var(--surface);border:1px solid var(--line);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  .hud-badge.warn{color:var(--amber);border-color:rgba(245,177,63,.5)}
+  .hud-badge.alert{color:var(--red);border-color:rgba(255,90,106,.55);animation:blink .7s infinite}
+  .hud-loc{color:var(--muted)}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* DASHBOARD — left-hand drive */
+  #dash{position:absolute;left:0;right:0;bottom:0;height:var(--dashH);z-index:16;
+    background:radial-gradient(130% 150% at 30% 130%,#141b2e 0%,transparent 60%),linear-gradient(to bottom,rgba(6,9,16,0) 0%,#0a0e18 12%,#06090f 100%)}
+  #dash::before{content:"";position:absolute;top:0;left:0;right:0;height:40%;border-radius:50%/70px;transform:translateY(-42%);
+    background:linear-gradient(to bottom,#161f36,#0a0e18);box-shadow:0 -1px 0 rgba(120,150,220,.16),0 -14px 34px -12px rgba(0,0,0,.8)}
+  #dash .vent{position:absolute;top:20%;height:9px;border-radius:5px;background:linear-gradient(#05070d,#0c1120);box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
+  #dash .vent.v1{right:20%;width:9%}
+  #dash .vent.v2{left:20%;width:9%}
+
+  /* steering wheel — LEFT side */
+  #wheel{position:absolute;bottom:calc(-1 * clamp(96px,16vh,176px));left:26%;transform:translateX(-50%);width:clamp(280px,34vw,440px);height:auto;z-index:17;opacity:.97;filter:drop-shadow(0 -6px 16px rgba(0,0,0,.5))}
+
+  /* speedometer binnacle behind the wheel (left) */
+  #speedo{position:absolute;left:26%;transform:translateX(-50%);bottom:calc(var(--dashH) - clamp(60px,9vh,96px));width:clamp(150px,17vw,220px);z-index:18;opacity:0;transition:opacity .4s}
+  #speedo.show{opacity:1}
+  #spd-num{position:absolute;left:0;right:0;top:52%;text-align:center;font-size:clamp(24px,3.2vw,40px);font-weight:800;font-variant-numeric:tabular-nums;text-shadow:0 0 14px rgba(63,224,245,.3)}
+  #spd-unit{position:absolute;left:0;right:0;top:calc(52% + clamp(26px,3.4vw,42px));text-align:center;font-size:clamp(9px,1.1vw,12px);letter-spacing:.14em;color:var(--muted)}
+
+  /* center console — infotainment screen */
+  #console{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(10px,2vh,22px);width:min(560px,80vw);height:calc(var(--dashH) - clamp(30px,4vh,48px));z-index:18;
+    border-radius:16px 16px 10px 10px;background:linear-gradient(#0c1220,#070b14);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(150,180,255,.08),0 -8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .4s}
+  #console.show{opacity:1}
+  .cl-cert-wrap{position:absolute;right:14px;top:12px;text-align:right}
+  .cl-lbl{font-size:clamp(9px,1.1vw,12px);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .cl-num{font-size:clamp(26px,3.4vw,44px);font-weight:800;line-height:.9;font-variant-numeric:tabular-nums}
+
+  /* fusion panel (docked on the console) */
+  #fusion{position:absolute;left:14px;top:12px;right:150px;bottom:12px;z-index:19;display:none;flex-direction:column;gap:7px}
+  #fusion.show{display:flex}
+  .fz-title{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .fz-title #fz-cond{color:var(--amber)}
+  .fz-row{display:grid;grid-template-columns:78px 1fr 38px;align-items:center;gap:9px}
+  .fz-row .nm{font-size:12px;font-weight:700}
+  .nm.cam{color:var(--amber)}.nm.lidar{color:var(--cyan)}.nm.radar{color:var(--green)}
+  .fz-row input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;background:#1b2233;outline:none;cursor:pointer}
+  .fz-row input.cam{background:linear-gradient(90deg,#3a2c10,#f5b13f)}
+  .fz-row input.lidar{background:linear-gradient(90deg,#0e3038,#3fe0f5)}
+  .fz-row input.radar{background:linear-gradient(90deg,#0e321f,#42d98a)}
+  .fz-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #0a0e18;box-shadow:0 1px 4px rgba(0,0,0,.6);cursor:pointer}
+  .fz-row input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #0a0e18;cursor:pointer}
+  #fusion.locked input[type=range]{pointer-events:none;opacity:.85}
+  #fusion.locked input[type=range]::-webkit-slider-thumb{background:var(--cyan)}
+  .fz-row .wv{font-size:11px;text-align:right;color:var(--white);font-variant-numeric:tabular-nums}
+  .fz-foot{display:flex;align-items:center;gap:10px;margin-top:2px}
+  .fz-cert{font-size:12px;color:var(--muted)}
+  .fz-cert b{font-size:clamp(16px,2vw,22px);color:var(--white);font-variant-numeric:tabular-nums}
+  #fz-verdict{font-weight:700}
+  .fz-auto{margin-left:auto;background:linear-gradient(to bottom,#12404c,#0c2129);border:1px solid var(--cyan);color:var(--cyan);padding:6px 13px;border-radius:9px;cursor:pointer;font-weight:700;font-size:12px;letter-spacing:.04em}
+  .fz-auto:hover{background:var(--cyan);color:#04121a}
+  .fz-auto.badge{margin-left:auto;background:rgba(63,224,245,.14);color:var(--cyan);cursor:default;border-style:dashed}
+  .fz-why{font-size:11px;color:#bfe0f0;line-height:1.35;min-height:1.1em}
+
+  /* DECISION + OUTCOME (modern surfaces) */
+  #decision{position:absolute;inset:0;z-index:46;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(20px,4vw,52px);background:rgba(6,10,22,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  #decision.show{display:flex;animation:fadeIn .35s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .d-eyebrow{font-size:clamp(11px,1.5vw,15px);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:.7rem}
+  .d-eyebrow.urgent{color:var(--red);animation:blink .7s infinite}
+  .d-question{font-size:clamp(20px,3.2vw,36px);font-weight:800;line-height:1.15;max-width:min(780px,92vw);margin-bottom:clamp(20px,3.4vh,42px)}
+  .d-options{display:flex;gap:clamp(12px,1.6vw,22px);justify-content:center;align-items:stretch;flex-wrap:wrap;width:100%;max-width:1040px}
+  .opt{flex:1 1 220px;max-width:330px;min-height:clamp(92px,14vh,142px);display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;cursor:pointer;padding:clamp(15px,1.9vw,24px);border-radius:16px;color:var(--white);
+    background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s,border-color .2s}
+  .opt:hover{border-color:var(--cyan);transform:translateY(-4px);box-shadow:0 0 30px rgba(63,224,245,.35),var(--shadow)}
+  .opt:active{transform:translateY(1px)}
+  .opt.picked{border-color:var(--amber);box-shadow:0 0 30px rgba(245,177,63,.5)}
+  .opt .k{width:clamp(30px,3vw,40px);height:clamp(30px,3vw,40px);border-radius:10px;display:grid;place-items:center;background:#0a1330;color:var(--cyan);font-weight:800;font-size:clamp(15px,1.8vw,20px);border:1px solid rgba(63,224,245,.4)}
+  .opt .t{font-size:clamp(15px,1.8vw,20px);font-weight:700;line-height:1.3}
+  .opt .s{font-size:clamp(11px,1.3vw,14px);color:var(--muted);line-height:1.4}
+  #outcome{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(24px,5vw,64px);background:rgba(6,10,22,.92)}
+  #outcome.show{display:flex}
+  #outcome::before{content:"";position:absolute;inset:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .o-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)}
+  #o-big{font-size:clamp(52px,13vw,150px);font-weight:800;line-height:.92;letter-spacing:-.02em;color:#fff;opacity:0;transform:translateY(18px);transition:all .6s;text-shadow:0 0 50px rgba(63,224,245,.3)}
+  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-top:1rem;opacity:0;transition:opacity .5s .45s}
+  #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;opacity:0;transition:opacity .5s .6s}
+  .o-stats{display:flex;gap:clamp(16px,3vw,48px);margin-top:clamp(18px,3vh,34px);flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .5s .95s}
+  .o-stat .v{font-size:clamp(22px,3vw,36px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+  .o-stat .v.bad{color:var(--red)}.o-stat .v.ok{color:var(--amber)}.o-stat .v.good{color:var(--green)}
+  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+  .o-quote{margin-top:clamp(18px,3vh,32px);max-width:min(620px,90vw);font-size:clamp(13px,1.6vw,17px);line-height:1.55;color:#cfeaf5;border-left:3px solid var(--cyan);padding-left:14px;text-align:left;opacity:0;transition:opacity .5s 1.35s}
+  .o-quote .who{display:block;margin-top:.5rem;color:var(--muted);font-style:italic;font-size:clamp(12px,1.4vw,15px)}
+  .o-continue{margin-top:clamp(22px,3.6vh,42px);opacity:0;pointer-events:none;transition:opacity .5s 1.85s;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(12px,1.6vh,16px) clamp(26px,3vw,44px);border-radius:12px;font-size:clamp(15px,1.8vw,19px);font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(245,166,35,.32)}
+  #outcome.show #o-big{opacity:1;transform:none}
+  #outcome.show #o-label,#outcome.show #o-ctx,#outcome.show .o-stats,#outcome.show .o-quote,#outcome.show .o-continue{opacity:1}
+  #outcome.ready .o-continue{pointer-events:auto}
+  .o-continue:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+  /* crash + transitions */
+  #impact{position:absolute;inset:0;z-index:53;pointer-events:none;opacity:0;background:#fff}
+  #impact.hit{animation:hit .5s ease-out}
+  @keyframes hit{0%{opacity:0}8%{opacity:.92}100%{opacity:0}}
+  #crackglass{position:absolute;inset:0;width:100%;height:100%;z-index:52;pointer-events:none;opacity:0;transition:opacity .18s;filter:drop-shadow(0 0 1px rgba(0,0,0,.7))}
+  #crackglass.show{opacity:1}
+  #dtimer{position:absolute;top:clamp(24px,7vh,70px);left:50%;transform:translateX(-50%);width:clamp(72px,9vw,108px);height:clamp(72px,9vw,108px);display:none}
+  #dtimer svg{width:100%;height:100%}
+  #dtimer .trk{fill:none;stroke:rgba(255,90,106,.18);stroke-width:8}
+  #dtimer .bar{fill:none;stroke:var(--red);stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:60px 60px;filter:drop-shadow(0 0 6px rgba(255,90,106,.6))}
+  #dtimer-num{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(22px,3vw,34px);font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+  #fade{position:absolute;inset:0;background:#070b16;opacity:0;pointer-events:none;transition:opacity .42s;z-index:55}
+  #fade.in{opacity:1;pointer-events:all}
+  #warnflash{position:absolute;inset:0;z-index:50;pointer-events:none;opacity:0;box-shadow:inset 0 0 160px 40px rgba(255,90,106,.85);background:rgba(255,90,106,.06)}
+  #warnflash.flash{animation:warnPulse .45s ease-out 3}
+  @keyframes warnPulse{0%,100%{opacity:0}40%{opacity:1}}
+  @keyframes shake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(4px,-1px)}30%,50%,70%{transform:translate(-7px,2px)}40%,60%{transform:translate(7px,-2px)}}
+  #root.shaking{animation:shake .5s}
+  #root.shaking-hard{animation:shake .6s 2}
+
+  /* hint + next */
+  #hint{position:absolute;top:calc(clamp(28px,6.5vh,68px) + 12px);left:50%;transform:translateX(-50%);z-index:24;max-width:min(700px,90vw);text-align:center;
+    font-size:clamp(13px,1.7vw,18px);font-weight:600;color:#eaf2ff;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 18px;backdrop-filter:blur(6px);box-shadow:var(--shadow);opacity:0;transition:opacity .5s;pointer-events:none}
+  #hint.show{opacity:1}
+  #nextbtn{position:absolute;top:calc(clamp(28px,6.5vh,68px) + 64px);left:50%;transform:translateX(-50%);z-index:31;display:none;
+    background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(9px,1.3vh,13px) clamp(20px,2.4vw,32px);border-radius:11px;font-size:clamp(13px,1.5vw,16px);font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(245,166,35,.32)}
+  #nextbtn.show{display:block;animation:fadeIn .4s}
+  #nextbtn:hover{filter:brightness(1.05)}
+
+  /* framing scenes — modern, inviting */
+  .full-scene{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;
+    background:radial-gradient(1200px 720px at 50% 12%,#25376b 0%,#141d3d 45%,#0b1020 78%)}
+  .full-scene::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 400px at 78% 88%,rgba(63,224,245,.10),transparent 60%),radial-gradient(600px 360px at 18% 78%,rgba(245,177,63,.08),transparent 60%);pointer-events:none}
+  .full-scene.active{display:flex}
+  .fs-card{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(560px,92vw);padding:clamp(22px,3.5vw,44px);border-radius:24px;background:linear-gradient(180deg,rgba(30,40,72,.66),rgba(16,22,44,.6));border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(8px)}
+  .chapter-label{font-size:clamp(11px,1.4vw,14px);letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:.7rem}
+  .title-eyebrow{font-size:clamp(11px,1.4vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+  .title-main{font-size:clamp(30px,6.5vw,60px);font-weight:700;line-height:1.08;margin-bottom:.7rem;background:linear-gradient(180deg,#fff,#b9c8ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .title-sub{font-size:clamp(14px,1.9vw,20px);color:#c3cde6;line-height:1.6;max-width:min(460px,84vw);margin-bottom:1.8rem}
+  .btn-primary{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(12px,1.6vh,17px) clamp(24px,3vw,42px);border-radius:13px;font-size:clamp(15px,1.9vw,20px);font-weight:800;cursor:pointer;transition:transform .15s,filter .15s;box-shadow:0 12px 30px rgba(245,166,35,.34)}
+  .btn-primary:hover{filter:brightness(1.06);transform:translateY(-2px)}
+  .progress-dots{display:flex;gap:9px;margin-bottom:1.4rem}
+  .dot{width:9px;height:9px;border-radius:50%;background:#33406a}
+  .dot.done{background:var(--cyan)}.dot.current{background:var(--amber)}
+  .final-icon{font-size:clamp(40px,6vw,64px);margin-bottom:.8rem}
+  .final-title{font-size:clamp(22px,3vw,34px);font-weight:800;margin-bottom:.5rem}
+  .final-sub{font-size:clamp(14px,1.8vw,19px);color:#c3cde6;line-height:1.6;max-width:min(460px,86vw);margin:0 auto 1.3rem}
+  .tags{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.3rem}
+  .tag{font-size:clamp(11px,1.3vw,14px);padding:5px 13px;border-radius:20px;background:rgba(63,224,245,.12);border:1px solid rgba(63,224,245,.28);color:var(--cyan)}
+  .final-quote{text-align:left;max-width:min(480px,86vw);margin-bottom:1.2rem;font-size:clamp(13px,1.6vw,16px);line-height:1.55;color:#cfeaf5;border-left:4px solid var(--cyan);border-radius:0 12px 12px 0;padding:.7rem 1rem;background:rgba(12,30,46,.7)}
+  .final-quote .l{font-size:clamp(9px,1.1vw,12px);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.35rem}
+  .next-chapter-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(11px,1.5vh,15px) clamp(20px,2.6vw,32px);border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer;transition:filter .2s}
+  .next-chapter-btn:hover{filter:brightness(1.06)}
+  #prog{position:absolute;top:0;left:0;height:4px;width:0;z-index:23;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .5s;box-shadow:0 0 10px rgba(63,224,245,.5)}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Can You Trust Your Car? — Chapter 2: how a machine perceives the world</h1>
+
+<div id="root">
+  <canvas id="road"></canvas>
+  <div id="glass"></div>
+  <div id="bezel"></div>
+  <div id="prog"></div>
+
+  <div id="roof"></div>
+  <div id="mirror"><div class="reflect"></div><span class="tl a"></span><span class="tl b"></span></div>
+  <div class="pillar left"><span class="trim"></span></div>
+  <div class="pillar right"><span class="trim"></span></div>
+
+  <div id="hud">
+    <span class="hud-badge" id="b-cam">📷 Camera</span>
+    <span class="hud-badge" id="b-lidar">🟦 LiDAR</span>
+    <span class="hud-badge" id="b-radar">📡 Radar</span>
+    <span class="hud-badge hud-loc" id="hud-loc">🌙 01:12 · G2 Expressway</span>
+  </div>
+
+  <div id="dash">
+    <div class="vent v1"></div><div class="vent v2"></div>
+    <svg id="wheel" viewBox="0 0 600 300" fill="none" aria-hidden="true">
+      <ellipse cx="300" cy="300" rx="250" ry="235" fill="none" stroke="#0f1626" stroke-width="34"/>
+      <ellipse cx="300" cy="300" rx="250" ry="235" fill="none" stroke="#2c3550" stroke-width="30"/>
+      <rect x="205" y="238" width="190" height="80" rx="26" fill="#0d1424"/>
+      <rect x="205" y="238" width="190" height="80" rx="26" fill="url(#hg)"/>
+      <path d="M120 268 L212 292" stroke="#20283e" stroke-width="26" stroke-linecap="round"/>
+      <path d="M480 268 L388 292" stroke="#20283e" stroke-width="26" stroke-linecap="round"/>
+      <path d="M300 320 L300 300" stroke="#20283e" stroke-width="26" stroke-linecap="round"/>
+      <circle cx="300" cy="278" r="15" fill="none" stroke="#3fe0f5" stroke-width="2.5" opacity=".8"/>
+      <circle cx="300" cy="278" r="4" fill="#3fe0f5" opacity=".9"/>
+      <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2740"/><stop offset="1" stop-color="#080c16"/></linearGradient></defs>
+    </svg>
+
+    <svg id="speedo" viewBox="0 0 200 130" aria-hidden="true">
+      <path d="M18 118 A 88 88 0 0 1 182 118" fill="none" stroke="#141d33" stroke-width="12"/>
+      <path d="M18 118 A 88 88 0 0 1 182 118" fill="none" stroke="url(#spg)" stroke-width="4" opacity=".9"/>
+      <g stroke="#5b6a92" stroke-width="2">
+        <line x1="18" y1="118" x2="28" y2="116"/><line x1="27" y1="76" x2="36" y2="80"/>
+        <line x1="60" y1="44" x2="66" y2="52"/><line x1="100" y1="32" x2="100" y2="42"/>
+        <line x1="140" y1="44" x2="134" y2="52"/><line x1="173" y1="76" x2="164" y2="80"/><line x1="182" y1="118" x2="172" y2="116"/>
+      </g>
+      <line id="spd-needle" x1="100" y1="118" x2="100" y2="46" stroke="#3fe0f5" stroke-width="3.5" stroke-linecap="round" transform="rotate(0 100 118)" style="filter:drop-shadow(0 0 4px rgba(63,224,245,.6))"/>
+      <circle cx="100" cy="118" r="6" fill="#0d1424" stroke="#3fe0f5" stroke-width="2"/>
+      <defs><linearGradient id="spg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3fe0f5"/><stop offset="1" stop-color="#f5b13f"/></linearGradient></defs>
+    </svg>
+    <div id="spd-num" style="opacity:0" >0</div><div id="spd-unit" style="opacity:0">km/h</div>
+
+    <div id="console">
+      <div class="cl-cert-wrap"><div class="cl-lbl">Certainty</div><span class="cl-num" id="cl-cert">—</span><span class="cl-lbl" style="display:inline">%</span></div>
+      <div id="fusion">
+        <div class="fz-title"><span>Sensor fusion</span><span id="fz-cond">Night</span></div>
+        <div class="fz-row"><span class="nm cam">📷 Camera</span><input id="w-cam" class="cam" type="range" min="0" max="100" value="34"><span class="wv" id="wv-cam">34%</span></div>
+        <div class="fz-row"><span class="nm lidar">🟦 LiDAR</span><input id="w-lidar" class="lidar" type="range" min="0" max="100" value="33"><span class="wv" id="wv-lidar">33%</span></div>
+        <div class="fz-row"><span class="nm radar">📡 Radar</span><input id="w-radar" class="radar" type="range" min="0" max="100" value="33"><span class="wv" id="wv-radar">33%</span></div>
+        <div class="fz-foot"><span class="fz-cert">Certainty <b id="fz-cert-val">—</b> · <span id="fz-verdict">—</span></span><button class="fz-auto" id="fz-auto">AUTO ⚙</button></div>
+        <div class="fz-why" id="fz-why"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="hint"></div>
+  <button id="nextbtn">Continue →</button>
+
+  <div id="decision">
+    <div id="dtimer"><svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52"/><circle class="bar" id="dtimer-bar" cx="60" cy="60" r="52"/></svg><span id="dtimer-num">3</span></div>
+    <div class="d-eyebrow" id="d-eyebrow"></div>
+    <div class="d-question" id="d-question"></div>
+    <div class="d-options" id="d-options"></div>
+  </div>
+
+  <div id="outcome"><div class="o-inner">
+    <div id="o-big">—</div><div id="o-label"></div><div id="o-ctx"></div>
+    <div class="o-stats" id="o-stats"></div>
+    <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
+    <button class="o-continue" id="o-continue">Continue →</button>
+  </div></div>
+
+  <svg id="crackglass" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <g stroke="rgba(232,240,255,.85)" fill="none" stroke-width=".3" stroke-linejoin="round">
+      <path d="M62 40 L22 8"/><path d="M62 40 L46 3"/><path d="M62 40 L72 1"/><path d="M62 40 L97 12"/>
+      <path d="M62 40 L99 46"/><path d="M62 40 L92 93"/><path d="M62 40 L60 99"/><path d="M62 40 L28 97"/>
+      <path d="M62 40 L3 68"/><path d="M62 40 L5 33"/>
+      <path d="M41 24 L53 31 L45 41"/><path d="M79 26 L67 33 L75 45"/><path d="M53 61 L63 55 L71 67"/>
+      <path d="M35 53 L49 47 L51 59"/><path d="M75 63 L65 51"/><path d="M30 40 L46 42"/>
+    </g>
+    <circle cx="62" cy="40" r="3.4" fill="rgba(255,255,255,.6)"/>
+    <circle cx="62" cy="40" r="8" fill="none" stroke="rgba(232,240,255,.5)" stroke-width=".35"/>
+  </svg>
+  <div id="impact"></div>
+  <div id="warnflash"></div>
+  <div id="fade"></div>
+
+  <div class="full-scene active" id="s2-title">
+    <div class="fs-card">
+      <div class="chapter-label">Chapter 2</div>
+      <div class="title-eyebrow">Can You Trust Your Car?</div>
+      <div class="title-main">Inside the Machine</div>
+      <div class="title-sub">You're still driving — but now you can see what the car sees. Its eyes are nothing like yours.</div>
+      <button class="btn-primary" onclick="startCh2()">See through its eyes →</button>
+    </div>
+  </div>
+
+  <div class="full-scene" id="s2-final">
+    <div class="fs-card">
+      <div class="progress-dots"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot current"></div></div>
+      <div class="final-icon">👁️</div>
+      <div class="final-title">Chapter 2 complete</div>
+      <div class="final-sub">You've seen how a machine perceives — three imperfect senses, fused, each covering the others' blind spots.</div>
+      <div class="tags"><span class="tag">Sensor fusion</span><span class="tag">Redundancy</span><span class="tag">Adaptive weighting</span><span class="tag">Graceful degradation</span></div>
+      <div class="final-quote"><div class="l">The central question</div>How does a machine perceive the world — and what does it miss? A car that trusts one sensor is one blind spot from disaster. In Chapter 3, you'll ask how we ever prove it's safe enough.</div>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
+        <button class="next-chapter-btn" onclick="continueCh3()">Continue to Chapter 3 ↗</button>
+        <button class="next-chapter-btn" style="background:transparent;border:1px solid var(--line);color:var(--muted);box-shadow:none" onclick="restart()">Replay chapter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const clamp01 = v => v<0?0:v>1?1:v;
+
+  /* ========================= CANVAS WORLD ENGINE ========================= */
+  const R = {
+    cvs:$('road'), ctx:null, W:0, H:0, horizonY:0,
+    seg:200, roadW:1500, camH:1500, camD:0.84, draw:180,
+    pos:0, speed:0, target:1400, playerX:0, mode:'idle', paused:false,
+    stars:[], clouds:[], skyline:[], last:0, camX:0
+  };
+  const MODES = {
+    idle:{sky:['#070c1c','#0e1a38','#1b2f5c'],grass:['#0a1420','#0b1626'],road:['#1a2030','#161b29'],rumble:['#f5b13f','#7a4a0b'],lane:'#e3ecff',pole:'#ffcf7a',glow:'rgba(90,130,210,.22)',time:'night'},
+    day:{sky:['#3f7fd0','#78abe4','#cfe2f5'],grass:['#33623c','#2c5734'],road:['#565e6c','#4e5664'],rumble:['#e6ebf2','#b9c0cc'],lane:'#ffffff',pole:'#ffd9a0',glow:'rgba(255,240,200,.22)',time:'day'},
+    dusk:{sky:['#3a2f5e','#8a5a6e','#e8a35a'],grass:['#2a3a2e','#24321f'],road:['#3a3a44','#33333c'],rumble:['#f5b13f','#7a4a0b'],lane:'#ffe0c0',pole:'#ffcf7a',glow:'rgba(255,150,90,.28)',time:'dusk'},
+    night:{sky:['#060a1a','#0d1832','#1a2c54'],grass:['#0a1420','#0b1626'],road:['#1a2030','#161b29'],rumble:['#f5b13f','#7a4a0b'],lane:'#e3ecff',pole:'#ffcf7a',glow:'rgba(90,130,210,.22)',time:'night'},
+    dawn:{sky:['#241a3a','#6a4f6e','#e0a05f'],grass:['#1a2016','#161b12'],road:['#2a2430','#241f2a'],rumble:['#f8c98a','#7a5a3a'],lane:'#f4e6d0',pole:'#ffd9a0',glow:'rgba(255,180,120,.24)',time:'dawn'}
+  };
+  function initRoad(){
+    R.ctx=R.cvs.getContext('2d');
+    for(let i=0;i<120;i++) R.stars.push({x:Math.random(),y:Math.random()*0.4,r:Math.random()*1.4+.3,a:Math.random()*.5+.2});
+    for(let i=0;i<7;i++) R.clouds.push({x:Math.random(),y:0.06+Math.random()*0.2,s:0.5+Math.random()*1.1,sp:0.2+Math.random()*0.5});
+    let bx=0; while(bx<1){ const w=0.03+Math.random()*0.05, h=0.03+Math.random()*0.08, lit=Math.random()<0.6, rows=[]; for(let k=0;k<8;k++) rows.push(Math.random()<0.5); R.skyline.push({x:bx,w,h,lit,rows}); bx+=w+0.006; }
+    resize(); window.addEventListener('resize',resize); requestAnimationFrame(frame);
+  }
+  function resize(){
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    R.W=R.cvs.clientWidth||window.innerWidth; R.H=R.cvs.clientHeight||window.innerHeight;
+    R.cvs.width=Math.round(R.W*dpr); R.cvs.height=Math.round(R.H*dpr);
+    R.ctx.setTransform(dpr,0,0,dpr,0,0); R.horizonY=R.H*0.46;
+  }
+  const curveAt = n => 0.26*Math.sin(n*0.021) + 0.16*Math.sin(n*0.006);
+  function project(cx,cz){
+    const dz=cz-R.pos, scale=R.camD/(dz<=0?1e-4:dz);
+    return {dz,scale,cx,x:R.W/2+scale*(cx-R.camX)*(R.W/2),y:R.horizonY+scale*R.camH*(R.H/2),w:scale*R.roadW*(R.W/2)};
+  }
+  function quad(x1,y1,x2,y2,x3,y3,x4,y4,c){const x=R.ctx;x.fillStyle=c;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.lineTo(x3,y3);x.lineTo(x4,y4);x.closePath();x.fill();}
+  function roundRect(x0,y0,w,h,r){const x=R.ctx;x.beginPath();x.moveTo(x0+r,y0);x.arcTo(x0+w,y0,x0+w,y0+h,r);x.arcTo(x0+w,y0+h,x0,y0+h,r);x.arcTo(x0,y0+h,x0,y0,r);x.arcTo(x0,y0,x0+w,y0,r);x.closePath();}
+  function strokeRR(x0,y0,w,h,r){roundRect(x0,y0,w,h,r);R.ctx.stroke();}
+
+  function orb(mx,my,mr,core,glow,crater){
+    const x=R.ctx; let gg=x.createRadialGradient(mx,my,mr*0.3,mx,my,mr*3.4);gg.addColorStop(0,glow);gg.addColorStop(1,'transparent');
+    x.fillStyle=gg;x.beginPath();x.arc(mx,my,mr*3.4,0,7);x.fill();
+    x.fillStyle=core;x.beginPath();x.arc(mx,my,mr,0,7);x.fill();
+    if(crater){ x.fillStyle='rgba(180,195,235,.22)';x.beginPath();x.arc(mx+mr*0.35,my-mr*0.2,mr*0.28,0,7);x.fill(); }
+  }
+  function drawSky(m){
+    const x=R.ctx,time=m.time||'night',g=x.createLinearGradient(0,0,0,R.horizonY+50);
+    g.addColorStop(0,m.sky[0]);g.addColorStop(.55,m.sky[1]);g.addColorStop(1,m.sky[2]);
+    x.fillStyle=g;x.fillRect(0,0,R.W,R.horizonY+50);
+    if(time==='night'){ for(const s of R.stars){x.globalAlpha=s.a;x.fillStyle='#fff';x.fillRect(s.x*R.W,s.y*R.H,s.r,s.r);} x.globalAlpha=1; }
+    if(time==='night') orb(R.W*0.76,R.H*0.15,Math.max(16,R.W*0.02),'#eef2ff','rgba(220,230,255,.5)',true);
+    else if(time==='day') orb(R.W*0.72,R.H*0.13,Math.max(20,R.W*0.024),'#fff7e0','rgba(255,244,200,.5)',false);
+    else if(time==='dusk') orb(R.W*0.60,R.horizonY-R.H*0.03,Math.max(22,R.W*0.028),'#ffcf94','rgba(255,160,100,.55)',false);
+    const cA=time==='day'?0.5:time==='dusk'?0.34:time==='overcast'?0.24:0.12;
+    const cC=time==='day'?'244,248,255':time==='dusk'?'240,200,175':'150,170,215';
+    for(const c of R.clouds){
+      const cx=((c.x + R.pos*0.00002*c.sp)%1.25-0.12)*R.W, cy=c.y*R.H, w=R.W*0.14*c.s, h=w*0.34;
+      x.fillStyle='rgba('+cC+','+cA+')';
+      x.beginPath();x.ellipse(cx,cy,w,h,0,0,7);x.ellipse(cx+w*0.5,cy+h*0.2,w*0.7,h*0.8,0,0,7);x.ellipse(cx-w*0.55,cy+h*0.25,w*0.6,h*0.7,0,0,7);x.fill();
+    }
+    const sy=R.horizonY, lit=(time==='night'||time==='dusk'||time==='overcast');
+    let bg=x.createRadialGradient(R.W/2,sy,20,R.W/2,sy,R.W*0.55);bg.addColorStop(0,m.glow);bg.addColorStop(1,'transparent');
+    x.fillStyle=bg;x.fillRect(0,sy-100,R.W,150);
+    for(const b of R.skyline){
+      const bx=b.x*R.W,bw=b.w*R.W,bh=b.h*R.H; x.fillStyle=time==='day'?'rgba(95,115,155,.55)':'rgba(20,30,60,.85)';x.fillRect(bx,sy-bh,bw,bh);
+      if(b.lit && lit){ x.fillStyle='rgba(255,207,122,.55)';let ri=0;for(let wy=sy-bh+4;wy<sy-3;wy+=6){ if(b.rows[ri%b.rows.length]){x.fillRect(bx+bw*0.3,wy,2,2);x.fillRect(bx+bw*0.6,wy,2,2);} ri++; } }
+    }
+  }
+  function frame(t){
+    if(!R.last)R.last=t; const dt=Math.min((t-R.last)/1000,0.05); R.last=t;
+    if(!R.paused){ R.speed+=(R.target-R.speed)*Math.min(dt*2,1); R.pos+=R.speed*dt; R.playerX+=(0-R.playerX)*Math.min(dt*3,1); }
+    render(); requestAnimationFrame(frame);
+  }
+  function render(){
+    const x=R.ctx,m=MODES[R.mode]||MODES.night; R.camX=R.playerX*R.roadW;
+    drawSky(m);
+    const base=Math.floor(R.pos/R.seg); let cx=0,dx=0; const segs=[];
+    for(let i=0;i<R.draw;i++){const n=base+i;const p1=project(cx,n*R.seg);dx+=curveAt(n);cx+=dx;const p2=project(cx,(n+1)*R.seg);segs.push({n,p1,p2});}
+    for(let i=segs.length-1;i>=0;i--){
+      const s=segs[i]; if(s.p1.dz<=0||s.p2.dz<=0) continue;
+      const light=(Math.floor(s.n/3)%2)===0, grass=light?m.grass[0]:m.grass[1], road=light?m.road[0]:m.road[1];
+      x.fillStyle=grass; x.fillRect(0,s.p2.y,R.W,Math.max(1,s.p1.y-s.p2.y));
+      quad(s.p1.x-s.p1.w,s.p1.y,s.p1.x+s.p1.w,s.p1.y,s.p2.x+s.p2.w,s.p2.y,s.p2.x-s.p2.w,s.p2.y,road);
+      if(light){
+        const rw1=s.p1.w*0.12,rw2=s.p2.w*0.12,rc=m.rumble[0];
+        quad(s.p1.x-s.p1.w,s.p1.y,s.p1.x-s.p1.w+rw1,s.p1.y,s.p2.x-s.p2.w+rw2,s.p2.y,s.p2.x-s.p2.w,s.p2.y,rc);
+        quad(s.p1.x+s.p1.w-rw1,s.p1.y,s.p1.x+s.p1.w,s.p1.y,s.p2.x+s.p2.w,s.p2.y,s.p2.x+s.p2.w-rw2,s.p2.y,rc);
+        const lw1=s.p1.w*0.028,lw2=s.p2.w*0.028;quad(s.p1.x-lw1,s.p1.y,s.p1.x+lw1,s.p1.y,s.p2.x+lw2,s.p2.y,s.p2.x-lw2,s.p2.y,m.lane);
+      }
+    }
+    drawRoadside(segs,m);
+    drawHeadlights();
+    drawWeather();
+    if(SENS.objects.length) drawSensors(base,segs);
+  }
+  function drawRoadside(segs,m){
+    const x=R.ctx;
+    for(let i=segs.length-1;i>=0;i--){
+      const s=segs[i]; if(s.p1.dz<=0||s.p2.dz<=0) continue;
+      // median wall along LEFT road edge (concrete Jersey barrier)
+      const wh1=s.p1.scale*260*(R.H/2), wh2=s.p2.scale*260*(R.H/2);
+      const l1=s.p1.x-s.p1.w, l2=s.p2.x-s.p2.w;
+      const wc=(Math.floor(s.n/2)%2)?'#3a4258':'#2f3750';
+      quad(l1,s.p1.y, l1,s.p1.y-wh1, l2,s.p2.y-wh2, l2,s.p2.y, wc);
+      x.strokeStyle='rgba(150,170,210,.5)';x.lineWidth=Math.max(1,s.p1.scale*40*(R.W/2)/12);
+      x.beginPath();x.moveTo(l1,s.p1.y-wh1);x.lineTo(l2,s.p2.y-wh2);x.stroke();
+      // guardrail along RIGHT edge
+      const gh1=s.p1.scale*150*(R.H/2), gh2=s.p2.scale*150*(R.H/2);
+      const r1=s.p1.x+s.p1.w, r2=s.p2.x+s.p2.w;
+      x.strokeStyle='rgba(150,165,195,.55)';x.lineWidth=Math.max(1,s.p1.scale*36*(R.W/2)/12);
+      x.beginPath();x.moveTo(r1,s.p1.y-gh1);x.lineTo(r2,s.p2.y-gh2);x.stroke();
+      if(s.n%4===0){ x.strokeStyle='rgba(90,105,140,.6)';x.beginPath();x.moveTo(r1,s.p1.y);x.lineTo(r1,s.p1.y-gh1);x.stroke(); }
+      // trees beyond the right guardrail
+      if(s.n%6===0){ drawTree(s, m); }
+    }
+  }
+  function drawTree(s,m){
+    const x=R.ctx, off=R.roadW+780, sx=R.W/2+s.p1.scale*((s.p1.cx+off)-R.camX)*(R.W/2);
+    const th=s.p1.scale*1500*(R.H/2), tw=Math.max(1.5,s.p1.scale*90*(R.W/2)/10);
+    if(sx<-40||sx>R.W+40||th<6) return;
+    x.fillStyle='#231a14';x.fillRect(sx-tw*0.28,s.p1.y-th*0.42,tw*0.56,th*0.42);
+    x.fillStyle=(m.time==='night'||m.time==='overcast')?'#12321f':'#274d33';
+    x.beginPath();x.ellipse(sx,s.p1.y-th*0.62,tw*1.5,th*0.42,0,0,7);x.fill();
+    x.beginPath();x.ellipse(sx-tw*0.6,s.p1.y-th*0.5,tw*1.1,th*0.3,0,0,7);x.ellipse(sx+tw*0.6,s.p1.y-th*0.5,tw*1.1,th*0.3,0,0,7);x.fill();
+  }
+  function drawHeadlights(){
+    const x=R.ctx, baseY=R.H*(1-0.30), topY=R.horizonY+R.H*0.06;
+    x.save(); x.globalCompositeOperation='lighter';
+    for(const hx of [R.W*0.42,R.W*0.58]){
+      const g=x.createLinearGradient(hx,baseY,R.W/2,topY); g.addColorStop(0,'rgba(255,244,214,.16)');g.addColorStop(1,'rgba(255,244,214,0)');
+      x.fillStyle=g;x.beginPath();x.moveTo(hx-6,baseY);x.lineTo(hx+6,baseY);x.lineTo(R.W/2+70,topY);x.lineTo(R.W/2-70,topY);x.closePath();x.fill();
+    }
+    x.restore();
+  }
+  function setRoadMode(mode){R.mode=mode;}
+  function setSpeed(v){R.target=v;}
+  function pauseRoad(b){R.paused=b;}
+
+  /* ========================= CRASH / TIMER HELPERS ========================= */
+  function shake(hard){const c=$('root');c.classList.remove('shaking','shaking-hard');void c.offsetWidth;c.classList.add(hard?'shaking-hard':'shaking');setTimeout(()=>c.classList.remove('shaking','shaking-hard'),hard?1300:550);}
+  function flashWarn(){const f=$('warnflash');f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);}
+  function crashSequence(cb){
+    const im=$('impact'); im.classList.remove('hit'); void im.offsetWidth; im.classList.add('hit');
+    flashWarn(); shake(true);
+    setTimeout(()=>$('crackglass').classList.add('show'),150);
+    setTimeout(()=>shake(true),220);
+    setTimeout(()=>{ if(cb)cb(); },1500);
+  }
+  function clearCrash(){ $('crackglass').classList.remove('show'); }
+  let timerRAF=null,timerEnd=0,timerDur=0,timerCb=null; const CIRC=2*Math.PI*52;
+  function startTimer(sec,onExpire){ timerDur=sec*1000; timerEnd=performance.now()+timerDur; timerCb=onExpire;
+    const bar=$('dtimer-bar'); bar.style.strokeDasharray=CIRC.toFixed(1); bar.style.strokeDashoffset='0'; timerTick(); }
+  function timerTick(){
+    const left=Math.max(0,timerEnd-performance.now()), frac=timerDur?left/timerDur:0;
+    $('dtimer-num').textContent=(left/1000).toFixed(1);
+    $('dtimer-bar').style.strokeDashoffset=(CIRC*(1-frac)).toFixed(1);
+    if(left<=0){ timerRAF=null; const cb=timerCb; timerCb=null; if(cb)cb(); return; }
+    timerRAF=requestAnimationFrame(timerTick);
+  }
+  function clearTimer(){ if(timerRAF){cancelAnimationFrame(timerRAF);timerRAF=null;} timerCb=null; }
+
+  /* ========================= SENSORS + FUSION ========================= */
+  const COND={ clear:{cam:.95,lidar:.9,radar:.85}, dusk:{cam:.45,lidar:.92,radar:.86}, night:{cam:.34,lidar:.94,radar:.86}, rain:{cam:.55,lidar:.5,radar:.92}, glare:{cam:.10,lidar:.9,radar:.9} };
+  const CONDNAME={clear:'Clear day',dusk:'Dusk',night:'Night',rain:'Heavy rain',glare:'Low sun'};
+  const OBJ_TRUCK={type:'truck',dist:2600,lane:0,   wf:.62,hf:1.0,label:'Truck',     vel:6, conf:{cam:.9,lidar:.96,radar:.94}};
+  const OBJ_SIGN ={type:'sign', dist:2050,lane:.78, wf:.3, hf:.9, label:'Road sign', vel:0, conf:{cam:.88,lidar:.82,radar:.3}};
+  const OBJ_PED  ={type:'ped',  dist:2350,lane:.34, wf:.2, hf:1.9,label:'Pedestrian',vel:4, conf:{cam:.72,lidar:.97,radar:.55}};
+  const OBJ_AMB  ={type:'amb',  dist:2300,lane:.1,  wf:.26,hf:.6, label:'Object?',   vel:6, conf:{cam:.5,lidar:.78,radar:.5}};
+  const SENS={ on:false, cond:'night', objects:[], target:null, w:{cam:34,lidar:33,radar:33}, _twn:null };
+
+  function cOf(o,s){ return clamp01((o.conf?o.conf[s]:.7) * (COND[SENS.cond][s])); }
+  function fused(o){ const w=SENS.w, sum=w.cam+w.lidar+w.radar||1; return clamp01((w.cam*cOf(o,'cam')+w.lidar*cOf(o,'lidar')+w.radar*cOf(o,'radar'))/sum); }
+  const wOn = s => SENS.w[s]>4;
+
+  function projObj(o,base,segs){
+    const idx=Math.round((R.pos+o.dist)/R.seg)-base; if(idx<1||idx>=segs.length) return null;
+    const s=segs[idx]; if(s.p1.dz<=0) return null;
+    const sc=s.p1.scale, baseW=sc*R.roadW*(R.W/2);
+    const sx=s.p1.x + sc*(o.lane*R.roadW*0.9)*(R.W/2);
+    const bw=baseW*o.wf, bh=bw*o.hf, by=s.p1.y;
+    return {sx,by,bw,bh};
+  }
+  function drawSensors(base,segs){
+    for(const o of SENS.objects){ const p=projObj(o,base,segs); if(!p||p.bw<3) continue; drawShape(o,p); if(SENS.on) drawOverlay(o,p); }
+  }
+  function drawShape(o,p){
+    const x=R.ctx,{sx,by,bw,bh}=p;
+    // ground shadow so it grips the road
+    x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.ellipse(sx,by,bw*0.55,bw*0.14,0,0,7);x.fill();
+    if(o.type==='truck'){
+      x.fillStyle='#e8edf6';roundRect(sx-bw/2,by-bh,bw,bh*0.82,Math.min(8,bw*0.06));x.fill(); // trailer (light)
+      x.strokeStyle='#8b97ad';x.lineWidth=Math.max(1,bw*0.02);x.beginPath();x.moveTo(sx,by-bh);x.lineTo(sx,by-bh*0.18);x.stroke(); // rear doors
+      x.fillStyle='#2a3350';roundRect(sx-bw/2,by-bh*0.2,bw,bh*0.2,3);x.fill(); // bumper
+      const tw=bw*0.16,th=bh*0.1; x.fillStyle='#ff5a6a';x.shadowColor='rgba(255,90,106,.9)';x.shadowBlur=bw*0.12;
+      roundRect(sx-bw/2+tw*0.4,by-bh*0.2,tw,th,2);x.fill();roundRect(sx+bw/2-tw*1.4,by-bh*0.2,tw,th,2);x.fill();x.shadowBlur=0;
+      x.fillStyle='rgba(245,177,63,.9)';for(let i=-2;i<=2;i++)x.fillRect(sx+i*bw*0.16,by-bh*0.86,bw*0.05,bw*0.05); // top marker lights
+    } else if(o.type==='ped'){
+      x.fillStyle='#f0d9a0'; x.beginPath();x.arc(sx,by-bh*0.86,bw*0.3,0,7);x.fill(); // head (lit)
+      x.fillStyle='#e6552e'; roundRect(sx-bw*0.34,by-bh*0.72,bw*0.68,bh*0.46,bw*0.22);x.fill(); // torso (reflective jacket)
+      x.fillStyle='#dfe6f2'; x.fillRect(sx-bw*0.3,by-bh*0.5,bw*0.6,bh*0.05); // hi-vis band
+      x.fillStyle='#20304f'; x.fillRect(sx-bw*0.28,by-bh*0.28,bw*0.22,bh*0.28); x.fillRect(sx+bw*0.06,by-bh*0.28,bw*0.22,bh*0.28); // legs
+    } else if(o.type==='sign'){
+      x.fillStyle='#2a3550';x.fillRect(sx-bw*0.05,by-bh,bw*0.1,bh);
+      x.fillStyle='#1f9fb8';roundRect(sx-bw/2,by-bh,bw,bh*0.55,4);x.fill();
+      x.fillStyle='#eafbff';x.fillRect(sx-bw*0.3,by-bh*0.78,bw*0.6,bh*0.07);
+    } else {
+      x.fillStyle='rgba(220,228,240,.7)';x.beginPath();x.ellipse(sx,by-bh*0.5,bw*0.44,bh*0.5,0,0,7);x.fill();
+    }
+  }
+  function drawOverlay(o,p){
+    const x=R.ctx,{sx,by,bw,bh}=p, bx=sx-bw/2, byy=by-bh, W=bw, H=bh;
+    const cc=cOf(o,'cam'),cl=cOf(o,'lidar'),cr=cOf(o,'radar');
+    const font=Math.max(10,bw*0.16);
+    if(wOn('lidar')){
+      x.fillStyle='rgba(63,224,245,'+(0.35+0.5*cl).toFixed(2)+')';
+      const n=Math.round(12+cl*80); for(let i=0;i<n;i++){ x.fillRect(bx+Math.random()*W, byy+Math.random()*H, 1.8,1.8); }
+    }
+    if(wOn('radar')){
+      x.strokeStyle='rgba(66,217,138,'+(0.45+0.5*cr).toFixed(2)+')';x.lineWidth=Math.max(1.6,bw*0.03);
+      const b=Math.max(6,bw*0.18);
+      x.beginPath();x.moveTo(bx-b,byy);x.lineTo(bx,byy);x.moveTo(bx-b,byy);x.lineTo(bx-b,byy+H);x.moveTo(bx-b,byy+H);x.lineTo(bx,byy+H);x.stroke();
+      x.beginPath();x.moveTo(bx+W+b,byy);x.lineTo(bx+W,byy);x.moveTo(bx+W+b,byy);x.lineTo(bx+W+b,byy+H);x.moveTo(bx+W+b,byy+H);x.lineTo(bx+W,byy+H);x.stroke();
+      x.fillStyle='rgba(66,217,138,.95)';x.font=(font*0.8).toFixed(0)+'px system-ui';x.textAlign='center';x.fillText('▲ '+o.vel+' km/h', sx, byy+H+font*1.4);
+    }
+    if(wOn('cam')){
+      const low=cc<0.4, jx=low?(Math.random()-0.5)*bw*0.09:0, jy=low?(Math.random()-0.5)*bh*0.05:0;
+      x.strokeStyle=low?'rgba(255,90,106,.95)':'rgba(245,177,63,.98)';x.lineWidth=Math.max(1.8,bw*0.035);
+      if(low)x.setLineDash([6,5]);
+      strokeRR(bx+jx,byy+jy,W,H,Math.min(9,bw*0.1)); x.setLineDash([]);
+      x.fillStyle=low?'rgba(255,90,106,1)':'rgba(245,177,63,1)';x.font='700 '+font.toFixed(0)+'px system-ui';x.textAlign='left';
+      x.fillText(o.label+' '+Math.round(cc*100)+'%', bx+jx, byy+jy-font*0.45);
+    }
+    if(o===SENS.target){
+      const f=fused(o), good=f>=0.7;
+      x.strokeStyle=good?'rgba(255,255,255,.98)':'rgba(255,255,255,.5)';x.lineWidth=Math.max(2.2,bw*0.05);x.setLineDash(good?[]:[3,4]);
+      strokeRR(bx-4,byy-4,W+8,H+8,Math.min(12,bw*0.14)); x.setLineDash([]);
+      x.fillStyle=good?'#fff':'rgba(255,255,255,.7)';x.font='800 '+(font*1.15).toFixed(0)+'px system-ui';x.textAlign='center';
+      x.fillText((good?'✓ ':'? ')+Math.round(f*100)+'%', sx, byy+H+font*2.6);
+    }
+    x.textAlign='left';
+  }
+  function drawWeather(){
+    const x=R.ctx;
+    if(SENS.cond==='glare'){
+      const cx=R.W/2, cy=R.horizonY+6, a=(0.55+0.2*Math.sin(R.pos*0.02));
+      const g=x.createRadialGradient(cx,cy,4,cx,cy,R.W*0.42);
+      g.addColorStop(0,'rgba(255,250,238,'+a.toFixed(2)+')');g.addColorStop(.22,'rgba(255,242,214,.35)');g.addColorStop(1,'transparent');
+      x.fillStyle=g;x.fillRect(0,0,R.W,R.horizonY+200);
+    } else if(SENS.cond==='rain'){
+      x.strokeStyle='rgba(180,200,230,.22)';x.lineWidth=1;
+      for(let i=0;i<70;i++){ const rx=Math.random()*R.W, ry=Math.random()*R.H*0.72; x.beginPath();x.moveTo(rx,ry);x.lineTo(rx-6,ry+16);x.stroke(); }
+    }
+  }
+
+  /* fusion panel */
+  function readSliders(){ SENS.w.cam=+$('w-cam').value; SENS.w.lidar=+$('w-lidar').value; SENS.w.radar=+$('w-radar').value; }
+  function setSliders(c,l,r){ $('w-cam').value=c; $('w-lidar').value=l; $('w-radar').value=r; readSliders(); }
+  function updateFusion(){
+    const w=SENS.w, sum=w.cam+w.lidar+w.radar||1;
+    $('wv-cam').textContent=Math.round(100*w.cam/sum)+'%'; $('wv-lidar').textContent=Math.round(100*w.lidar/sum)+'%'; $('wv-radar').textContent=Math.round(100*w.radar/sum)+'%';
+    const t=SENS.target, cert=t?fused(t):0, good=cert>=0.7, mid=cert>=0.45;
+    $('fz-cert-val').textContent=t?Math.round(cert*100)+'%':'—';
+    $('fz-verdict').textContent=t?(good?('✓ '+t.label):'Uncertain'):'—';
+    $('fz-verdict').style.color=good?'var(--green)':mid?'var(--amber)':'var(--red)';
+    $('cl-cert').textContent=t?Math.round(cert*100):'—';
+    $('cl-cert').style.color=!t?'var(--muted)':good?'var(--green)':mid?'var(--amber)':'var(--red)';
+    $('fz-cond').textContent=CONDNAME[SENS.cond]||'—';
+    if(FMODE==='manual' && t && good && !manualSolved){ manualSolved=true; setHint('Confident — that\'s a pedestrian. Continue when ready.'); showNext(()=>showOutcome(FUSE_FACT,'s2-fail')); }
+  }
+  function autoFuse(cb){
+    const t=SENS.target;
+    const val=t?{cam:cOf(t,'cam'),lidar:cOf(t,'lidar'),radar:cOf(t,'radar')}:COND[SENS.cond];
+    const sc=v=>v*v, s=sc(val.cam)+sc(val.lidar)+sc(val.radar)||1;
+    const tg={cam:100*sc(val.cam)/s,lidar:100*sc(val.lidar)/s,radar:100*sc(val.radar)/s};
+    const from={cam:+$('w-cam').value,lidar:+$('w-lidar').value,radar:+$('w-radar').value};
+    let pg=0; clearInterval(SENS._twn);
+    SENS._twn=setInterval(()=>{ pg+=0.06; if(pg>=1){pg=1;clearInterval(SENS._twn); if(cb)cb();}
+      setSliders(from.cam+(tg.cam-from.cam)*pg, from.lidar+(tg.lidar-from.lidar)*pg, from.radar+(tg.radar-from.radar)*pg); updateFusion();
+    },28);
+    $('fz-why').textContent=WHY[SENS.cond]||'';
+  }
+  const WHY={
+    clear:'Clear day: all three sensors are reliable, so the system blends them fairly evenly.',
+    dusk:'At dusk the camera is fading (45%), so the system starts leaning on LiDAR and radar as the light goes.',
+    night:'Night: the camera barely sees (34% reliable), so the system down-weights it and leans on LiDAR, which needs no light.',
+    glare:'The low sun is straight in the camera (10% reliable). The system drops it and trusts LiDAR + radar instead.',
+    rain:'Heavy rain scatters LiDAR (50%). The system leans on radar, which sees straight through rain.'
+  };
+  let FMODE='manual', manualSolved=false;
+  function showFusion(on,mode){
+    $('fusion').classList.toggle('show',!!on); $('console').classList.toggle('show',!!on);
+    if(!on) return; FMODE=mode||'manual'; manualSolved=false;
+    $('fusion').classList.toggle('locked',FMODE==='auto');
+    const auto=$('fz-auto');
+    if(FMODE==='auto'){ auto.style.display=''; auto.textContent='AUTO FUSION'; auto.classList.add('badge'); }
+    else { auto.style.display='none'; auto.classList.remove('badge'); }  /* manual: no AUTO button */
+    updateFusion();
+  }
+
+  /* HUD + speedometer */
+  function badge(el,txt,r){ el.textContent=txt+' '+Math.round(r*100)+'%'; el.className='hud-badge '+(r<0.25?'alert':r<0.6?'warn':''); }
+  function setHUD(cfg){
+    $('hud').classList.toggle('show',!!(cfg&&cfg.show));
+    $('speedo').classList.toggle('show',!!(cfg&&cfg.show));
+    $('spd-num').style.opacity=cfg&&cfg.show?'1':'0'; $('spd-unit').style.opacity=cfg&&cfg.show?'1':'0';
+    if(cfg&&cfg.speed!=null){ $('spd-num').textContent=cfg.speed; const ang=-90+clamp01(cfg.speed/160)*180; $('spd-needle').setAttribute('transform','rotate('+ang.toFixed(1)+' 100 118)'); }
+    const rel=COND[SENS.cond]||COND.night;
+    badge($('b-cam'),'📷 Camera',rel.cam); badge($('b-lidar'),'🟦 LiDAR',rel.lidar); badge($('b-radar'),'📡 Radar',rel.radar);
+    if(cfg&&cfg.loc!=null){ $('hud-loc').textContent=cfg.loc; $('hud-loc').className='hud-badge hud-loc'; }
+  }
+
+  function setHint(txt){ const h=$('hint'); if(txt){h.textContent=txt;h.classList.add('show');} else h.classList.remove('show'); }
+  function showNext(cb){ const b=$('nextbtn'); b.classList.add('show'); b.onclick=()=>{ b.classList.remove('show'); cb&&cb(); }; }
+  function hideNext(){ $('nextbtn').classList.remove('show'); }
+
+  /* ========================= SCENES ========================= */
+  const PROG={'s2-see':22,'s2-fuse':46,'s2-fail':70,'s2-decide':90,'s2-final':100};
+  const SCENE={
+    's2-title':{mode:'day',speed:2400,cond:'clear',objects:[],sensorsOn:false,panel:false,target:null,hud:{show:false}},
+    's2-see':{mode:'day',speed:3600,cond:'clear',objects:[OBJ_TRUCK,OBJ_SIGN],sensorsOn:true,panel:false,target:null,
+      hud:{show:true,speed:96,loc:'☀ 17:40 · G2 Expressway'},hint:'SENSOR VISION ONLINE — every box, point and bracket is the car perceiving the world.'},
+    's2-fuse':{mode:'dusk',speed:3200,cond:'dusk',objects:[OBJ_PED],sensorsOn:true,panel:true,fmode:'manual',target:OBJ_PED,
+      hud:{show:true,speed:92,loc:'🌆 18:20 · Pedestrian ahead'},hint:'Dusk. A pedestrian ahead. Drag the sensor weights until the car is confident it\'s a person.'},
+    's2-fail':{mode:'dusk',speed:3000,cond:'glare',objects:[OBJ_PED],sensorsOn:true,panel:true,fmode:'auto',target:OBJ_PED,
+      hud:{show:true,speed:88,loc:'🌇 18:34 · Low sun'},hint:'The setting sun is dead ahead. The camera goes blind — watch the car re-weight itself, automatically.'},
+    's2-decide':{mode:'dusk',speed:2800,cond:'glare',objects:[OBJ_AMB],sensorsOn:true,panel:true,fmode:'auto',target:OBJ_AMB,
+      hud:{show:true,speed:84,loc:'🌇 18:35 · Object in lane'},hint:'Something is in your lane. The sun has blinded the camera. What do you trust?'},
+    's2-final':{mode:'night',speed:1600,cond:'clear',objects:[],sensorsOn:false,panel:false,target:null,hud:{show:false}}
+  };
+  function applyScene(id){
+    const c=SCENE[id]||SCENE['s2-title'];
+    pauseRoad(false); setRoadMode(c.mode); setSpeed(c.speed);
+    SENS.cond=c.cond; SENS.on=c.sensorsOn; SENS.objects=c.objects||[]; SENS.target=c.target||null;
+    setHUD(c.hud); setHint(c.hint||''); hideNext(); clearCrash();
+    if(c.panel){ setSliders(34,33,33); showFusion(true,c.fmode); } else showFusion(false);
+    updateFusion();
+    if(PROG[id]!=null) $('prog').style.width=PROG[id]+'%'; else $('prog').style.width='0%';
+  }
+  function go(id){
+    const f=$('fade'); f.classList.add('in');
+    setTimeout(()=>{
+      document.querySelectorAll('.full-scene').forEach(s=>s.classList.remove('active'));
+      const el=$(id); if(el&&el.classList.contains('full-scene')) el.classList.add('active');
+      applyScene(id); f.classList.remove('in'); initScene(id);
+    },420);
+  }
+  function startCh2(){ go('s2-see'); }
+  function initScene(id){
+    if(id==='s2-see'){ setTimeout(()=>showNext(()=>showOutcome(SEE_FACT,'s2-fuse')), 4600); }
+    else if(id==='s2-fuse'){ /* manual: Continue unlocks when solved; fallback after 16s */ setTimeout(()=>{ if(!manualSolved) showNext(()=>showOutcome(FUSE_FACT,'s2-fail')); }, 16000); }
+    else if(id==='s2-fail'){
+      setTimeout(()=>{ flashWarn(); setHUD(SCENE['s2-fail'].hud); updateFusion(); }, 1400);   // camera blinded
+      setTimeout(()=>autoFuse(), 3000);                                                        // car re-weights itself
+      setTimeout(()=>showNext(()=>showOutcome(FAIL_FACT,'s2-decide')), 6200);
+    }
+    else if(id==='s2-decide'){ setTimeout(()=>autoFuse(), 700); setTimeout(askFuse, 2000); }
+  }
+
+  /* ========================= FACTS + DECISION ========================= */
+  const SEE_FACT={big:'3 senses',label:'fused ~30× a second',ctx:'Camera reads meaning and colour; LiDAR measures exact shape and distance; radar tracks speed through anything.',
+    stats:[{v:'~1.5 M',l:'LiDAR pts/sec',c:'ok'},{v:'~30 Hz',l:'Fusion rate',c:'ok'},{v:'3',l:'Overlapping senses',c:'good'}],
+    ins:'Each sensor is strong exactly where the others are weak. Perception is the art of combining them — not picking one.',who:'— Perception engineer, robotaxi program'};
+  const FUSE_FACT={big:'No single sensor',label:'is enough',ctx:'As the light fades the camera weakens; LiDAR carries the detection. Weighting by reliability keeps the car confident.',
+    stats:[{v:'45%',l:'Camera · dusk',c:'ok'},{v:'92%',l:'LiDAR · dusk',c:'good'},{v:'≥80%',l:'Fused',c:'good'}],
+    ins:'The car does not trust every sensor equally — it weights each by how reliable it is right now, and re-checks constantly.',who:'— Sensor-fusion lead'};
+  const FAIL_FACT={big:'Redundancy',label:'is why it survives',ctx:'The low sun blinded the camera — but LiDAR and radar still see, so the system stays confident. That overlap is the whole point.',
+    stats:[{v:'10%',l:'Camera · sun',c:'bad'},{v:'held',l:'Certainty',c:'good'},{v:'auto',l:'Re-weighted',c:'good'}],
+    ins:'Sensors are chosen to fail in different conditions. If any one blind spot could stop the car, the design has already failed.',who:'— Safety-validation engineer'};
+
+  const FUSE_DATA={
+    A:{big:'Braked',label:'Trusted LiDAR',ctx:'LiDAR saw a solid return through the glare. You braked in time.',danger:'none',
+       stats:[{v:'Avoided',l:'Outcome',c:'good'},{v:'LiDAR',l:'Trusted',c:'good'}],
+       ins:'When one sense is blinded, lead with the one that still works. LiDAR needs no light at all.',who:'— Perception lead, robotaxi program'},
+    B:{big:'Slowed',label:'Trusted the fused read',ctx:'The fused certainty was low, so you slowed and kept sensing. Enough margin to stop safely.',danger:'none',
+       stats:[{v:'Safe',l:'Outcome',c:'good'},{v:'Fusion',l:'Trusted',c:'ok'}],
+       ins:'Low certainty is information. The safe move is to buy time — speed is what removes your options.',who:'— Safety-validation engineer'},
+    C:{big:'Impact',label:'Trusted a blind camera',ctx:'The camera reported "nothing" — because it was blinded. It was a child crossing.',danger:'high',crash:true,
+       stats:[{v:'Fatal',l:'Outcome',c:'bad'},{v:'Camera',l:'Trusted',c:'bad'}],
+       ins:'A blinded sensor reports absence, not safety. Trusting "nothing detected" from a failed sensor is how perception crashes happen.',who:'— Autonomy safety researcher'}
+  };
+  const FUSE_TIMEOUT={big:'Impact',label:'No decision',ctx:'You never chose. At speed, indecision is a decision — and the car kept going.',danger:'high',crash:true,
+    stats:[{v:'Fatal',l:'Outcome',c:'bad'},{v:'0.0 s',l:'Your input',c:'bad'}],
+    ins:'Perception buys time only if someone acts on it. Hesitation spends the margin the sensors just earned you.',who:'— Autonomy safety researcher'};
+  const DECIDE={eyebrow:'Camera blind · object in lane',timer:3,q:'The camera sees nothing. What do you trust?',
+    opts:[{k:'A',t:'Trust LiDAR',s:'brake hard'},{k:'B',t:'Trust the fused read',s:'slow, keep sensing'},{k:'C',t:'Assume false alarm',s:'keep going'}],data:FUSE_DATA,next:'s2-final'};
+
+  let curDecision=false;
+  function askFuse(){
+    const c=DECIDE; pauseRoad(true);
+    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow urgent';
+    $('d-question').textContent=c.q;
+    const wrap=$('d-options'); wrap.innerHTML='';
+    c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span><span class="s">'+o.s+'</span>';
+      b.onclick=()=>chooseFuse(o.k); wrap.appendChild(b); });
+    curDecision=true; $('dtimer').style.display='block';
+    startTimer(c.timer,()=>{ if(!curDecision)return; curDecision=false; resolveFuse('TIMEOUT'); });
+    $('decision').classList.add('show');
+  }
+  function chooseFuse(k){
+    if(!curDecision)return; curDecision=false; clearTimer();
+    const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b)b.classList.add('picked');
+    setTimeout(()=>resolveFuse(k),260);
+  }
+  function resolveFuse(k){
+    $('decision').classList.remove('show'); pauseRoad(false);
+    const d = k==='TIMEOUT'?FUSE_TIMEOUT:FUSE_DATA[k];
+    if(d.crash){ crashSequence(()=>showOutcome(d,'s2-final')); return; }
+    setTimeout(()=>showOutcome(d,'s2-final'),650);
+  }
+
+  function showOutcome(d,next){
+    $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none';
+    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
+    const st=$('o-stats'); st.innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
+    st.style.display=(d.stats&&d.stats.length)?'':'none';
+    $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+    $('o-quote').style.display=d.ins?'':'none';
+    $('o-continue').onclick=()=>{ $('outcome').classList.remove('show','ready'); go(next); };
+    const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show'); setTimeout(()=>o.classList.add('ready'),1950);
+  }
+
+  function restart(){ curDecision=false; clearTimer(); clearCrash(); $('decision').classList.remove('show'); $('outcome').classList.remove('show','ready'); go('s2-title'); }
+  function continueCh3(){const msg='I finished Chapter 2 of Can You Trust Your Car. Design me the full Chapter 3 experience.';if(typeof sendPrompt==='function')sendPrompt(msg);}
+
+  ['cam','lidar','radar'].forEach(s=>$('w-'+s).addEventListener('input',()=>{ if($('fusion').classList.contains('locked'))return; readSliders(); updateFusion(); }));
+  $('fz-auto').addEventListener('click',()=>{ if(FMODE==='manual') return; });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toUpperCase();
+    if('ABC'.includes(k) && $('decision').classList.contains('show')){ const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b)b.click(); return; }
+    if((e.key==='Enter'||e.key===' ') && $('outcome').classList.contains('ready')) $('o-continue').click();
+  });
+  Object.assign(window,{startCh2,restart,continueCh3});
+
+  /* boot */
+  initRoad(); applyScene('s2-title');
+
+  /* self-check */
+  (function(){
+    ['A','B','C'].forEach(k=>console.assert(FUSE_DATA[k]&&FUSE_DATA[k].big&&FUSE_DATA[k].ins&&FUSE_DATA[k].stats,'FUSE_DATA.'+k+' incomplete'));
+    [SEE_FACT,FUSE_FACT,FAIL_FACT,FUSE_TIMEOUT].forEach((f,i)=>console.assert(f&&f.big&&f.ins,'fact '+i+' incomplete'));
+    ['road','glass','bezel','roof','mirror','hud','dash','wheel','speedo','spd-needle','spd-num','console','cl-cert',
+     'fusion','w-cam','w-lidar','w-radar','fz-auto','fz-cert-val','fz-verdict','fz-why','fz-cond',
+     'hint','nextbtn','decision','d-question','d-options','outcome','o-big','o-continue','dtimer','crackglass','impact','warnflash','fade','prog']
+      .forEach(id=>console.assert($(id),'missing #'+id));
+    ['s2-title','s2-final'].forEach(id=>console.assert($(id),'missing scene #'+id));
+    console.assert(R.ctx,'canvas 2d context missing');
+  })();
+})();
+</script>
+</body>
+</html>

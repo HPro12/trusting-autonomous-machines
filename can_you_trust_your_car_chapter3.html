@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Can You Trust Your Car? — Chapter 3</title>
+<style>
+  /* ============================================================
+     CAN YOU TRUST YOUR CAR? — Chapter 3: The Long Tail
+     Safety-review workstation. Road engine reused as dashcam footage.
+     Self-contained: no images, no libraries, no build step.
+     ============================================================ */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;margin:0;background:#0b1020;overflow:hidden}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#eaf0ff}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  :root{
+    --amber:#f5b13f;--cyan:#3fe0f5;--red:#ff5a6a;--green:#42d98a;--blue:#6ea8ff;
+    --white:#eaf0ff;--muted:#9aa6c2;
+    --surface:rgba(24,32,58,.82);--surface-2:rgba(34,45,78,.9);--line:rgba(150,180,255,.14);
+    --shadow:0 22px 55px rgba(0,0,0,.5);--speed:.2s;
+  }
+  #root{position:fixed;inset:0;overflow:hidden;background:#05070f}
+  #road{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+  /* monitor feel: vignette + faint scanlines */
+  #screen{position:absolute;inset:0;z-index:6;pointer-events:none;
+    background:radial-gradient(150% 110% at 50% 45%,transparent 55%,rgba(0,0,0,.55) 100%),
+      repeating-linear-gradient(to bottom,rgba(255,255,255,.02) 0 1px,transparent 1px 3px)}
+  #bezel{position:absolute;inset:0;z-index:7;pointer-events:none;border:clamp(6px,1vw,12px) solid #05070c;border-radius:clamp(10px,1.6vw,20px);box-shadow:inset 0 0 0 1px rgba(150,180,255,.08),inset 0 0 60px rgba(0,0,0,.55)}
+
+  /* workstation top bar */
+  #wstop{position:absolute;top:0;left:0;right:0;z-index:16;display:flex;align-items:center;gap:14px;padding:10px clamp(14px,2.5vw,34px);
+    background:linear-gradient(to bottom,rgba(8,12,22,.92),rgba(8,12,22,.55) 80%,transparent);opacity:0;transition:opacity .4s}
+  #wstop.show{opacity:1}
+  .ws-rec{display:inline-flex;align-items:center;gap:7px;font-size:clamp(11px,1.4vw,14px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+  .ws-rec .d{width:9px;height:9px;border-radius:50%;background:var(--red);animation:blink 1.3s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .ws-log{font-size:clamp(11px,1.4vw,14px);color:var(--muted)}
+  .ws-km{margin-left:auto;font-size:clamp(14px,2vw,22px);font-weight:800;font-variant-numeric:tabular-nums;color:var(--white)}
+  .ws-km small{font-size:.6em;color:var(--muted);font-weight:600;letter-spacing:.08em}
+
+  /* incident flag */
+  #flag{position:absolute;top:clamp(46px,9vh,84px);left:50%;transform:translateX(-50%);z-index:17;
+    background:rgba(255,90,106,.16);border:1px solid rgba(255,90,106,.6);color:#ffd0d6;font-weight:700;font-size:clamp(12px,1.6vw,16px);
+    padding:8px 16px;border-radius:10px;backdrop-filter:blur(4px);opacity:0;transition:opacity .35s;pointer-events:none}
+  #flag.show{opacity:1;animation:blink 1s 3}
+
+  /* timeline scrubber */
+  #scrub{position:absolute;left:0;right:0;bottom:0;z-index:16;display:flex;align-items:center;gap:clamp(10px,1.6vw,18px);padding:12px clamp(14px,2.5vw,34px) clamp(14px,3vh,26px);
+    background:linear-gradient(to top,rgba(8,12,22,.92),rgba(8,12,22,.5) 80%,transparent);opacity:0;transition:opacity .4s}
+  #scrub.show{opacity:1}
+  .sc-btn{background:var(--surface-2);border:1px solid var(--line);color:var(--white);border-radius:9px;padding:8px 14px;font-weight:700;font-size:clamp(12px,1.5vw,15px);cursor:pointer;white-space:nowrap}
+  .sc-btn:hover{border-color:var(--cyan)}
+  .sc-track{position:relative;flex:1;height:8px;border-radius:5px;background:#1b2233;overflow:hidden}
+  .sc-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--cyan),var(--amber))}
+  .sc-mark{position:absolute;top:-3px;width:3px;height:14px;background:var(--red);border-radius:2px;opacity:0}
+  .sc-mark.show{opacity:1}
+  .sc-time{font-size:clamp(11px,1.4vw,14px);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  /* stats panel */
+  #stats{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;width:min(680px,92vw);display:none;flex-direction:column;gap:14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.6vw,30px);backdrop-filter:blur(8px);box-shadow:var(--shadow)}
+  #stats.show{display:flex}
+  .st-h{font-size:clamp(15px,2vw,21px);font-weight:800}
+  .st-sub{font-size:clamp(12px,1.5vw,15px);color:var(--muted);line-height:1.5;margin-top:-6px}
+  .st-row{display:flex;justify-content:space-between;align-items:baseline;font-size:clamp(12px,1.5vw,15px)}
+  .st-row b{font-size:clamp(18px,2.6vw,28px);font-variant-numeric:tabular-nums}
+  .st-bar{position:relative;height:16px;border-radius:8px;background:#131a2c;overflow:hidden}
+  .st-bar .f{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:8px;transition:width .5s}
+  .st-bar .f.driven{background:linear-gradient(90deg,var(--cyan),var(--blue))}
+  .st-bar .f.conf{background:linear-gradient(90deg,var(--amber),var(--green))}
+  .st-cap{font-size:clamp(10px,1.2vw,13px);color:var(--muted);margin-top:3px}
+  .st-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .st-run{background:linear-gradient(180deg,#2dd4ee,#1aa7c4);color:#04121a;border:none;border-radius:10px;padding:10px 16px;font-weight:800;font-size:clamp(13px,1.6vw,16px);cursor:pointer}
+  .st-run:hover{filter:brightness(1.05)}
+  .st-next{margin-left:auto;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;border-radius:10px;padding:10px 18px;font-weight:800;font-size:clamp(13px,1.6vw,16px);cursor:pointer}
+  .st-next:hover{filter:brightness(1.05)}
+
+  /* hint + next */
+  #hint{position:absolute;top:clamp(52px,10vh,96px);left:50%;transform:translateX(-50%);z-index:24;max-width:min(720px,90vw);text-align:center;
+    font-size:clamp(13px,1.7vw,18px);font-weight:600;color:#eaf2ff;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 18px;backdrop-filter:blur(6px);box-shadow:var(--shadow);opacity:0;transition:opacity .5s;pointer-events:none}
+  #hint.show{opacity:1}
+  #nextbtn{position:absolute;left:50%;bottom:clamp(64px,11vh,104px);transform:translateX(-50%);z-index:31;display:none;
+    background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(9px,1.3vh,13px) clamp(20px,2.4vw,32px);border-radius:11px;font-size:clamp(13px,1.5vw,16px);font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(245,166,35,.32)}
+  #nextbtn.show{display:block;animation:fadeIn .4s}
+  #nextbtn:hover{filter:brightness(1.05)}
+
+  /* DECISION + OUTCOME */
+  #decision{position:absolute;inset:0;z-index:46;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(20px,4vw,52px);background:rgba(6,10,22,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  #decision.show{display:flex;animation:fadeIn .35s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .d-eyebrow{font-size:clamp(11px,1.5vw,15px);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:.7rem}
+  .d-question{font-size:clamp(20px,3.2vw,36px);font-weight:800;line-height:1.15;max-width:min(820px,92vw);margin-bottom:clamp(20px,3.4vh,42px)}
+  .d-options{display:flex;gap:clamp(12px,1.6vw,22px);justify-content:center;align-items:stretch;flex-wrap:wrap;width:100%;max-width:1100px}
+  .opt{flex:1 1 240px;max-width:340px;min-height:clamp(96px,15vh,150px);display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;cursor:pointer;padding:clamp(15px,1.9vw,24px);border-radius:16px;color:var(--white);
+    background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s,border-color .2s}
+  .opt:hover{border-color:var(--cyan);transform:translateY(-4px);box-shadow:0 0 30px rgba(63,224,245,.35),var(--shadow)}
+  .opt:active{transform:translateY(1px)}
+  .opt.picked{border-color:var(--amber);box-shadow:0 0 30px rgba(245,177,63,.5)}
+  .opt .k{width:clamp(30px,3vw,40px);height:clamp(30px,3vw,40px);border-radius:10px;display:grid;place-items:center;background:#0a1330;color:var(--cyan);font-weight:800;font-size:clamp(15px,1.8vw,20px);border:1px solid rgba(63,224,245,.4)}
+  .opt .t{font-size:clamp(15px,1.8vw,20px);font-weight:700;line-height:1.3}
+  .opt .s{font-size:clamp(11px,1.3vw,14px);color:var(--muted);line-height:1.4}
+  #outcome{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(24px,5vw,64px);background:rgba(6,10,22,.93)}
+  #outcome.show{display:flex}
+  #outcome::before{content:"";position:absolute;inset:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .o-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)}
+  #o-big{font-size:clamp(46px,11vw,132px);font-weight:800;line-height:.94;letter-spacing:-.02em;color:#fff;opacity:0;transform:translateY(18px);transition:all .6s;text-shadow:0 0 50px rgba(63,224,245,.3)}
+  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-top:1rem;opacity:0;transition:opacity .5s .45s}
+  #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;opacity:0;transition:opacity .5s .6s}
+  .o-stats{display:flex;gap:clamp(16px,3vw,44px);margin-top:clamp(18px,3vh,32px);flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .5s .95s}
+  .o-stat .v{font-size:clamp(20px,2.8vw,32px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+  .o-stat .v.bad{color:var(--red)}.o-stat .v.ok{color:var(--amber)}.o-stat .v.good{color:var(--green)}
+  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+  .o-quote{margin-top:clamp(18px,3vh,32px);max-width:min(640px,90vw);font-size:clamp(13px,1.6vw,17px);line-height:1.55;color:#cfeaf5;border-left:3px solid var(--cyan);padding-left:14px;text-align:left;opacity:0;transition:opacity .5s 1.35s}
+  .o-quote .who{display:block;margin-top:.5rem;color:var(--muted);font-style:italic;font-size:clamp(12px,1.4vw,15px)}
+  .o-continue{margin-top:clamp(22px,3.6vh,42px);opacity:0;pointer-events:none;transition:opacity .5s 1.85s;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(12px,1.6vh,16px) clamp(26px,3vw,44px);border-radius:12px;font-size:clamp(15px,1.8vw,19px);font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(245,166,35,.32)}
+  #outcome.show #o-big{opacity:1;transform:none}
+  #outcome.show #o-label,#outcome.show #o-ctx,#outcome.show .o-stats,#outcome.show .o-quote,#outcome.show .o-continue{opacity:1}
+  #outcome.ready .o-continue{pointer-events:auto}
+  .o-continue:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+  #warnflash{position:absolute;inset:0;z-index:50;pointer-events:none;opacity:0;box-shadow:inset 0 0 160px 40px rgba(255,90,106,.85);background:rgba(255,90,106,.06)}
+  #warnflash.flash{animation:warnPulse .45s ease-out 3}
+  @keyframes warnPulse{0%,100%{opacity:0}40%{opacity:1}}
+  @keyframes shake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(4px,-1px)}30%,50%,70%{transform:translate(-7px,2px)}40%,60%{transform:translate(7px,-2px)}}
+  #root.shaking{animation:shake .5s}
+  #fade{position:absolute;inset:0;background:#070b16;opacity:0;pointer-events:none;transition:opacity .42s;z-index:55}
+  #fade.in{opacity:1;pointer-events:all}
+
+  .full-scene{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;
+    background:radial-gradient(1200px 720px at 50% 12%,#25376b 0%,#141d3d 45%,#0b1020 78%)}
+  .full-scene::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 400px at 78% 88%,rgba(63,224,245,.10),transparent 60%),radial-gradient(600px 360px at 18% 78%,rgba(245,177,63,.08),transparent 60%);pointer-events:none}
+  .full-scene.active{display:flex}
+  .fs-card{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(580px,92vw);padding:clamp(22px,3.5vw,44px);border-radius:24px;background:linear-gradient(180deg,rgba(30,40,72,.66),rgba(16,22,44,.6));border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(8px)}
+  .chapter-label{font-size:clamp(11px,1.4vw,14px);letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:.7rem}
+  .title-eyebrow{font-size:clamp(11px,1.4vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+  .title-main{font-size:clamp(30px,6.5vw,60px);font-weight:700;line-height:1.08;margin-bottom:.7rem;background:linear-gradient(180deg,#fff,#b9c8ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .title-sub{font-size:clamp(14px,1.9vw,20px);color:#c3cde6;line-height:1.6;max-width:min(480px,84vw);margin-bottom:1.8rem}
+  .btn-primary{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(12px,1.6vh,17px) clamp(24px,3vw,42px);border-radius:13px;font-size:clamp(15px,1.9vw,20px);font-weight:800;cursor:pointer;transition:transform .15s,filter .15s;box-shadow:0 12px 30px rgba(245,166,35,.34)}
+  .btn-primary:hover{filter:brightness(1.06);transform:translateY(-2px)}
+  .progress-dots{display:flex;gap:9px;margin-bottom:1.4rem}
+  .dot{width:9px;height:9px;border-radius:50%;background:#33406a}
+  .dot.done{background:var(--cyan)}.dot.current{background:var(--amber)}
+  .final-icon{font-size:clamp(40px,6vw,64px);margin-bottom:.8rem}
+  .final-title{font-size:clamp(22px,3vw,34px);font-weight:800;margin-bottom:.5rem}
+  .final-sub{font-size:clamp(14px,1.8vw,19px);color:#c3cde6;line-height:1.6;max-width:min(470px,86vw);margin:0 auto 1.3rem}
+  .tags{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.3rem}
+  .tag{font-size:clamp(11px,1.3vw,14px);padding:5px 13px;border-radius:20px;background:rgba(63,224,245,.12);border:1px solid rgba(63,224,245,.28);color:var(--cyan)}
+  .final-quote{text-align:left;max-width:min(480px,86vw);margin-bottom:1.2rem;font-size:clamp(13px,1.6vw,16px);line-height:1.55;color:#cfeaf5;border-left:4px solid var(--cyan);border-radius:0 12px 12px 0;padding:.7rem 1rem;background:rgba(12,30,46,.7)}
+  .final-quote .l{font-size:clamp(9px,1.1vw,12px);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.35rem}
+  .next-chapter-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(11px,1.5vh,15px) clamp(20px,2.6vw,32px);border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer;transition:filter .2s}
+  .next-chapter-btn:hover{filter:brightness(1.06)}
+  #prog{position:absolute;top:0;left:0;height:4px;width:0;z-index:23;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .5s;box-shadow:0 0 10px rgba(63,224,245,.5)}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Can You Trust Your Car? — Chapter 3: how do you prove a machine is safe enough?</h1>
+
+<div id="root">
+  <canvas id="road"></canvas>
+  <div id="screen"></div>
+  <div id="bezel"></div>
+  <div id="prog"></div>
+
+  <div id="wstop">
+    <span class="ws-rec"><span class="d"></span>REC · SAFETY REVIEW</span>
+    <span class="ws-log" id="ws-log">Log #4471 · fleet validation</span>
+    <span class="ws-km"><span id="ws-km">0</span> <small>KM REVIEWED</small></span>
+  </div>
+  <div id="flag">⚠ NEAR-MISS DETECTED · km 6,213</div>
+
+  <div id="scrub">
+    <button class="sc-btn" id="sc-btn">▶▶ Scan logs</button>
+    <div class="sc-track"><div class="sc-fill" id="sc-fill"></div><div class="sc-mark" id="sc-mark" style="left:62%"></div></div>
+    <span class="sc-time" id="sc-time">km 0 / 10,000</span>
+  </div>
+
+  <div id="stats">
+    <div class="st-h">How many test miles prove it's safe?</div>
+    <div class="st-sub">A U.S. driver has a fatal crash about every <b>100 million miles</b>. To show — with statistical confidence — that a self-driving car is even <em>that</em> safe, you must drive it that far without one.</div>
+    <div class="st-row"><span>Test miles driven</span><b id="st-miles">6,200</b></div>
+    <div class="st-bar"><div class="f driven" id="st-driven"></div></div>
+    <div class="st-cap" id="st-drivencap">vs 275,000,000 miles needed (95% confidence)</div>
+    <div class="st-row" style="margin-top:6px"><span>Confidence it's ≥ as safe as a human</span><b id="st-conf">0%</b></div>
+    <div class="st-bar"><div class="f conf" id="st-confbar"></div></div>
+    <div class="st-actions">
+      <button class="st-run" id="st-run">▶▶ Run 10× more test miles</button>
+      <button class="st-next" id="st-nextbtn">What this means →</button>
+    </div>
+  </div>
+
+  <div id="hint"></div>
+  <button id="nextbtn">Continue →</button>
+
+  <div id="decision">
+    <div class="d-eyebrow" id="d-eyebrow"></div>
+    <div class="d-question" id="d-question"></div>
+    <div class="d-options" id="d-options"></div>
+  </div>
+
+  <div id="outcome"><div class="o-inner">
+    <div id="o-big">—</div><div id="o-label"></div><div id="o-ctx"></div>
+    <div class="o-stats" id="o-stats"></div>
+    <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
+    <button class="o-continue" id="o-continue">Continue →</button>
+  </div></div>
+
+  <div id="warnflash"></div>
+  <div id="fade"></div>
+
+  <div class="full-scene active" id="s3-title">
+    <div class="fs-card">
+      <div class="chapter-label">Chapter 3</div>
+      <div class="title-eyebrow">Can You Trust Your Car?</div>
+      <div class="title-main">The Long Tail</div>
+      <div class="title-sub">You're a safety evaluator now. Ten thousand kilometres of test logs are on your screen — and one decision no amount of data can make for you.</div>
+      <button class="btn-primary" onclick="startCh3()">Open the logs →</button>
+    </div>
+  </div>
+
+  <div class="full-scene" id="s3-final">
+    <div class="fs-card">
+      <div class="progress-dots"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot current"></div></div>
+      <div class="final-icon">📈</div>
+      <div class="final-title">Chapter 3 complete</div>
+      <div class="final-sub">You've seen why "safe enough" can't be proven — only argued, tested, and decided under uncertainty.</div>
+      <div class="tags"><span class="tag">The long tail</span><span class="tag">Statistical proof</span><span class="tag">Simulation</span><span class="tag">Deciding under uncertainty</span></div>
+      <div class="final-quote"><div class="l">The central question</div>How do you prove a machine is safe enough? You can't — not perfectly. Someone still has to decide. In Chapter 4, a crash has happened, and the question becomes: who answers for it?</div>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
+        <button class="next-chapter-btn" onclick="continueCh4()">Continue to Chapter 4 ↗</button>
+        <button class="next-chapter-btn" style="background:transparent;border:1px solid var(--line);color:var(--muted);box-shadow:none" onclick="restart()">Replay chapter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const clamp01 = v => v<0?0:v>1?1:v;
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+
+  /* ========================= CANVAS WORLD ENGINE (reused as footage) ========================= */
+  const R = {
+    cvs:$('road'), ctx:null, W:0, H:0, horizonY:0,
+    seg:200, roadW:1500, camH:1500, camD:0.84, draw:180,
+    pos:0, speed:0, target:1400, playerX:0, mode:'day', paused:false,
+    stars:[], clouds:[], skyline:[], last:0, camX:0
+  };
+  const MODES = {
+    day:{sky:['#3f7fd0','#78abe4','#cfe2f5'],grass:['#33623c','#2c5734'],road:['#565e6c','#4e5664'],rumble:['#e6ebf2','#b9c0cc'],lane:'#ffffff',pole:'#ffd9a0',glow:'rgba(255,240,200,.22)',time:'day'},
+    dusk:{sky:['#3a2f5e','#8a5a6e','#e8a35a'],grass:['#2a3a2e','#24321f'],road:['#3a3a44','#33333c'],rumble:['#f5b13f','#7a4a0b'],lane:'#ffe0c0',pole:'#ffcf7a',glow:'rgba(255,150,90,.28)',time:'dusk'},
+    night:{sky:['#060a1a','#0d1832','#1a2c54'],grass:['#0a1420','#0b1626'],road:['#1a2030','#161b29'],rumble:['#f5b13f','#7a4a0b'],lane:'#e3ecff',pole:'#ffcf7a',glow:'rgba(90,130,210,.22)',time:'night'}
+  };
+  function initRoad(){
+    R.ctx=R.cvs.getContext('2d');
+    for(let i=0;i<120;i++) R.stars.push({x:Math.random(),y:Math.random()*0.4,r:Math.random()*1.4+.3,a:Math.random()*.5+.2});
+    for(let i=0;i<7;i++) R.clouds.push({x:Math.random(),y:0.06+Math.random()*0.2,s:0.5+Math.random()*1.1,sp:0.2+Math.random()*0.5});
+    let bx=0; while(bx<1){ const w=0.03+Math.random()*0.05,h=0.03+Math.random()*0.08,lit=Math.random()<0.6,rows=[]; for(let k=0;k<8;k++)rows.push(Math.random()<0.5); R.skyline.push({x:bx,w,h,lit,rows}); bx+=w+0.006; }
+    resize(); window.addEventListener('resize',resize); requestAnimationFrame(frame);
+  }
+  function resize(){
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    R.W=R.cvs.clientWidth||window.innerWidth; R.H=R.cvs.clientHeight||window.innerHeight;
+    R.cvs.width=Math.round(R.W*dpr); R.cvs.height=Math.round(R.H*dpr);
+    R.ctx.setTransform(dpr,0,0,dpr,0,0); R.horizonY=R.H*0.46;
+  }
+  const curveAt = n => 0.26*Math.sin(n*0.021) + 0.16*Math.sin(n*0.006);
+  function project(cx,cz){ const dz=cz-R.pos, scale=R.camD/(dz<=0?1e-4:dz);
+    return {dz,scale,cx,x:R.W/2+scale*(cx-R.camX)*(R.W/2),y:R.horizonY+scale*R.camH*(R.H/2),w:scale*R.roadW*(R.W/2)}; }
+  function quad(x1,y1,x2,y2,x3,y3,x4,y4,c){const x=R.ctx;x.fillStyle=c;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.lineTo(x3,y3);x.lineTo(x4,y4);x.closePath();x.fill();}
+  function roundRect(x0,y0,w,h,r){const x=R.ctx;x.beginPath();x.moveTo(x0+r,y0);x.arcTo(x0+w,y0,x0+w,y0+h,r);x.arcTo(x0+w,y0+h,x0,y0+h,r);x.arcTo(x0,y0+h,x0,y0,r);x.arcTo(x0,y0,x0+w,y0,r);x.closePath();}
+  function strokeRR(x0,y0,w,h,r){roundRect(x0,y0,w,h,r);R.ctx.stroke();}
+  function orb(mx,my,mr,core,glow){const x=R.ctx;let gg=x.createRadialGradient(mx,my,mr*0.3,mx,my,mr*3.4);gg.addColorStop(0,glow);gg.addColorStop(1,'transparent');x.fillStyle=gg;x.beginPath();x.arc(mx,my,mr*3.4,0,7);x.fill();x.fillStyle=core;x.beginPath();x.arc(mx,my,mr,0,7);x.fill();}
+  function drawSky(m){
+    const x=R.ctx,time=m.time||'day',g=x.createLinearGradient(0,0,0,R.horizonY+50);
+    g.addColorStop(0,m.sky[0]);g.addColorStop(.55,m.sky[1]);g.addColorStop(1,m.sky[2]);
+    x.fillStyle=g;x.fillRect(0,0,R.W,R.horizonY+50);
+    if(time==='night'){ for(const s of R.stars){x.globalAlpha=s.a;x.fillStyle='#fff';x.fillRect(s.x*R.W,s.y*R.H,s.r,s.r);} x.globalAlpha=1; orb(R.W*0.76,R.H*0.15,Math.max(16,R.W*0.02),'#eef2ff','rgba(220,230,255,.5)'); }
+    else if(time==='day') orb(R.W*0.72,R.H*0.13,Math.max(20,R.W*0.024),'#fff7e0','rgba(255,244,200,.5)');
+    else if(time==='dusk') orb(R.W*0.60,R.horizonY-R.H*0.03,Math.max(22,R.W*0.028),'#ffcf94','rgba(255,160,100,.55)');
+    const cA=time==='day'?0.5:time==='dusk'?0.34:0.12, cC=time==='day'?'244,248,255':time==='dusk'?'240,200,175':'150,170,215';
+    for(const c of R.clouds){ const cx=((c.x + R.pos*0.00002*c.sp)%1.25-0.12)*R.W, cy=c.y*R.H, w=R.W*0.14*c.s, h=w*0.34;
+      x.fillStyle='rgba('+cC+','+cA+')'; x.beginPath();x.ellipse(cx,cy,w,h,0,0,7);x.ellipse(cx+w*0.5,cy+h*0.2,w*0.7,h*0.8,0,0,7);x.ellipse(cx-w*0.55,cy+h*0.25,w*0.6,h*0.7,0,0,7);x.fill(); }
+    const sy=R.horizonY, lit=(time==='night'||time==='dusk');
+    let bg=x.createRadialGradient(R.W/2,sy,20,R.W/2,sy,R.W*0.55);bg.addColorStop(0,m.glow);bg.addColorStop(1,'transparent');x.fillStyle=bg;x.fillRect(0,sy-100,R.W,150);
+    for(const b of R.skyline){ const bx=b.x*R.W,bw=b.w*R.W,bh=b.h*R.H; x.fillStyle=time==='day'?'rgba(95,115,155,.55)':'rgba(20,30,60,.85)';x.fillRect(bx,sy-bh,bw,bh);
+      if(b.lit&&lit){x.fillStyle='rgba(255,207,122,.55)';let ri=0;for(let wy=sy-bh+4;wy<sy-3;wy+=6){if(b.rows[ri%b.rows.length]){x.fillRect(bx+bw*0.3,wy,2,2);x.fillRect(bx+bw*0.6,wy,2,2);}ri++;}} }
+  }
+  function frame(t){ if(!R.last)R.last=t; const dt=Math.min((t-R.last)/1000,0.05); R.last=t;
+    if(!R.paused){ R.speed+=(R.target-R.speed)*Math.min(dt*2,1); R.pos+=R.speed*dt; R.playerX+=(0-R.playerX)*Math.min(dt*3,1);
+      if(FOOT.subj) FOOT.subj.dist+=(FOOT.subjTarget-FOOT.subj.dist)*Math.min(dt*1.5,1); }
+    render(); requestAnimationFrame(frame); }
+  function render(){
+    const x=R.ctx,m=MODES[R.mode]||MODES.day; R.camX=R.playerX*R.roadW;
+    drawSky(m);
+    const base=Math.floor(R.pos/R.seg); let cx=0,dx=0; const segs=[];
+    for(let i=0;i<R.draw;i++){const n=base+i;const p1=project(cx,n*R.seg);dx+=curveAt(n);cx+=dx;const p2=project(cx,(n+1)*R.seg);segs.push({n,p1,p2});}
+    for(let i=segs.length-1;i>=0;i--){ const s=segs[i]; if(s.p1.dz<=0||s.p2.dz<=0) continue;
+      const light=(Math.floor(s.n/3)%2)===0, grass=light?m.grass[0]:m.grass[1], road=light?m.road[0]:m.road[1];
+      x.fillStyle=grass; x.fillRect(0,s.p2.y,R.W,Math.max(1,s.p1.y-s.p2.y));
+      quad(s.p1.x-s.p1.w,s.p1.y,s.p1.x+s.p1.w,s.p1.y,s.p2.x+s.p2.w,s.p2.y,s.p2.x-s.p2.w,s.p2.y,road);
+      if(light){ const rw1=s.p1.w*0.12,rw2=s.p2.w*0.12,rc=m.rumble[0];
+        quad(s.p1.x-s.p1.w,s.p1.y,s.p1.x-s.p1.w+rw1,s.p1.y,s.p2.x-s.p2.w+rw2,s.p2.y,s.p2.x-s.p2.w,s.p2.y,rc);
+        quad(s.p1.x+s.p1.w-rw1,s.p1.y,s.p1.x+s.p1.w,s.p1.y,s.p2.x+s.p2.w,s.p2.y,s.p2.x+s.p2.w-rw2,s.p2.y,rc);
+        const lw1=s.p1.w*0.028,lw2=s.p2.w*0.028;quad(s.p1.x-lw1,s.p1.y,s.p1.x+lw1,s.p1.y,s.p2.x+lw2,s.p2.y,s.p2.x-lw2,s.p2.y,m.lane); }
+    }
+    drawRoadside(segs,m);
+    if(FOOT.subj) drawSubject(base,segs);
+  }
+  function drawRoadside(segs,m){
+    const x=R.ctx;
+    for(let i=segs.length-1;i>=0;i--){ const s=segs[i]; if(s.p1.dz<=0||s.p2.dz<=0) continue;
+      const wh1=s.p1.scale*260*(R.H/2), wh2=s.p2.scale*260*(R.H/2), l1=s.p1.x-s.p1.w, l2=s.p2.x-s.p2.w, wc=(Math.floor(s.n/2)%2)?'#3a4258':'#2f3750';
+      quad(l1,s.p1.y,l1,s.p1.y-wh1,l2,s.p2.y-wh2,l2,s.p2.y,wc);
+      x.strokeStyle='rgba(150,170,210,.5)';x.lineWidth=Math.max(1,s.p1.scale*40*(R.W/2)/12);x.beginPath();x.moveTo(l1,s.p1.y-wh1);x.lineTo(l2,s.p2.y-wh2);x.stroke();
+      const gh1=s.p1.scale*150*(R.H/2), gh2=s.p2.scale*150*(R.H/2), r1=s.p1.x+s.p1.w, r2=s.p2.x+s.p2.w;
+      x.strokeStyle='rgba(150,165,195,.55)';x.lineWidth=Math.max(1,s.p1.scale*36*(R.W/2)/12);x.beginPath();x.moveTo(r1,s.p1.y-gh1);x.lineTo(r2,s.p2.y-gh2);x.stroke();
+      if(s.n%6===0) drawTree(s,m);
+    }
+  }
+  function drawTree(s,m){
+    const x=R.ctx, off=R.roadW+780, sx=R.W/2+s.p1.scale*((s.p1.cx+off)-R.camX)*(R.W/2);
+    const th=s.p1.scale*1500*(R.H/2), tw=Math.max(1.5,s.p1.scale*90*(R.W/2)/10); if(sx<-40||sx>R.W+40||th<6) return;
+    x.fillStyle='#231a14';x.fillRect(sx-tw*0.28,s.p1.y-th*0.42,tw*0.56,th*0.42);
+    x.fillStyle=(m.time==='night')?'#12321f':'#274d33';x.beginPath();x.ellipse(sx,s.p1.y-th*0.62,tw*1.5,th*0.42,0,0,7);x.fill();
+    x.beginPath();x.ellipse(sx-tw*0.6,s.p1.y-th*0.5,tw*1.1,th*0.3,0,0,7);x.ellipse(sx+tw*0.6,s.p1.y-th*0.5,tw*1.1,th*0.3,0,0,7);x.fill();
+  }
+  /* the reviewed footage subject + the AV's own detection box */
+  const FOOT={ subj:null, subjTarget:2600, on:false };
+  function drawSubject(base,segs){
+    const o=FOOT.subj, x=R.ctx;
+    const idx=Math.round((R.pos+o.dist)/R.seg)-base; if(idx<1||idx>=segs.length) return;
+    const s=segs[idx]; if(s.p1.dz<=0) return;
+    const sc=s.p1.scale, baseW=sc*R.roadW*(R.W/2), sx=s.p1.x+sc*(o.lane*R.roadW*0.9)*(R.W/2), bw=baseW*0.2, bh=bw*1.9, by=s.p1.y; if(bw<3) return;
+    x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.ellipse(sx,by,bw*0.6,bw*0.16,0,0,7);x.fill();
+    x.fillStyle='#f0d9a0';x.beginPath();x.arc(sx,by-bh*0.86,bw*0.3,0,7);x.fill();
+    x.fillStyle='#3a6ea8';roundRect(sx-bw*0.34,by-bh*0.72,bw*0.68,bh*0.46,bw*0.22);x.fill();
+    x.fillStyle='#dfe6f2';x.fillRect(sx-bw*0.3,by-bh*0.5,bw*0.6,bh*0.05);
+    x.fillStyle='#20304f';x.fillRect(sx-bw*0.28,by-bh*0.28,bw*0.22,bh*0.28);x.fillRect(sx+bw*0.06,by-bh*0.28,bw*0.22,bh*0.28);
+    if(FOOT.on){ const font=Math.max(10,bw*0.16);
+      x.strokeStyle='rgba(63,224,245,.95)';x.lineWidth=Math.max(1.8,bw*0.04);x.setLineDash([6,4]);strokeRR(sx-bw/2-3,by-bh-3,bw+6,bh+6,6);x.setLineDash([]);
+      x.fillStyle='rgba(63,224,245,1)';x.font='700 '+font.toFixed(0)+'px system-ui';x.textAlign='left';x.fillText('Pedestrian '+o.conf, sx-bw/2-3, by-bh-font*0.6);
+      x.textAlign='left';
+    }
+  }
+  function setRoadMode(mode){R.mode=mode;}
+  function setSpeed(v){R.target=v;}
+  function pauseRoad(b){R.paused=b;}
+  function swerve(dir){R.playerX=dir*0.34;}
+  function flashWarn(){const f=$('warnflash');f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);}
+  function shake(){const c=$('root');c.classList.remove('shaking');void c.offsetWidth;c.classList.add('shaking');setTimeout(()=>c.classList.remove('shaking'),550);}
+
+  /* ========================= WORKSTATION ========================= */
+  const WS={ km:0, scanning:false, flagged:false, kmFlag:6213, raf:null };
+  function showWS(on){ $('wstop').classList.toggle('show',on); $('scrub').classList.toggle('show',on); }
+  function setKm(km){ WS.km=km; $('ws-km').textContent=fmt(km); $('sc-time').textContent='km '+fmt(km)+' / 10,000'; $('sc-fill').style.width=Math.min(100,km/100)+'%'; }
+  function scanLogs(){
+    if(WS.scanning) return; WS.scanning=true; $('sc-btn').textContent='▶▶ Scanning…'; $('hint').classList.remove('show');
+    const t0=performance.now();
+    const step=()=>{
+      const el=(performance.now()-t0)/1000, km=Math.min(WS.kmFlag, el/3.8*WS.kmFlag); setKm(km);
+      if(km<WS.kmFlag){ WS.raf=requestAnimationFrame(step); } else { WS.scanning=false; nearMiss(); }
+    };
+    WS.raf=requestAnimationFrame(step);
+  }
+  function nearMiss(){
+    FOOT.subjTarget=780; flashWarn(); shake(); swerve(-1);   // subject looms; AV brakes/swerves
+    $('sc-mark').classList.add('show'); $('flag').classList.add('show'); $('sc-btn').textContent='⏸ Flagged';
+    setTimeout(()=>{ FOOT.subjTarget=1500; }, 900);
+    setTimeout(()=>{ setHint('Near-miss logged at km 6,213. One incident in 10,000 km. Now — what is it?'); showNext(()=>go('s3-classify')); }, 1600);
+  }
+
+  /* ========================= STATISTICS MINI-INTERACTIVE ========================= */
+  const NEED=275e6; // RAND: ~275M miles to show, 95% confidence, AV fatality rate ≤ human
+  let testMiles=6200;
+  function renderStats(){
+    $('st-miles').textContent=fmt(testMiles);
+    const conf=1-Math.exp(-testMiles/(NEED/1.1)); // saturating; ~63% at 275M, ~100% near 11B
+    $('st-conf').textContent=Math.round(conf*100)+'%';
+    $('st-confbar').style.width=(conf*100).toFixed(1)+'%';
+    $('st-driven').style.width=Math.min(100,(testMiles/NEED)*100).toFixed(3)+'%';
+  }
+  function runMiles(){ testMiles=Math.min(2e10,testMiles*10); renderStats(); }
+  function showStats(on){ $('stats').classList.toggle('show',on); if(on){ testMiles=6200; renderStats(); } }
+
+  /* ========================= SCENES ========================= */
+  const PROG={'s3-review':22,'s3-classify':46,'s3-stats':70,'s3-reco':90,'s3-final':100};
+  const SCENE={
+    's3-title':{mode:'day',speed:2600,ws:false,foot:false,stats:false},
+    's3-review':{mode:'day',speed:3800,ws:true,foot:true,stats:false},
+    's3-classify':{mode:'day',speed:2600,ws:true,foot:true,stats:false},
+    's3-stats':{mode:'day',speed:0,ws:false,foot:false,stats:true},
+    's3-reco':{mode:'dusk',speed:2200,ws:false,foot:false,stats:false},
+    's3-final':{mode:'night',speed:1400,ws:false,foot:false,stats:false}
+  };
+  function applyScene(id){
+    const c=SCENE[id]||SCENE['s3-title'];
+    pauseRoad(false); setRoadMode(c.mode); setSpeed(c.speed);
+    showWS(c.ws); showStats(c.stats); setHint(''); hideNext();
+    $('flag').classList.remove('show'); $('sc-mark').classList.remove('show');
+    FOOT.on=c.foot;
+    if(c.foot){ FOOT.subj={dist:2600,lane:0.34,conf:'0.42'}; FOOT.subjTarget=2600; } else { FOOT.subj=null; }
+    if(id==='s3-review'){ WS.flagged=false; setKm(0); $('sc-btn').textContent='▶▶ Scan logs'; }
+    if(PROG[id]!=null) $('prog').style.width=PROG[id]+'%'; else $('prog').style.width='0%';
+  }
+  function go(id){
+    const f=$('fade'); f.classList.add('in');
+    setTimeout(()=>{
+      document.querySelectorAll('.full-scene').forEach(s=>s.classList.remove('active'));
+      const el=$(id); if(el&&el.classList.contains('full-scene')) el.classList.add('active');
+      applyScene(id); f.classList.remove('in'); initScene(id);
+    },420);
+  }
+  function startCh3(){ go('s3-review'); }
+  function initScene(id){
+    if(id==='s3-review'){ setHint('10,000 km of fleet logs. Most of it is nothing. Scan through it — and watch for the one moment that isn\'t.'); }
+    else if(id==='s3-classify'){ FOOT.subj={dist:1200,lane:0.34,conf:'0.42'}; FOOT.subjTarget=1200; setTimeout(()=>askDecision('classify'),900); }
+    else if(id==='s3-stats'){ /* interactive; buttons wired below */ }
+    else if(id==='s3-reco'){ setTimeout(()=>askDecision('reco'),700); }
+  }
+
+  /* ========================= DATA + DECISIONS ========================= */
+  const CLASSIFY={eyebrow:'Incident #6213 · classify',q:'A pedestrian stepped out; the car braked hard and missed by 40 cm. What is this?',
+    opts:[{k:'A',t:'Software bug',s:'a defect to fix'},{k:'B',t:'Rare edge case',s:'add to the test suite'},{k:'C',t:'Acceptable risk',s:'within tolerance'}],next:'s3-stats'};
+  const CLASSIFY_DATA={
+    A:{big:'Bug?',label:'Filed as a defect',ctx:'You order a fix and a recall of the software build. But the logs never reproduce it — so was it ever a bug?',
+       stats:[{v:'1',l:'In 10,000 km',c:'ok'},{v:'?',l:'Reproducible',c:'bad'}],
+       ins:'Call everything a bug and you chase ghosts and erode trust in the fleet. Some "bugs" are just the world being strange once.',who:'— AV validation engineer'},
+    B:{big:'Edge case',label:'Added to the library',ctx:'You add the scenario to simulation and regression tests. Sensible — but the tail of rare scenarios has no end.',
+       stats:[{v:'+1',l:'Scenario logged',c:'good'},{v:'∞',l:'Ones you haven\'t seen',c:'bad'}],
+       ins:'You can catalogue the edge cases you\'ve met. The dangerous ones are the millions you haven\'t.',who:'— Simulation lead, AV program'},
+    C:{big:'Accept',label:'Logged as tolerable risk',ctx:'The system reacted and no one was hurt — arguably it worked. But "acceptable" is a value judgement, and one bad call is a headline.',
+       stats:[{v:'0',l:'Injuries',c:'good'},{v:'You',l:'Who decides "acceptable"',c:'ok'}],
+       ins:'Every safety case draws a line and calls what\'s beyond it "acceptable." Reasonable experts put that line in different places.',who:'— Safety-case assessor'}
+  };
+  const STATS_FACT={big:'275,000,000',label:'miles — just to match a human',ctx:'RAND estimates you\'d need to drive ~275 million miles with no worse-than-human fatality rate to show it, with 95% confidence. For real proof, ~11 billion.',
+    stats:[{v:'~100 M',l:'Miles / human fatality',c:'ok'},{v:'275 M',l:'To match (95% conf.)',c:'bad'},{v:'11 B',l:'For high confidence',c:'bad'}],
+    ins:'No fleet has driven that far incident-free — and the rarest events may never appear in any finite test. Companies drive billions of simulated miles to compensate, but simulation can only test the world you thought to imagine.',who:'— AV safety-validation lead'};
+  const RECO={eyebrow:'Your recommendation',q:'You can\'t prove it\'s safe. You must still advise. What do you recommend?',
+    opts:[{k:'A',t:'Deploy',s:'the data looks good enough'},{k:'B',t:'Keep testing',s:'not enough evidence yet'},{k:'C',t:'Limited rollout',s:'geofenced & supervised'}],next:'s3-final'};
+  const RECO_DATA={
+    A:{big:'Deploy',label:'You cleared it for the road',ctx:'Every day you wait, human drivers keep crashing — delay has a body count too. But you\'re shipping a system no one can prove, and one public failure could set the field back years.',
+       stats:[{v:'Now',l:'Lives it may save',c:'good'},{v:'Unproven',l:'Tail risk',c:'bad'}],
+       ins:'The bravest and most dangerous word in this industry is "ship." Sometimes it\'s right. You will not know for years.',who:'— AV program director'},
+    B:{big:'Hold',label:'You asked for more testing',ctx:'The cautious call — and defensible. But certainty never arrives, and every month of delay is months of human crashes you could have prevented.',
+       stats:[{v:'Safer',l:'For now',c:'good'},{v:'Never',l:'When you\'re "sure"',c:'bad'}],
+       ins:'"More testing" feels responsible, and can be. It can also be a way to never have to decide.',who:'— Regulatory affairs lead'},
+    C:{big:'Limited',label:'Geofenced, supervised rollout',ctx:'Deploy in mapped, low-risk zones with safety drivers and remote monitoring — gather real-world data with guardrails. The pragmatic middle most companies actually choose.',
+       stats:[{v:'Bounded',l:'Risk exposure',c:'good'},{v:'Real',l:'Data gathered',c:'good'}],
+       ins:'You can\'t prove it safe in a lab, and you can\'t prove it safe without the road. A narrow, watched rollout is how most teams thread that needle.',who:'— Deployment safety lead'}
+  };
+
+  /* decision + outcome (reused) */
+  let curDecision=null;
+  const DMAP={classify:{cfg:CLASSIFY,data:CLASSIFY_DATA},reco:{cfg:RECO,data:RECO_DATA}};
+  function askDecision(key){
+    const c=DMAP[key].cfg; pauseRoad(key==='classify'?false:true); curDecision=key;
+    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow';
+    $('d-question').textContent=c.q;
+    const wrap=$('d-options'); wrap.innerHTML='';
+    c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
+      b.onclick=()=>chooseOption(key,o.k); wrap.appendChild(b); });
+    $('decision').classList.add('show');
+  }
+  function chooseOption(key,k){
+    if(curDecision!==key) return; curDecision=null;
+    const btn=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(btn) btn.classList.add('picked');
+    setTimeout(()=>{ $('decision').classList.remove('show'); const d=DMAP[key].data[k]; showOutcome(d,DMAP[key].cfg.next); },300);
+  }
+  function showOutcome(d,next){
+    $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none';
+    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
+    const st=$('o-stats'); st.innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
+    st.style.display=(d.stats&&d.stats.length)?'':'none';
+    $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+    $('o-quote').style.display=d.ins?'':'none';
+    $('o-continue').onclick=()=>{ $('outcome').classList.remove('show','ready'); go(next); };
+    const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show'); setTimeout(()=>o.classList.add('ready'),1950);
+  }
+
+  function setHint(txt){ const h=$('hint'); if(txt){h.textContent=txt;h.classList.add('show');} else h.classList.remove('show'); }
+  function showNext(cb){ const b=$('nextbtn'); b.classList.add('show'); b.onclick=()=>{ b.classList.remove('show'); cb&&cb(); }; }
+  function hideNext(){ $('nextbtn').classList.remove('show'); }
+  function restart(){ curDecision=null; $('decision').classList.remove('show'); $('outcome').classList.remove('show','ready'); go('s3-title'); }
+  function continueCh4(){const msg='I finished Chapter 3 of Can You Trust Your Car. Design me the full Chapter 4 experience.';if(typeof sendPrompt==='function')sendPrompt(msg);}
+
+  /* wiring */
+  $('sc-btn').addEventListener('click',scanLogs);
+  $('st-run').addEventListener('click',runMiles);
+  $('st-nextbtn').addEventListener('click',()=>{ showStats(false); showOutcome(STATS_FACT,'s3-reco'); });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toUpperCase();
+    if('ABC'.includes(k) && $('decision').classList.contains('show')){ const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b)b.click(); return; }
+    if((e.key==='Enter'||e.key===' ') && $('outcome').classList.contains('ready')) $('o-continue').click();
+  });
+  Object.assign(window,{startCh3,restart,continueCh4});
+
+  /* boot */
+  initRoad(); applyScene('s3-title');
+
+  /* self-check */
+  (function(){
+    ['A','B','C'].forEach(k=>{console.assert(CLASSIFY_DATA[k]&&CLASSIFY_DATA[k].ins,'CLASSIFY_DATA.'+k); console.assert(RECO_DATA[k]&&RECO_DATA[k].ins,'RECO_DATA.'+k);});
+    console.assert(STATS_FACT.big&&STATS_FACT.ins,'STATS_FACT');
+    ['road','screen','bezel','wstop','ws-km','flag','scrub','sc-btn','sc-fill','stats','st-run','st-nextbtn','st-miles','st-conf',
+     'hint','nextbtn','decision','d-question','d-options','outcome','o-big','o-continue','warnflash','fade','prog']
+      .forEach(id=>console.assert($(id),'missing #'+id));
+    ['s3-title','s3-final'].forEach(id=>console.assert($(id),'missing scene #'+id));
+    console.assert(R.ctx,'canvas 2d context missing');
+  })();
+})();
+</script>
+</body>
+</html>

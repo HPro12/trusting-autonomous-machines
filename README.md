@@ -6,17 +6,33 @@ An interactive, public-interest educational project about autonomous driving saf
 
 *The Last Human Decision*
 
-A self-contained, interactive web experience that puts you behind the wheel on a late-night highway drive. Through a short branching story, you feel — rather than read about — what human driving actually costs and where assistance systems promise help but fall short.
+A self-contained, interactive web experience that puts you behind the wheel on a late-night highway drive. Through a short branching story with a typewritten narrative layer and synthesized night-drive audio, you feel — rather than read about — what human driving actually costs and where assistance systems promise help but fall short. Your choices adjust two live meters, Trust and Attention, and change which scenes and outcomes you see later.
 
 The chapter walks through five scenes:
 
 1. **Human driving** — A fatigued, distracted midnight drive. Your choice about a phone notification is scored against real reaction-time and braking-distance data.
 2. **L2 assistance** — The car takes over lane keeping and adaptive cruise. You confront the question of who is actually responsible.
-3. **The edge case** — Lane markings vanish in a construction zone and the system demands an instant takeover, illustrating "automation-induced complacency" and the long-tail problem.
-4. **Choose your car** — Compare L0, L2, and L4 vehicles. Your pick is meant to carry into future chapters.
-5. **Summary** — A recap of the chapter's themes: human limitations, "L2 ≠ autonomous," edge cases, and trust calibration.
+3. **The edge case** — Lane markings vanish in a construction zone and the system demands an instant takeover. How long your window lasts depends on how much attention you have left; choosing to grab the wheel opens a hold-to-take-control interaction that measures your real reaction time. Illustrates "automation-induced complacency" and the long-tail problem.
+4. **Choose your car** — Compare L0, L2, and L4 vehicles. Your pick, along with the rest of your run, is saved to `localStorage` (`cytc.v1`) to carry into future chapters.
+5. **Debrief** — A personalized recap: a timeline of every choice and its consequence, your final Trust and Attention meters, your takeover reaction time, and a closing verdict written from the specific path you took.
 
 The content is based on interviews with autonomous-driving industry professionals in China and reflects the legal and technical landscape as of 2026.
+
+### Chapter 1 (3D rebuild) — `can_you_trust_your_car_drive.html`
+
+A real 3D WebGL rebuild of the Chapter 1 drive, using [Three.js](https://threejs.org). You sit
+in a first-person cockpit modelled after a minimalist EV interior (no brand marks) and drive a
+two-carriageway night highway with a median wall, lane markings, and NPC traffic in both
+directions. The car holds a constant speed; you change lanes with **A/D** or the **arrow keys**
+(a discrete, banked, pre-animated lane switch — you can't drift off the road). Audio is a
+synthesized EV powertrain (whine rising with speed + wind bed) plus an adaptive night score. The
+incoming message arrives as an **iMessage on the car's central touchscreen**. The full branching
+story, takeover (now a 3D lane-dodge that measures your reaction time), and debrief are layered on
+as DOM overlays, sharing the same `cytc.v1` save as the canvas version.
+
+> **Portability note:** this file **inlines** Three.js so it stays a single, offline,
+> double-clickable page. A `WEBSITE-TODO` comment marks where to swap the inlined library for a
+> CDN importmap once the chapters are served as part of a website.
 
 ## Chapter 2 — Inside the Machine
 
@@ -56,13 +72,14 @@ open can_you_trust_your_car_chapter1.html
 
 Or double-click the file in your file manager.
 
-> **Note:** The "Continue to Chapter 2" button calls a `sendPrompt(...)` function intended to be provided by a host environment. In a standalone browser this button is inert; the rest of the experience works fully offline.
+> **Note:** The "Continue to Chapter 2" button first tries a `sendPrompt(...)` function intended to be provided by a host environment; when that is absent (a standalone browser), it falls back to navigating directly to `can_you_trust_your_car_chapter2.html`. Audio is synthesized with the Web Audio API and stays silent until your first interaction; a mute toggle (top-right, or the **M** key) persists across reloads.
 
 ## Project structure
 
 ```
 .
-├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Last Human Decision
+├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Last Human Decision (canvas)
+├── can_you_trust_your_car_drive.html      # Chapter 1 — 3D driving-sim rebuild (Three.js, inlined)
 ├── can_you_trust_your_car_chapter2.html   # Chapter 2 — Inside the Machine
 ├── can_you_trust_your_car_chapter3.html   # Chapter 3 — The Long Tail
 └── README.md

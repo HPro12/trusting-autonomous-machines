@@ -203,6 +203,94 @@
   .next-chapter-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:clamp(11px,1.5vh,15px) clamp(20px,2.6vw,32px);border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer;transition:filter .2s}
   .next-chapter-btn:hover{filter:brightness(1.06)}
   #prog{position:absolute;top:0;left:0;height:4px;width:0;z-index:23;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .5s;box-shadow:0 0 10px rgba(63,224,245,.5)}
+
+  /* ============ STORY MODE: letterbox + beat caption ============ */
+  #letterbox{position:absolute;inset:0;z-index:43;pointer-events:none}
+  #letterbox .bar{position:absolute;left:0;right:0;height:0;background:#03050b;transition:height .5s ease}
+  #letterbox .bar.top{top:0}#letterbox .bar.bot{bottom:0}
+  #letterbox.on .bar{height:clamp(46px,10vh,104px)}
+  #beat{position:absolute;left:50%;bottom:clamp(60px,15vh,140px);transform:translateX(-50%);z-index:45;
+    width:min(760px,90vw);padding:clamp(14px,2vw,22px) clamp(18px,2.4vw,28px);border-radius:16px;cursor:pointer;text-align:left;
+    background:linear-gradient(180deg,rgba(16,22,44,.86),rgba(9,13,28,.92));border:1px solid var(--line);
+    box-shadow:var(--shadow);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
+  #beat.show{opacity:1;pointer-events:auto}
+  #beat-who{display:block;font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:.5rem}
+  #beat-tx{font-size:clamp(15px,2vw,21px);line-height:1.5;color:#eef2ff;text-wrap:balance;min-height:1.5em}
+  #beat-hint{position:absolute;right:16px;bottom:11px;font-size:15px;color:var(--muted);opacity:0;transition:opacity .3s}
+  #beat.ready #beat-hint{opacity:.75;animation:beatHint 1.3s ease-in-out infinite}
+  @keyframes beatHint{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+
+  /* trust cluster — mirror of fatigue, left */
+  .cluster.left{left:clamp(16px,3vw,52px);text-align:left}
+  .cluster.left .fat-word{justify-content:flex-start}
+  .cluster.left .fat-bar{margin-left:0;margin-right:auto}
+  .cluster.left .fat-fill{background:linear-gradient(90deg,var(--red),var(--amber),var(--green))}
+
+  /* mute chip */
+  #mute{position:absolute;top:clamp(10px,2.2vh,18px);right:clamp(12px,2.4vw,26px);z-index:49;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--muted);
+    padding:6px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);backdrop-filter:blur(6px);transition:color .2s,border-color .2s}
+  #mute:hover{color:var(--white);border-color:var(--cyan)}
+  #mute[aria-pressed="true"]{color:var(--red);border-color:rgba(255,90,106,.4)}
+
+  /* film grain */
+  #grain{position:absolute;inset:0;z-index:47;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* hold-to-takeover */
+  #hold{position:absolute;left:50%;bottom:calc(var(--dashH) + clamp(24px,6vh,70px));transform:translateX(-50%);z-index:47;
+    display:none;flex-direction:column;align-items:center;gap:11px;text-align:center;cursor:pointer;user-select:none;touch-action:none}
+  #hold.show{display:flex;animation:fadeIn .25s}
+  #hold .ring{position:relative;width:clamp(96px,13vw,140px);height:clamp(96px,13vw,140px)}
+  #hold .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  #hold .ring .trk{fill:none;stroke:rgba(63,224,245,.16);stroke-width:8}
+  #hold .ring .bar{fill:none;stroke:var(--cyan);stroke-width:8;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(63,224,245,.6))}
+  #hold .ring .ic{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(30px,4.4vw,46px)}
+  #hold.grabbing .ring .ic{transform:scale(1.12)}
+  #hold .lbl{font-size:clamp(13px,1.6vw,17px);font-weight:700;color:var(--cyan);letter-spacing:.03em}
+
+  /* outcome delta chips */
+  .o-delta{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .5s .8s}
+  #outcome.show .o-delta{opacity:1}
+  .chip{font-size:clamp(11px,1.3vw,14px);font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+  .chip.up{color:var(--green);border-color:rgba(66,217,138,.4)}
+  .chip.down{color:var(--red);border-color:rgba(255,90,106,.4)}
+
+  /* debrief */
+  .db-head{font-size:clamp(11px,1.4vw,14px);letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem}
+  .db-title{font-size:clamp(24px,3.4vw,38px);font-weight:800;margin-bottom:1.2rem;text-wrap:balance}
+  .db-meters{display:flex;gap:clamp(16px,3vw,40px);flex-wrap:wrap;justify-content:center;margin-bottom:1.4rem;width:100%}
+  .db-meter{flex:1 1 180px;max-width:240px;text-align:left}
+  .db-meter .ml{display:flex;justify-content:space-between;font-size:clamp(11px,1.3vw,13px);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .db-meter .mbar{height:10px;border-radius:6px;background:#161d2c;overflow:hidden}
+  .db-meter .mfill{height:100%;width:0;border-radius:6px;transition:width .9s ease}
+  .db-meter.trust .mfill{background:linear-gradient(90deg,var(--red),var(--amber),var(--green))}
+  .db-meter.att .mfill{background:linear-gradient(90deg,var(--red),var(--amber),var(--green))}
+  .db-timeline{width:100%;max-width:560px;display:flex;flex-direction:column;gap:1px;border-radius:14px;overflow:hidden;border:1px solid var(--line);margin-bottom:1.2rem}
+  .db-row{display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:11px 15px;background:rgba(14,20,40,.7);text-align:left;align-items:baseline}
+  .db-row .rw-scene{font-size:clamp(11px,1.3vw,13px);color:var(--muted);letter-spacing:.03em}
+  .db-row .rw-call{font-size:clamp(14px,1.7vw,17px);font-weight:700;color:var(--white);grid-column:1;grid-row:2}
+  .db-row .rw-cons{grid-column:2;grid-row:1/3;align-self:center;font-size:clamp(12px,1.4vw,14px);color:var(--cyan);text-align:right;max-width:44%}
+  .db-row .rw-cons.bad{color:var(--red)}.db-row .rw-cons.good{color:var(--green)}
+  .db-verdict{text-align:left;max-width:min(520px,88vw);margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid var(--cyan);padding:.2rem 0 .2rem 1rem}
+
+  /* entrance motion */
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes optIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  #s-title.active .fs-card>*{animation:riseIn .55s both}
+  #s-title.active .fs-card>*:nth-child(2){animation-delay:.08s}
+  #s-title.active .fs-card>*:nth-child(3){animation-delay:.16s}
+  #s-title.active .fs-card>*:nth-child(4){animation-delay:.26s}
+  #s-title.active .fs-card>*:nth-child(5){animation-delay:.4s}
+  .d-options .opt{animation:optIn .45s both}
+
+  @media (prefers-reduced-motion: reduce){
+    #grain{display:none}
+    #root.shaking,#root.shaking-hard{animation:none}
+    #beat.ready #beat-hint{animation:none}
+    .hud-badge.alert,.d-eyebrow.urgent,#dashphone.lit .dot,#mirror .tl{animation:none}
+    #s-title.active .fs-card>*,.d-options .opt{animation:none}
+  }
 </style>
 </head>
 <body>
@@ -255,6 +343,7 @@
     </svg>
     <div id="spd-num" style="opacity:0">0</div><div id="spd-unit" style="opacity:0">km/h</div>
     <div class="cluster right" id="cl-r"><div class="cl-lbl">Fatigue</div><div class="fat-word" id="cl-fatword" style="color:var(--muted)"><span class="eye">😵‍💫</span><span id="cl-fattxt">—</span></div><div class="fat-bar"><div class="fat-fill" id="cl-fatbar"></div></div></div>
+    <div class="cluster left" id="cl-l"><div class="cl-lbl">Trust in system</div><div class="fat-word" id="cl-truword" style="color:var(--muted)"><span class="eye">🤝</span><span id="cl-trutxt">—</span></div><div class="fat-bar"><div class="fat-fill" id="cl-trubar"></div></div></div>
     <div id="dashphone"><div class="scr"></div><span class="dot"></span></div>
   </div>
 
@@ -289,6 +378,20 @@
   </svg>
   <div id="impact"></div>
   <div id="warnflash"></div>
+
+  <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
+  <div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
+
+  <div id="hold" role="button" tabindex="0" aria-label="Hold to take the wheel">
+    <div class="ring">
+      <svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52"/><circle class="bar" id="hold-bar" cx="60" cy="60" r="52"/></svg>
+      <span class="ic">🖐</span>
+    </div>
+    <div class="lbl">Hold to grab the wheel</div>
+  </div>
+
+  <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
+  <div id="grain"></div>
   <div id="fade"></div>
 
   <div class="full-scene active" id="s-title">
@@ -302,13 +405,16 @@
   </div>
 
   <div class="full-scene" id="s-final">
-    <div class="fs-card">
+    <div class="fs-card" style="max-width:min(640px,94vw)">
       <div class="progress-dots"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot current"></div></div>
-      <div class="final-icon">🏁</div>
-      <div class="final-title">Chapter 1 complete</div>
-      <div class="final-sub">You've felt what human driving costs — and what assistance promises, and where it fails.</div>
-      <div class="tags"><span class="tag">Human limits</span><span class="tag">L2 ≠ autonomous</span><span class="tag">Edge cases</span><span class="tag">Trust calibration</span></div>
-      <div class="final-quote"><div class="l">The central question</div>When should humans trust machines — and how much? In Chapter 2, you'll see inside the system that tried to keep you safe.</div>
+      <div class="db-head">Chapter 1 · Debrief</div>
+      <div class="db-title" id="db-title">Your last human decision</div>
+      <div class="db-meters">
+        <div class="db-meter trust"><div class="ml"><span>Trust in system</span><span id="db-trust-v">—</span></div><div class="mbar"><div class="mfill" id="db-trust-f"></div></div></div>
+        <div class="db-meter att"><div class="ml"><span>Attention left</span><span id="db-att-v">—</span></div><div class="mbar"><div class="mfill" id="db-att-f"></div></div></div>
+      </div>
+      <div class="db-timeline" id="db-timeline"></div>
+      <div class="db-verdict" id="db-verdict"></div>
       <div style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
         <button class="next-chapter-btn" onclick="continueCh2()">Continue to Chapter 2 ↗</button>
         <button class="next-chapter-btn" style="background:transparent;border:1px solid var(--line);color:var(--muted);box-shadow:none" onclick="restart()">Replay chapter</button>
@@ -373,8 +479,9 @@
     if(time==='night') orb(R.W*0.76,R.H*0.15,Math.max(16,R.W*0.02),'#eef2ff','rgba(220,230,255,.5)',true);
     else if(time==='day') orb(R.W*0.72,R.H*0.13,Math.max(20,R.W*0.024),'#fff7e0','rgba(255,244,200,.5)',false);
     else if(time==='dusk') orb(R.W*0.60,R.horizonY-R.H*0.03,Math.max(22,R.W*0.028),'#ffcf94','rgba(255,160,100,.55)',false);
-    const cA=time==='day'?0.5:time==='dusk'?0.34:time==='overcast'?0.24:0.12;
-    const cC=time==='day'?'244,248,255':time==='dusk'?'240,200,175':'150,170,215';
+    else if(time==='dawn') orb(R.W*0.64,R.horizonY-R.H*0.02,Math.max(20,R.W*0.026),'#ffe0b0','rgba(255,190,120,.5)',false);
+    const cA=time==='day'?0.5:time==='dusk'?0.34:time==='dawn'?0.3:time==='overcast'?0.24:0.12;
+    const cC=time==='day'?'244,248,255':time==='dusk'?'240,200,175':time==='dawn'?'250,214,178':'150,170,215';
     for(const c of R.clouds){
       const cx=((c.x + R.pos*0.00002*c.sp)%1.25-0.12)*R.W, cy=c.y*R.H, w=R.W*0.14*c.s, h=w*0.34;
       x.fillStyle='rgba('+cC+','+cA+')';
@@ -497,8 +604,8 @@
     $('speedo').classList.toggle('show',!!cfg.show);
     $('spd-num').style.opacity=cfg.show?'1':'0'; $('spd-unit').style.opacity=cfg.show?'1':'0';
     $('cl-r').style.opacity=cfg.show?'1':'0';
+    $('cl-l').style.opacity=cfg.show?'1':'0';
     if(cfg.speed!=null){ $('spd-num').textContent=cfg.speed; const ang=-90+clamp01(cfg.speed/160)*180; $('spd-needle').setAttribute('transform','rotate('+ang.toFixed(1)+' 100 118)'); }
-    if(cfg.fatigue!=null){ $('cl-fatbar').style.width=cfg.fatigue+'%'; $('cl-fattxt').textContent=cfg.fatWord||''; $('cl-fatword').style.color=cfg.fatigue>66?'var(--red)':cfg.fatigue>40?'var(--amber)':'var(--green)'; $('cl-r').classList.toggle('high',cfg.fatigue>66); }
     if(cfg.loc!=null){ $('hud-loc').textContent=cfg.loc; $('hud-loc').className='hud-badge hud-loc'; }
     ({off(){badge($('b-lk'),'◯ Lane keep','off');badge($('b-acc'),'◯ ACC','off');badge($('b-aeb'),'◯ Emergency brake','off');},
       l2(){badge($('b-lk'),'🟢 Lane keep','');badge($('b-acc'),'🟢 ACC','');badge($('b-aeb'),'🟢 Emergency brake','');},
@@ -510,7 +617,7 @@
   let fint=0, fatigue=0, blinkT=null;
   function setFatigueFx(level){ fatigue=level; fint=level>45?Math.min((level-45)/50,1):0; const fx=$('fatiguefx'); fx.style.setProperty('--fint',fint.toFixed(2)); fx.classList.toggle('on',fint>0); }
   function blinkLoop(){ clearTimeout(blinkT); const fx=$('fatiguefx');
-    const active=fatigue>55 && fx.classList.contains('on') && !$('decision').classList.contains('show') && !$('outcome').classList.contains('show');
+    const active=fatigue>55 && fx.classList.contains('on') && !$('decision').classList.contains('show') && !$('outcome').classList.contains('show') && !$('beat').classList.contains('show');
     if(active){ fx.classList.add('blink'); setTimeout(()=>fx.classList.remove('blink'),320); blinkT=setTimeout(blinkLoop,Math.max(1400,2600+Math.random()*3200-fatigue*18)); }
     else blinkT=setTimeout(blinkLoop,1600);
   }
@@ -526,154 +633,412 @@
     if(left<=0){ timerRAF=null; const cb=timerCb; timerCb=null; if(cb)cb(); return; } timerRAF=requestAnimationFrame(timerTick); }
   function clearTimer(){ if(timerRAF){cancelAnimationFrame(timerRAF);timerRAF=null;} timerCb=null; }
 
-  /* ========================= SCENE ROUTING ========================= */
+  /* ========================= AUDIO (Web Audio, no assets) ========================= */
+  const AUDIO=(function(){
+    let ac=null,master=null,bedG=null,sfxG=null,muted=false; const beds={};
+    function init(){ if(ac)return; const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+      ac=new AC(); master=ac.createGain(); master.gain.value=muted?0:0.9; master.connect(ac.destination);
+      bedG=ac.createGain(); bedG.gain.value=0.5; bedG.connect(master); sfxG=ac.createGain(); sfxG.gain.value=0.9; sfxG.connect(master); }
+    function unlock(){ init(); if(ac&&ac.state==='suspended') ac.resume(); }
+    function noiseBuf(){ const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0); for(let i=0;i<n;i++)d[i]=Math.random()*2-1; return b; }
+    function engineOn(){ if(!ac||beds.engine)return;
+      const o1=ac.createOscillator(),o2=ac.createOscillator(),lp=ac.createBiquadFilter(),g=ac.createGain();
+      o1.type='sawtooth';o2.type='sawtooth';o1.frequency.value=70;o2.frequency.value=70;o2.detune.value=9;
+      lp.type='lowpass';lp.frequency.value=420;g.gain.value=0;
+      o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(bedG);o1.start();o2.start();
+      g.gain.setTargetAtTime(0.16,ac.currentTime,0.6); beds.engine={o1,o2,lp,g}; }
+    function engineSpeed(v){ if(!beds.engine)return; const t=ac.currentTime,f=48+v*0.02;
+      beds.engine.o1.frequency.setTargetAtTime(f,t,0.3); beds.engine.o2.frequency.setTargetAtTime(f+0.6,t,0.3); beds.engine.lp.frequency.setTargetAtTime(320+v*0.05,t,0.3); }
+    function rainOn(on){ if(!ac)return;
+      if(on&&!beds.rain){ const s=ac.createBufferSource(),bp=ac.createBiquadFilter(),g=ac.createGain();
+        s.buffer=noiseBuf();s.loop=true;bp.type='bandpass';bp.frequency.value=1800;bp.Q.value=0.6;g.gain.value=0;
+        s.connect(bp);bp.connect(g);g.connect(bedG);s.start();g.gain.setTargetAtTime(0.11,ac.currentTime,0.8);beds.rain={s,g}; }
+      else if(!on&&beds.rain){ const r=beds.rain; r.g.gain.setTargetAtTime(0,ac.currentTime,0.5); setTimeout(()=>{try{r.s.stop()}catch(e){}},900); beds.rain=null; } }
+    function padOn(on){ if(!ac)return;
+      if(on&&!beds.pad){ const o1=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),lfo=ac.createOscillator(),lg=ac.createGain();
+        o1.type='sine';o2.type='sine';o1.frequency.value=110;o2.frequency.value=164.8;g.gain.value=0;
+        lfo.frequency.value=0.1;lg.gain.value=6;lfo.connect(lg);lg.connect(o1.detune);
+        o1.connect(g);o2.connect(g);g.connect(bedG);o1.start();o2.start();lfo.start();
+        g.gain.setTargetAtTime(0.05,ac.currentTime,1.2);beds.pad={o1,o2,lfo,g}; }
+      else if(!on&&beds.pad){ const p=beds.pad; p.g.gain.setTargetAtTime(0,ac.currentTime,0.8); setTimeout(()=>{try{p.o1.stop();p.o2.stop();p.lfo.stop()}catch(e){}},1000); beds.pad=null; } }
+    function duck(amount,rel){ if(!bedG)return; const t=ac.currentTime; bedG.gain.cancelScheduledValues(t); bedG.gain.setTargetAtTime(amount,t,0.05); bedG.gain.setTargetAtTime(0.5,t+(rel||1.2),0.4); }
+    function ping(freq,dur,type,gain,slideTo){ if(!ac)return; const o=ac.createOscillator(),g=ac.createGain();
+      o.type=type||'sine';o.frequency.value=freq;o.connect(g);g.connect(sfxG); const t=ac.currentTime;
+      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(gain||0.3,t+0.008);g.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.3));
+      if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t+dur); o.start(t);o.stop(t+dur+0.05); }
+    const ONE={
+      buzz(){ for(let i=0;i<2;i++) setTimeout(()=>ping(170,0.09,'square',0.16),i*150); },
+      chime(){ ping(880,0.5,'sine',0.20); setTimeout(()=>ping(1320,0.5,'sine',0.14),90); },
+      beep(){ ping(1000,0.12,'square',0.22); },
+      tick(){ ping(2100+Math.random()*400,0.02,'square',0.03); },
+      ui(){ ping(620,0.06,'sine',0.10); },
+      crash(){ if(!ac)return; duck(0.06,1.5);
+        const s=ac.createBufferSource(),g=ac.createGain(),lp=ac.createBiquadFilter(),t=ac.currentTime;
+        s.buffer=noiseBuf();lp.type='lowpass';lp.frequency.setValueAtTime(4200,t);lp.frequency.exponentialRampToValueAtTime(180,t+0.6);
+        g.gain.setValueAtTime(0.5,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.7);s.connect(lp);lp.connect(g);g.connect(sfxG);s.start(t);s.stop(t+0.75);
+        const o=ac.createOscillator(),og=ac.createGain();o.type='sawtooth';o.frequency.setValueAtTime(170,t);o.frequency.exponentialRampToValueAtTime(38,t+0.5);
+        og.gain.setValueAtTime(0.3,t);og.gain.exponentialRampToValueAtTime(0.001,t+0.5);o.connect(og);og.connect(sfxG);o.start(t);o.stop(t+0.55); }
+    };
+    function sfx(name){ if(!ac||muted)return; (ONE[name]||function(){})(); }
+    let beepTimer=null;
+    function warnLoop(on){ stopWarn(); if(on){ const tick=()=>{ sfx('beep'); beepTimer=setTimeout(tick,620); }; tick(); } }
+    function stopWarn(){ if(beepTimer){ clearTimeout(beepTimer); beepTimer=null; } }
+    function scene(id){ if(!ac)return; padOn(id==='s-title'||id==='s-compare'||id==='s-final'); rainOn(id==='s-l2'); if(id!=='s-title') engineOn(); }
+    function setMuted(m){ muted=m; if(master&&ac) master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); }
+    return {unlock,scene,sfx,engineSpeed,warnLoop,duck,setMuted,isMuted:()=>muted,initMuted:m=>{muted=m;}};
+  })();
+
+  /* ========================= STATE + PERSISTENCE ========================= */
+  const S={ trust:50, attention:90, flags:{}, choices:{}, edgeOutcome:null, reactionMs:null, car:null };
+  const LS_KEY='cytc.v1';
+  const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function clampV(v){ return v<0?0:v>100?100:v; }
+  function readStore(){ try{ return JSON.parse(localStorage.getItem(LS_KEY))||{}; }catch(e){ return {}; } }
+  function loadSettings(){ const o=readStore(); return (o&&o.settings)||{muted:false}; }
+  function saveMutedOnly(){ try{ const store=readStore(); store.version=1; store.settings=Object.assign({},store.settings,{muted:AUDIO.isMuted()}); localStorage.setItem(LS_KEY,JSON.stringify(store)); }catch(e){} }
+  function save(){ try{ const store=readStore(); store.version=1;
+      store.settings=Object.assign({muted:false},store.settings,{muted:AUDIO.isMuted()});
+      store.chapter1={ completed:true, completedAt:new Date().toISOString(), car:S.car, choices:S.choices,
+        trust:Math.round(S.trust), attention:Math.round(S.attention), edgeOutcome:S.edgeOutcome, reactionMs:S.reactionMs };
+      localStorage.setItem(LS_KEY,JSON.stringify(store)); }catch(e){} }
+  function applyEffects(e){ const chips=[];
+    if(e){ if(e.attention!=null){ S.attention=clampV(S.attention+e.attention); chips.push({label:'Attention',delta:e.attention}); }
+      if(e.trust!=null){ S.trust=clampV(S.trust+e.trust); chips.push({label:'Trust',delta:e.trust}); }
+      if(e.flag) S.flags[e.flag]=true; }
+    updateMeters(); return chips; }
+  function updateMeters(){ const fatigue=Math.round(100-S.attention);
+    $('cl-fatbar').style.width=fatigue+'%'; $('cl-fattxt').textContent=fatigue>60?'High':fatigue>35?'Rising':'Low';
+    $('cl-fatword').style.color=fatigue>66?'var(--red)':fatigue>40?'var(--amber)':'var(--green)'; $('cl-r').classList.toggle('high',fatigue>66);
+    $('cl-trubar').style.width=Math.round(S.trust)+'%'; $('cl-trutxt').textContent=S.trust>66?'High':S.trust>40?'Medium':'Low';
+    $('cl-truword').style.color=S.trust>66?'var(--green)':S.trust>40?'var(--amber)':'var(--red)';
+    setFatigueFx(fatigue); }
+
+  /* ========================= SCENE CONFIG + DIRECTOR ========================= */
   const PROG={'s-drive1':16,'s-l2':40,'s-edge':64,'s-compare':86,'s-final':100};
   const SCENE={
     's-title':{mode:'idle',speed:2400,hud:{show:false},lead:false},
-    's-drive1':{mode:'night',speed:4600,hud:{show:true,speed:110,fatigue:74,fatWord:'High',badges:'off',loc:'🌙 23:47 · G2 Expressway'},lead:true,leadDist:3600,leadKind:'car'},
-    's-l2':{mode:'rainnight',weather:'rain',speed:4200,hud:{show:true,speed:112,fatigue:58,fatWord:'Easing',badges:'l2',loc:'🌧 00:14 · Rain · G2 Expressway'},lead:true,leadDist:2600,leadKind:'truck'},
-    's-edge':{mode:'construction',speed:3600,hud:{show:true,speed:104,fatigue:63,fatWord:'Numb',badges:'edge',loc:'🌙 00:31 · Roadworks'},lead:false},
-    's-compare':{mode:'idle',speed:900,hud:{show:false},lead:false},
-    's-final':{mode:'dawn',speed:1600,hud:{show:false},lead:false}
+    's-drive1':{mode:'night',speed:4600,hud:{show:true,speed:110,badges:'off',loc:'🌙 23:47 · G2 Expressway'},lead:true,leadDist:3600,leadKind:'car'},
+    's-l2':{mode:'rainnight',weather:'rain',speed:4200,hud:{show:true,speed:112,badges:'l2',loc:'🌧 00:14 · Rain · G2 Expressway'},lead:true,leadDist:2600,leadKind:'truck'},
+    's-edge':{mode:'construction',speed:3600,hud:{show:true,speed:104,badges:'edge',loc:'🌙 00:31 · Roadworks'},lead:false},
+    's-compare':{mode:'dawn',speed:900,hud:{show:false},lead:false},
+    's-final':{mode:'dawn',speed:1400,hud:{show:false},lead:false}
   };
   function applyScene(id){
     const c=SCENE[id]; if(!c) return;
-    pauseRoad(false); setRoadMode(c.mode); R.weather=c.weather||'none'; setSpeed(c.speed); setHUD(c.hud); leadShow(!!c.lead,c.leadDist,c.leadKind);
-    $('dashphone').classList.remove('lit'); clearCrash(); setFatigueFx(c.hud.show?(c.hud.fatigue||0):0);
-    if(PROG[id]!=null) $('prog').style.width=PROG[id]+'%'; else $('prog').style.width='0%';
+    pauseRoad(false); setRoadMode(c.mode); R.weather=c.weather||'none'; setSpeed(c.speed);
+    AUDIO.engineSpeed(id==='s-title'?0:c.speed);
+    setHUD(c.hud); leadShow(!!c.lead,c.leadDist,c.leadKind);
+    $('dashphone').classList.remove('lit'); clearCrash();
+    if(c.hud.show) updateMeters(); else setFatigueFx(0);
+    $('prog').style.width=(PROG[id]!=null?PROG[id]:0)+'%';
+  }
+  const NEXT={'s-drive1':'s-l2','s-l2':'s-edge','s-edge':'s-compare','s-compare':'s-final'};
+  const SCRIPTS={
+    's-drive1':async()=>{ await playBeats('drive1_intro'); phoneAlert(); AUDIO.sfx('buzz'); await wait(750); await ask('s-drive1'); await playBeats('drive1_after'); },
+    's-l2':async()=>{ await playBeats('l2_intro'); AUDIO.sfx('chime'); setHUD(SCENE['s-l2'].hud); updateMeters(); await ask('s-l2'); },
+    's-edge':async()=>{ await playBeats('edge_intro'); setHUD(SCENE['s-edge'].hud); updateMeters(); await ask('s-edge'); await playBeats('edge_after'); },
+    's-compare':async()=>{ await playBeats('compare_intro'); await ask('s-compare'); }
+  };
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  async function runScene(id){
+    applyScene(id); AUDIO.scene(id);
+    if(id==='s-final'){ renderDebrief(); return; }
+    try{ if(SCRIPTS[id]) await SCRIPTS[id](); }catch(err){ console.error('scene',id,err); }
+    if(NEXT[id]) goTo(NEXT[id]);
   }
   function goTo(id){
     const f=$('fade'); f.classList.add('in');
     setTimeout(()=>{
       document.querySelectorAll('.full-scene').forEach(s=>s.classList.remove('active'));
       const el=$(id); if(el&&el.classList.contains('full-scene')) el.classList.add('active');
-      applyScene(id); f.classList.remove('in');
-      if(id==='s-drive1'){ setTimeout(phoneAlert,900); setTimeout(()=>askDecision('s-drive1'),3700); }
-      if(id==='s-l2') setTimeout(()=>askDecision('s-l2'),1500);
-      if(id==='s-edge'){ setTimeout(()=>setHUD(SCENE['s-edge'].hud),1200); setTimeout(()=>askDecision('s-edge'),2600); }
-      if(id==='s-compare') setTimeout(()=>askDecision('s-compare'),700);
+      f.classList.remove('in'); runScene(id);
     },420);
   }
-  function startDrive(){ goTo('s-drive1'); }
+  function startDrive(){ AUDIO.unlock(); syncMute(); goTo('s-drive1'); }
 
-  /* ========================= DATA + DECISIONS ========================= */
-  let currentDecision=null;
-  const DRIVE_DATA={
-    A:{big:'+68 m',label:'Travelled blind',ctx:'One glance at 110 km/h ≈ 67 m with eyes off the road.',danger:'high',
-       stats:[{v:'2.4 s',l:'Reaction',c:'bad'},{v:'+68 m',l:'Blind distance',c:'bad'},{v:'Critical',l:'Risk',c:'bad'}],
-       ins:'At night, fatigued, this is among the most dangerous things a driver can do. Distraction is tied to 10%+ of China\'s fatal highway crashes.',who:'— Perception engineer, L2 program, Shanghai'},
-    B:{big:'0.9 s',label:'Reaction — fatigued',ctx:'Alert: 0.4–0.7 s. Fatigue adds 0.2–0.5 s.',danger:'mid',
-       stats:[{v:'0.9 s',l:'Reaction',c:'ok'},{v:'+18 m',l:'Braking',c:'ok'},{v:'Elevated',l:'Risk',c:'ok'}],
-       ins:'Eyes forward, but fatigue still slows you. At 110 km/h every 0.1 s ≈ 3 m more stopping distance.',who:'— Vehicle-safety researcher, OEM lab'},
-    C:{big:'0 m',label:'Added risk',ctx:'The safe choice — and the slow one.',danger:'none',
-       stats:[{v:'0 m',l:'Added risk',c:'good'},{v:'Low',l:'Risk',c:'good'}],
-       ins:'Humans know the right move; they just don\'t always make it. Assistance exists because that discipline is hard to sustain.',who:'— ADAS product lead'}
+  /* ========================= STORY: beats + letterbox ========================= */
+  const BEATS={
+    drive1_intro:[
+      {who:'You',tx:"Almost midnight. Two hundred kilometres of expressway behind you, sixty still ahead."},
+      {who:'You',tx:"Your eyes have that hot, sandy feeling. You blink hard and the lane lines swim back into focus."}
+    ],
+    drive1_after(){
+      if(S.flags.glanced) return [ {who:'',tx:"The tyres bite the rumble strip and the whole car shivers. Your head snaps up. The truck ahead is closer than it was a heartbeat ago."},{who:'You',tx:"Two seconds. You looked away for two seconds and the road moved sixty-eight metres without you."} ];
+      if(S.flags.pulledOver) return [ {who:'',tx:"You coast onto the shoulder. Engine ticking, hazard lights washing the dark in slow orange."},{who:'You',tx:"The message can wait. You breathe out. The road looks different when you are not fighting to stay on it."} ];
+      return [ {who:'You',tx:"The phone keeps glowing on the dash. You keep your eyes where they belong, on the white line unspooling into the dark."} ];
+    },
+    l2_intro(){
+      const base=[];
+      if(S.flags.pulledOver) base.push({who:'You',tx:"Rested, a little sharper, you pull back onto the expressway. Rain starts to freckle the windscreen."});
+      else if(S.flags.glanced) base.push({who:'You',tx:"Your hands are tight on the wheel now. The near-miss still hums in your chest. Then the rain begins."});
+      else base.push({who:'You',tx:"Rain starts to fall, fine and steady, smearing the tail-lights ahead into long red streaks."});
+      base.push({who:'Dashboard',tx:"ASSIST AVAILABLE. A cyan icon blooms on the cluster. You thumb the button, and the wheel begins to steer itself."});
+      return base;
+    },
+    edge_intro:[
+      {who:'',tx:"Roadworks. The lane lines vanish under a skin of fresh tar and a scatter of cones."},
+      {who:'System',tx:"LANE KEEP: LOST. A red hand flashes on the display. The wheel goes light and slack under your palms."}
+    ],
+    edge_after(){
+      if(S.edgeOutcome==='save') return [{who:'You',tx:"Your hands find the wheel. You thread the gap between the cones, heart slamming, and the car is yours again."}];
+      if(S.edgeOutcome==='clip') return [{who:'',tx:"A cone bursts off the bumper. You wrestle the car straight, a crack spidering across one corner of the glass."}];
+      if(S.edgeOutcome==='trust-bump') return [{who:'',tx:"The car grazes a barrier and shudders back into line. It held. Barely. You were a passenger for every metre of it."}];
+      if(S.edgeOutcome==='trust-stop') return [{who:'System',tx:"MINIMAL RISK MANEUVER. The car brakes hard and stops half in the lane. In the mirror, a pair of headlights swells."}];
+      return [{who:'',tx:"No hands. No time. The barrier fills the whole windscreen."}];
+    },
+    compare_intro(){
+      if(S.edgeOutcome==='crash'||S.edgeOutcome==='timeout') return [{who:'',tx:"Later. A tow truck's amber light sweeps across the wreck. You walk away unhurt, and you cannot stop replaying the last four seconds."}];
+      return [{who:'You',tx:"Dawn finds you at a rest area, hands not quite steady, the sky going from grey to gold."}];
+    }
   };
-  const L2_DATA={
-    A:{big:'L2',label:'You are responsible',ctx:'At L2 the human is fully liable. The system is a tool, not a driver.',danger:'none',
-       stats:[{v:'Incorrect',l:'Your answer',c:'bad'},{v:'L2',l:'System level',c:'ok'}],
-       ins:'Names like "Autopilot" and "NOA" cause exactly this confusion.',who:'— Regulatory affairs specialist, AV maker'},
-    B:{big:'~40 s',label:'Until attention drifts',ctx:'Most drivers disengage within ~40 s of L2 use.',danger:'none',
-       stats:[{v:'Correct',l:'Your answer',c:'good'},{v:'L2',l:'System level',c:'ok'}],
-       ins:'The system handles routine inputs; you own monitoring and every edge case. Staying engaged is the core problem.',who:'— Human-factors lead, automation team'},
-    C:{big:'L2',label:'Rarely wins today',ctx:'Product-liability claims are hard for L2. L4/L5 is unresolved.',danger:'none',
-       stats:[{v:'Rare',l:'Company liable',c:'ok'},{v:'L2',l:'System level',c:'ok'}],
-       ins:'For L2, courts still hold the driver responsible for failing to monitor.',who:'— Product-liability counsel'}
-  };
-  const EDGE_DATA={
-    A:{big:'1.8 s',label:'Handover — safe',ctx:'Fast enough — because you were watching.',danger:'none',
-       stats:[{v:'1.8 s',l:'Handover',c:'good'},{v:'Safe',l:'Outcome',c:'good'}],
-       ins:'The ideal case — but it needs attention through boring automation, the hardest thing to keep.',who:'— L3 systems engineer'},
-    B:{big:'4.2 s',label:'Handover — too late',ctx:'Checked out, you react in 4.2 s. The car is already off the road.',danger:'high',crash:true,
-       stats:[{v:'4.2 s',l:'Handover',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-       ins:'"Automation-induced complacency": the automation that cuts fatigue also cuts vigilance. The 2016 Autopilot fatality gave 7 s of warning — unwatched.',who:'— Safety-validation engineer'},
-    C:{big:'≈0',label:'Guaranteed safe stops',ctx:'A "minimal-risk maneuver" is not guaranteed; stopping at speed can cause rear-end crashes.',danger:'mid',
-       stats:[{v:'Maybe',l:'Safe stop',c:'bad'},{v:'Depends',l:'Outcome',c:'ok'}],
-       ins:'These "long-tail" corner cases are rare — but they define the gap between L2 and true autonomy.',who:'— Autonomy planning engineer'}
-  };
-  const EDGE_TIMEOUT={big:'Impact',label:'No takeover',ctx:'You never took the wheel. At 100 km/h, the car met the barrier.',danger:'high',crash:true,
-    stats:[{v:'0.0 s',l:'Your input',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-    ins:'This is the core L2 risk: the system hands control back exactly when it can no longer cope — and an unengaged driver cannot respond in time.',who:'— Safety-validation engineer'};
-  const CAR_DATA={
-    A:{big:'L0',label:'Standard · your pick',ctx:'Full control. Full responsibility.',ins:'In Chapter 2 you\'ll see what a human misses that a sensor-equipped car catches.',who:''},
-    B:{big:'L2',label:'Highway assist · your pick',ctx:'Help on highways. You stay in control.',ins:'In Chapter 2 you\'ll explore how the perception behind L2 works — and where it fails.',who:''},
-    C:{big:'L4',label:'Robotaxi · your pick',ctx:'No wheel. Mapped zones only.',ins:'In Chapter 2 you\'ll discover what it takes to build a system safe enough to deserve that trust.',who:''}
+  function resolveBeats(key){ const b=BEATS[key]; return typeof b==='function'?b():b; }
+  function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
+  function playBeat(b){
+    return new Promise(resolve=>{
+      const panel=$('beat'),who=$('beat-who'),tx=$('beat-tx');
+      who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent='';
+      panel.classList.remove('ready'); panel.classList.add('show');
+      const full=b.tx; let i=0,done=false,raf=null;
+      function finishType(){ done=true; tx.textContent=full; panel.classList.add('ready'); }
+      function step(){ if(RM){ finishType(); return; }
+        if(i<=full.length){ tx.textContent=full.slice(0,i); if(i%2===0)AUDIO.sfx('tick'); i++; raf=setTimeout(step,28); }
+        else finishType(); }
+      function cleanup(){ panel.removeEventListener('click',onClick); document.removeEventListener('keydown',onKey,true); }
+      function advance(){ if(!done){ if(raf)clearTimeout(raf); finishType(); return; } cleanup(); resolve(); }
+      function onClick(){ advance(); }
+      function onKey(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); advance(); } }
+      panel.addEventListener('click',onClick); document.addEventListener('keydown',onKey,true);
+      step();
+    });
+  }
+  async function playBeats(key){
+    const beats=resolveBeats(key); if(!beats||!beats.length) return;
+    showLetterbox(true);
+    for(const b of beats) await playBeat(b);
+    $('beat').classList.remove('show','ready'); showLetterbox(false);
+  }
+
+  /* ========================= DECISIONS ========================= */
+  let currentDecision=null, decideResolve=null, edgePromptAt=0, edgeDone=false, holdCleanup=null;
+  const EDGE_OUT={
+    save:{label:'Handover, safe',danger:'none',ins:'The ideal case, and the rare one. It works only because you stayed alert through boring automation, which is the hardest thing to keep doing.',who:'L3 systems engineer'},
+    clip:{label:'Handover, barely',danger:'mid',ins:'You caught it late. A cone and a cracked windscreen are the cheap version of this lesson. The 2016 Autopilot crash was the expensive one.',who:'Safety-validation engineer'},
+    timeout:{big:'Impact',label:'No takeover',danger:'high',crash:true,stats:[{v:'0.0 s',l:'Your input',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],ins:'The system handed control back at the exact moment it could no longer cope. An unengaged driver cannot answer that fast. This is the core risk of L2.',who:'Safety-validation engineer'},
+    trustBump:{big:'Luck',label:'It held, barely',danger:'mid',stats:[{v:'Passenger',l:'Your role',c:'bad'},{v:'Survived',l:'Outcome',c:'ok'}],ins:'The car brushed a barrier and recovered, and you had no hand in which way it went. Trusting a tool past its limit is a bet you keep winning until the night you do not.',who:'Autonomy planning engineer'},
+    trustStop:{big:'Halt',label:'Minimal-risk stop',danger:'mid',stats:[{v:'Stopped',l:'The car',c:'ok'},{v:'Exposed',l:'Outcome',c:'bad'}],ins:'A minimal-risk maneuver is not a guaranteed-safe one. Stopping dead in a live lane trades one danger for a rear-end collision. These long-tail cases define the gap between L2 and real autonomy.',who:'Autonomy planning engineer'}
   };
   const DECISIONS={
-    's-drive1':{eyebrow:'23:47 · G2 Expressway',q:'Your phone lights up on the dash. What do you do?',
-      opts:[{k:'A',t:'Glance at it'},{k:'B',t:'Eyes on the road'},{k:'C',t:'Pull over first'}],data:DRIVE_DATA,next:'s-l2'},
-    's-l2':{eyebrow:'00:14 · Assist engaged',q:'The assist system is steering and holding your speed. If it crashes, who is responsible?',
-      opts:[{k:'A',t:'The car'},{k:'B',t:'Me'},{k:'C',t:'The company'}],data:L2_DATA,next:'s-edge'},
-    's-edge':{eyebrow:'00:31 · Lane markings gone',urgent:true,timer:2.5,q:'Takeover required. Now.',
-      opts:[{k:'A',t:'Take control now'},{k:'B',t:'Hesitate'},{k:'C',t:'Trust the system'}],data:EDGE_DATA,next:'s-compare'},
-    's-compare':{eyebrow:'Your next car',q:'Which car would you trust?',
-      opts:[{k:'A',t:'Standard',s:'L0 · you drive'},{k:'B',t:'Highway assist',s:'L2 · like tonight'},{k:'C',t:'Robotaxi',s:'L4 · no driver'}],data:CAR_DATA,next:'s-final',compare:true}
+    's-drive1':{eyebrow:'23:47 · G2 Expressway',q:'Your phone lights up on the dash. What do you do?',next:'s-l2',
+      opts:[
+        {k:'A',t:'Glance at it',effects:{attention:-25,flag:'glanced'},
+          outcome:{big:'68 m',label:'Travelled blind',danger:'high',ctx:'Two seconds with your eyes down at 110 km/h. The car covered sixty-eight metres you never saw.',
+            stats:[{v:'2.0 s',l:'Eyes off road',c:'bad'},{v:'68 m',l:'Blind distance',c:'bad'},{v:'Critical',l:'Risk',c:'bad'}],
+            ins:'Distraction shows up in more than one in ten fatal highway crashes in China. Tired, at night, it is the most dangerous thing you can do behind a wheel.',who:'Perception engineer, L2 program, Shanghai'}},
+        {k:'B',t:'Eyes on the road',effects:{attention:-5,flag:'eyesahead'},
+          outcome:{big:'0.9 s',label:'Reaction, fatigued',danger:'mid',ctx:'You leave the phone glowing. Alert, you would react in half a second. Tired, you need almost twice that.',
+            stats:[{v:'0.9 s',l:'Reaction',c:'ok'},{v:'18 m',l:'Extra braking',c:'ok'},{v:'Elevated',l:'Risk',c:'ok'}],
+            ins:'Every tenth of a second of delay adds about three metres of stopping distance at this speed. Fatigue steals those tenths quietly.',who:'Vehicle-safety researcher, OEM lab'}},
+        {k:'C',t:'Pull over first',effects:{attention:10,flag:'pulledOver'},
+          outcome:{big:'0 m',label:'Risk added',danger:'none',ctx:'You take the shoulder, read the message, and breathe. Slower, and the only choice that costs you nothing.',
+            stats:[{v:'0 m',l:'Risk added',c:'good'},{v:'Low',l:'Risk',c:'good'}],
+            ins:'Drivers know the right move. They just cannot hold that discipline for three hundred kilometres at midnight. Assistance exists to cover that gap.',who:'ADAS product lead'}}
+      ]},
+    's-l2':{eyebrow:'00:14 · Assist engaged',q:'The car is steering and holding your speed. If it crashes now, who answers for it?',next:'s-edge',
+      opts:[
+        {k:'A',t:'The car',effects:{trust:15,flag:'overtrust'},
+          outcome:{big:'You',label:'Wrong. You are liable',danger:'mid',ctx:'This is a Level 2 system. It assists; you drive. Every legal consequence still lands on you.',
+            stats:[{v:'Incorrect',l:'Your answer',c:'bad'},{v:'L2',l:'System level',c:'ok'}],
+            ins:'Names like Autopilot and NOA sell exactly this confusion. The marketing says autonomy; the fine print says you never stopped being the driver.',who:'Regulatory affairs specialist, AV maker'}},
+        {k:'B',t:'Me',effects:{trust:5,flag:'calibrated'},
+          outcome:{big:'You',label:'Right, and it is hard',danger:'none',ctx:'Correct. The car owns the routine inputs. You own monitoring, and every edge case it cannot read.',
+            stats:[{v:'Correct',l:'Your answer',c:'good'},{v:'~40 s',l:'Until attention drifts',c:'ok'}],
+            ins:'Most drivers check out within about forty seconds of switching L2 on. Staying alert through work you are not doing is the whole problem.',who:'Human-factors lead, automation team'}},
+        {k:'C',t:'The company',effects:{trust:-5},
+          outcome:{big:'Rarely',label:'The courts, usually not',danger:'none',ctx:'For L2, product-liability claims almost never win. The driver failed to monitor, and the law knows it.',
+            stats:[{v:'Rare',l:'Company liable',c:'ok'},{v:'L2',l:'System level',c:'ok'}],
+            ins:'Who pays when software drives is still unsettled for L4 and L5. For L2 it is not. The answer is you.',who:'Product-liability counsel'}}
+      ]},
+    's-edge':{eyebrow:'00:31 · Lane markings gone',urgent:true,timer:()=>S.attention<60?2.0:3.0,q:'Takeover required. Now.',next:'s-compare',
+      opts:[
+        {k:'A',t:'Take control now',hold:true},
+        {k:'B',t:'Hesitate',effects:{trust:-10},
+          outcome:{big:'4.2 s',label:'Too late',danger:'high',crash:true,ctx:'Checked out, you react in four seconds. The car is already off the road.',
+            stats:[{v:'4.2 s',l:'Reaction',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
+            ins:'The automation that cut your fatigue also cut your vigilance. The 2016 Autopilot fatality gave seven seconds of warning. Nobody was watching.',who:'Safety-validation engineer'}},
+        {k:'C',t:'Trust the system',computed:true}
+      ]},
+    's-compare':{eyebrow:'Dawn · Your next car',q:'After tonight, which car would you actually trust?',next:'s-final',compare:true,
+      opts:[
+        {k:'A',t:'Standard',s:'L0 · you drive',car:'L0',
+          outcome:{big:'L0',label:'Full control, full weight',danger:'none',ctx:'No help, no illusions. Everything that happens is yours.',
+            stats:[{v:'You',l:'The driver',c:'ok'}],ins:'In Chapter 2 you will see what a bare pair of human eyes misses that a sensor suite catches.',who:''}},
+        {k:'B',t:'Highway assist',s:'L2 · like tonight',car:'L2',
+          outcome:{big:'L2',label:'Help, and its trap',danger:'none',ctx:'The same hand on the wheel you felt tonight. Useful, right up until the moment it hands back.',
+            stats:[{v:'Shared',l:'Control',c:'ok'}],ins:'In Chapter 2 you will look inside the perception that makes L2 work, and find where it quietly fails.',who:''}},
+        {k:'C',t:'Robotaxi',s:'L4 · no driver',car:'L4',
+          outcome:{big:'L4',label:'No wheel at all',danger:'none',ctx:'It drives; you ride. Only inside the mapped zones it has learned by heart.',
+            stats:[{v:'The car',l:'The driver',c:'good'}],ins:'In Chapter 2 you will see what it takes to build a system that has earned that much trust.',who:''}}
+      ]}
   };
+  function ask(id){ return new Promise(res=>{ decideResolve=res; askDecision(id); }); }
   function askDecision(id){
     const c=DECISIONS[id]; if(!c) return;
     pauseRoad(true); setFatigueFx(0);
     const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
     $('d-question').textContent=c.q;
     const wrap=$('d-options'); wrap.innerHTML='';
-    c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
+    c.opts.forEach((o,idx)=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k; b.style.animationDelay=(idx*70)+'ms';
       b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
       b.onclick=()=>chooseOption(id,o.k); wrap.appendChild(b); });
-    currentDecision=id;
+    currentDecision=id; edgePromptAt=performance.now();
     const dt=$('dtimer');
-    if(c.timer){ dt.style.display='block'; startTimer(c.timer,()=>{ if(currentDecision!==id) return; currentDecision=null; timeoutResolve(id,c); }); }
+    if(c.timer){ const sec=typeof c.timer==='function'?c.timer():c.timer; dt.style.display='block'; edgeDone=false; AUDIO.warnLoop(true);
+      startTimer(sec,()=>{ if(edgeDone)return; edgeDone=true; onEdgeTimeout(); }); }
     else { dt.style.display='none'; clearTimer(); }
-    $('decision').classList.add('show');
+    $('decision').classList.add('show'); AUDIO.sfx('ui');
   }
   function chooseOption(id,k){
-    if(currentDecision!==id) return; currentDecision=null; clearTimer();
-    const c=DECISIONS[id], d=c.data[k];
+    if(currentDecision!==id) return;
+    const c=DECISIONS[id], o=c.opts.find(x=>x.k===k);
     const btn=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(btn) btn.classList.add('picked');
-    setTimeout(()=>resolveOutcome(id,c,d),260);
-  }
-  function timeoutResolve(id,c){ clearTimer(); resolveOutcome(id,c,EDGE_TIMEOUT); }
-  function resolveOutcome(id,c,d){
-    $('decision').classList.remove('show'); pauseRoad(false); setFatigueFx(0);
-    if(d.crash){ crashSequence(()=>showOutcome(d,c.next)); return; }
-    if(!c.compare){
-      if(d.danger==='high'){ flashWarn(); shake(true); if(id==='s-drive1'){swerve(1);leadShow(true,3600,'car');leadApproach(700);} else swerve(-1); }
-      else if(d.danger==='mid'){ shake(false); if(id==='s-edge') swerve(1); }
+    AUDIO.sfx('ui'); S.choices[id.replace('s-','')]=k;
+    if(id==='s-edge'){
+      if(k==='A'){ currentDecision='hold'; AUDIO.warnLoop(false); $('decision').classList.remove('show'); startHold(id); return; }
+      edgeDone=true; clearTimer(); AUDIO.warnLoop(false);
+      let outcome,chips;
+      if(k==='B'){ S.edgeOutcome='crash'; chips=applyEffects(o.effects); outcome=o.outcome; }
+      else { if(S.flags.overtrust){ S.edgeOutcome='trust-bump'; outcome=EDGE_OUT.trustBump; } else { S.edgeOutcome='trust-stop'; outcome=EDGE_OUT.trustStop; } chips=applyEffects({trust:-5}); }
+      currentDecision=null;
+      setTimeout(()=>finishDecision(id,outcome,chips),260);
+      return;
     }
-    setTimeout(()=>showOutcome(d,c.next),700);
+    currentDecision=null; clearTimer();
+    const chips=applyEffects(o.effects);
+    if(id==='s-compare') S.car=o.car;
+    if(id==='s-drive1'&&k==='A') leadApproach(900);
+    setTimeout(()=>finishDecision(id,o.outcome,chips),260);
   }
-  function showOutcome(d,next){
+  function onEdgeTimeout(){ if(holdCleanup) holdCleanup(); AUDIO.warnLoop(false); S.edgeOutcome='timeout'; const chips=applyEffects({trust:-10}); currentDecision=null; finishDecision('s-edge',EDGE_OUT.timeout,chips); }
+  function startHold(id){
+    const el=$('hold'); el.classList.add('show'); el.classList.remove('grabbing');
+    const bar=$('hold-bar'),CIRC=2*Math.PI*52; bar.style.strokeDasharray=CIRC.toFixed(1); bar.style.strokeDashoffset=CIRC.toFixed(1);
+    const HOLD_MS=620; let holding=false,held=0,last=0,raf=null,resolved=false;
+    function loop(t){ if(resolved)return; if(!last)last=t; const dt=t-last; last=t;
+      if(holding){ held+=dt; el.classList.add('grabbing'); } else { held=Math.max(0,held-dt*1.5); el.classList.remove('grabbing'); }
+      const frac=Math.min(held/HOLD_MS,1); bar.style.strokeDashoffset=(CIRC*(1-frac)).toFixed(1);
+      if(frac>=1){ complete(); return; } raf=requestAnimationFrame(loop); }
+    function complete(){ if(resolved)return; resolved=true; edgeDone=true; if(raf)cancelAnimationFrame(raf); clearTimer(); AUDIO.warnLoop(false); cleanup();
+      S.reactionMs=Math.round(performance.now()-edgePromptAt);
+      const okSave=S.reactionMs<=1800; S.edgeOutcome=okSave?'save':'clip';
+      const secs=(S.reactionMs/1000).toFixed(1)+' s';
+      const out=Object.assign({},okSave?EDGE_OUT.save:EDGE_OUT.clip);
+      out.big=secs; out.ctx=okSave?'Your hands hit the wheel before the car left the lane.':'You caught it, a beat too slow, and paid for the beat in glass.';
+      out.stats=[{v:secs,l:'Your reaction',c:okSave?'good':'ok'},{v:okSave?'Safe':'Grazed',l:'Outcome',c:okSave?'good':'ok'}];
+      const chips=applyEffects({trust:okSave?5:-5});
+      if(okSave){ AUDIO.sfx('chime'); swerve(-1); } else { AUDIO.sfx('crash'); shake(false); $('crackglass').classList.add('show'); setTimeout(()=>$('crackglass').classList.remove('show'),1600); }
+      currentDecision=null;
+      setTimeout(()=>finishDecision(id,out,chips),300); }
+    function down(e){ if(e.type==='keydown'){ if(e.key!==' ')return; if(e.repeat)return; } if(e.preventDefault)e.preventDefault(); holding=true; }
+    function up(e){ if(e.type==='keyup'&&e.key!==' ')return; holding=false; }
+    function cleanup(){ el.classList.remove('show','grabbing'); el.removeEventListener('pointerdown',down); window.removeEventListener('pointerup',up); document.removeEventListener('keydown',down,true); document.removeEventListener('keyup',up,true); holdCleanup=null; }
+    holdCleanup=()=>{ if(!resolved){ resolved=true; if(raf)cancelAnimationFrame(raf); } cleanup(); };
+    el.addEventListener('pointerdown',down); window.addEventListener('pointerup',up);
+    document.addEventListener('keydown',down,true); document.addEventListener('keyup',up,true);
+    raf=requestAnimationFrame(loop);
+  }
+  function finishDecision(id,outcome,chips){
+    $('decision').classList.remove('show'); pauseRoad(false); if(SCENE[id]&&SCENE[id].hud.show) updateMeters();
+    const done=()=>{ const r=decideResolve; decideResolve=null; if(r)r(); };
+    const proceed=()=>showOutcome(outcome,chips,done);
+    if(outcome.crash){ AUDIO.sfx('crash'); crashSequence(proceed); return; }
+    if(outcome.danger==='high'){ flashWarn(); shake(true); swerve(1); }
+    else if(outcome.danger==='mid'){ shake(false); }
+    setTimeout(proceed,700);
+  }
+  function showOutcome(d,chips,onContinue){
     $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none';
+    $('o-big').style.color=(d.crash||d.danger==='high')?'var(--red)':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
     const st=$('o-stats'); st.innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
     st.style.display=(d.stats&&d.stats.length)?'':'none';
-    $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+    let dEl=$('o-delta'); if(!dEl){ dEl=document.createElement('div'); dEl.id='o-delta'; dEl.className='o-delta'; st.after(dEl); }
+    dEl.innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{ const up=c.delta>=0; return '<span class="chip '+(up?'up':'down')+'">'+c.label+' '+(up?'+':'')+c.delta+'</span>'; }).join('');
+    dEl.style.display=(chips&&chips.length)?'':'none';
+    $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who?'— '+d.who:'';
     $('o-quote').style.display=d.ins?'':'none';
-    $('o-continue').onclick=()=>{ $('outcome').classList.remove('show','ready'); goTo(next); };
-    const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show'); setTimeout(()=>o.classList.add('ready'),1950);
+    $('o-continue').onclick=()=>{ $('outcome').classList.remove('show','ready'); AUDIO.sfx('ui'); if(onContinue)onContinue(); };
+    const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show'); setTimeout(()=>o.classList.add('ready'),1700);
   }
-  function restart(){ currentDecision=null; clearTimer(); clearCrash(); $('decision').classList.remove('show'); $('outcome').classList.remove('show','ready'); goTo('s-title'); }
-  function continueCh2(){const msg='I finished Chapter 1 of Can You Trust Your Car. Design me the full Chapter 2 experience.';if(typeof sendPrompt==='function')sendPrompt(msg);}
+
+  /* ========================= DEBRIEF ========================= */
+  function driveCall(){ return {A:'Glanced at the phone',B:'Kept eyes on the road',C:'Pulled over first'}[S.choices.drive1]||'—'; }
+  function driveCons(){ return {A:{t:'68 m blind',c:'bad'},B:{t:'Slowed but alert',c:''},C:{t:'No risk added',c:'good'}}[S.choices.drive1]||{t:''}; }
+  function l2Call(){ return {A:'Blamed the car',B:'Took responsibility',C:'Blamed the company'}[S.choices.l2]||'—'; }
+  function l2Cons(){ return {A:{t:'Misread L2',c:'bad'},B:{t:'Calibrated',c:'good'},C:{t:'Half right',c:''}}[S.choices.l2]||{t:''}; }
+  function edgeCall(){ return {A:'Grabbed the wheel',B:'Hesitated',C:'Trusted the system'}[S.choices.edge]||'Never chose'; }
+  function edgeCons(){ const secs=S.reactionMs!=null?(S.reactionMs/1000).toFixed(1)+' s, ':'';
+    return {save:{t:secs+'safe',c:'good'},clip:{t:secs+'grazed',c:''},crash:{t:'Collision',c:'bad'},timeout:{t:'No input, impact',c:'bad'},'trust-bump':{t:'Survived on luck',c:''},'trust-stop':{t:'Stopped in lane',c:''}}[S.edgeOutcome]||{t:'—'}; }
+  function carCall(){ return {L0:'Standard (L0)',L2:'Highway assist (L2)',L4:'Robotaxi (L4)'}[S.car]||'—'; }
+  function verdict(){
+    const eo=S.edgeOutcome,car=S.car,reacted=(eo==='save'||eo==='clip');
+    if(reacted&&car==='L4') return "You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.";
+    if(reacted&&car==='L2') return "Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.";
+    if(reacted&&car==='L0') return "You made the save, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.";
+    if(car==='L4') return "The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked. Chapter 2 tests whether it has earned that.";
+    if(car==='L2') return "It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That distance between what L2 promises and what it delivers is the whole subject of this project.";
+    return "It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology actually stands.";
+  }
+  function renderDebrief(){
+    save();
+    $('db-trust-v').textContent=Math.round(S.trust); $('db-att-v').textContent=Math.round(S.attention);
+    $('db-trust-f').style.width='0%'; $('db-att-f').style.width='0%';
+    setTimeout(()=>{ $('db-trust-f').style.width=S.trust+'%'; $('db-att-f').style.width=S.attention+'%'; },90);
+    const rows=[
+      {scene:'23:47 · The phone',call:driveCall(),cons:driveCons()},
+      {scene:'00:14 · Who is liable',call:l2Call(),cons:l2Cons()},
+      {scene:'00:31 · The takeover',call:edgeCall(),cons:edgeCons()},
+      {scene:'Dawn · Your next car',call:carCall(),cons:{t:'',c:''}}
+    ];
+    $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
+    $('db-verdict').textContent=verdict();
+  }
+
+  /* ========================= CONTROLS + BOOT ========================= */
+  function restart(){ currentDecision=null; decideResolve=null; edgeDone=false; if(holdCleanup)holdCleanup(); clearTimer(); clearCrash(); AUDIO.warnLoop(false);
+    $('decision').classList.remove('show'); $('outcome').classList.remove('show','ready'); $('beat').classList.remove('show','ready'); showLetterbox(false);
+    S.trust=50; S.attention=90; S.flags={}; S.choices={}; S.edgeOutcome=null; S.reactionMs=null; S.car=null; goTo('s-title'); }
+  function continueCh2(){ save(); const msg='I finished Chapter 1 of Can You Trust Your Car. Design me the full Chapter 2 experience.';
+    try{ if(typeof sendPrompt==='function'){ sendPrompt(msg); return; } }catch(e){} location.href='can_you_trust_your_car_chapter2.html'; }
+  function syncMute(){ const m=$('mute'),on=AUDIO.isMuted(); m.setAttribute('aria-pressed',on?'true':'false'); m.querySelector('.mic').textContent=on?'🔇':'🔊'; m.querySelector('.mtx').textContent=on?'Muted':'Sound'; }
+  function toggleMute(){ AUDIO.unlock(); AUDIO.setMuted(!AUDIO.isMuted()); syncMute(); saveMutedOnly(); }
 
   document.addEventListener('keydown',e=>{
     const k=(e.key||'').toUpperCase();
+    if(k==='M'){ toggleMute(); return; }
     if('ABC'.includes(k) && $('decision').classList.contains('show')){ const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b)b.click(); return; }
     if((e.key==='Enter'||e.key===' ') && $('outcome').classList.contains('ready')) $('o-continue').click();
   });
+  $('mute').addEventListener('click',toggleMute);
   Object.assign(window,{startDrive,restart,continueCh2});
 
   /* boot */
-  initRoad(); applyScene('s-title'); blinkLoop();
+  (function(){ const st=loadSettings(); AUDIO.initMuted(!!st.muted); })();
+  syncMute(); initRoad(); applyScene('s-title'); blinkLoop();
 
   /* self-check */
   (function(){
-    const maps={DRIVE_DATA,L2_DATA,EDGE_DATA};
-    for(const nm in maps)['A','B','C'].forEach(k=>console.assert(maps[nm][k]&&maps[nm][k].big&&maps[nm][k].ins&&maps[nm][k].stats,nm+'.'+k+' incomplete'));
-    ['A','B','C'].forEach(k=>console.assert(CAR_DATA[k]&&CAR_DATA[k].ins,'CAR_DATA.'+k+' incomplete'));
-    console.assert(EDGE_TIMEOUT&&EDGE_TIMEOUT.crash,'EDGE_TIMEOUT incomplete');
-    ['road','glass','bezel','roof','mirror','hud','dash','wheel','speedo','spd-needle','spd-num','cl-fattxt','cl-r','dashphone','phonebig',
-     'fatiguefx','eyelidTop','eyelidBottom','crackglass','impact','dtimer','decision','d-question','d-options','outcome','o-big','o-continue','fade','warnflash','prog']
+    ['road','glass','bezel','roof','mirror','hud','dash','wheel','speedo','spd-needle','spd-num','cl-fattxt','cl-r','cl-l','cl-trutxt','cl-trubar','dashphone','phonebig',
+     'fatiguefx','eyelidTop','eyelidBottom','crackglass','impact','dtimer','decision','d-question','d-options','outcome','o-big','o-continue','fade','warnflash','prog',
+     'beat','beat-tx','beat-who','letterbox','hold','hold-bar','mute','grain','db-timeline','db-verdict','db-trust-f','db-att-f']
       .forEach(id=>console.assert($(id),'missing #'+id));
     ['s-title','s-final'].forEach(id=>console.assert($(id),'missing scene #'+id));
-    console.assert(R.ctx,'canvas 2d context missing');
+    console.assert(R.ctx,'canvas 2d context missing'); console.assert(MODES.dawn,'dawn mode missing');
+    for(const id in DECISIONS){ const d=DECISIONS[id]; console.assert(NEXT[id]||d.next,'decision '+id+' has no next');
+      d.opts.forEach(o=>console.assert(o.hold||o.computed||o.effects||o.outcome||o.car,'option '+id+'.'+o.k+' has no effect/outcome')); }
+    ['drive1_intro','drive1_after','l2_intro','edge_intro','edge_after','compare_intro'].forEach(kk=>{ const b=resolveBeats(kk); console.assert(Array.isArray(b)&&b.length,'beats '+kk+' empty'); });
+    ['save','clip','timeout','trustBump','trustStop'].forEach(kk=>console.assert(EDGE_OUT[kk]&&EDGE_OUT[kk].ins,'EDGE_OUT.'+kk+' incomplete'));
+    console.assert(typeof AUDIO.sfx==='function'&&typeof AUDIO.scene==='function','AUDIO api missing');
+    try{ const raw=localStorage.getItem(LS_KEY); if(raw)console.assert('version' in JSON.parse(raw),'cytc.v1 missing version'); }catch(e){}
   })();
 })();
 </script>

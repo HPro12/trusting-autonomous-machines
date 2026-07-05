@@ -4,35 +4,21 @@ An interactive, public-interest educational project about autonomous driving saf
 
 ## Chapter 1 — Can You Trust Your Car?
 
-*The Last Human Decision*
+*The Night Drive*
 
-A self-contained, interactive web experience that puts you behind the wheel on a late-night highway drive. Through a short branching story with a typewritten narrative layer and synthesized night-drive audio, you feel — rather than read about — what human driving actually costs and where assistance systems promise help but fall short. Your choices adjust two live meters, Trust and Attention, and change which scenes and outcomes you see later.
+A self-contained, real-3D (WebGL / [Three.js](https://threejs.org)) driving experience that puts you in a first-person cockpit on a late-night expressway. You sit in a minimalist EV-style interior (no brand marks) and drive a two-carriageway highway with a median wall, lane markings, NPC traffic in both directions, and a starlit skyline. The car holds a constant speed; you change lanes with **A/D** or the **arrow keys** — a discrete, banked, pre-animated lane switch, so you can't drift off the road. Audio is a synthesized EV powertrain (inverter whine rising with speed + a wind bed) plus an adaptive night score. A branching story, typewritten dialogue, and two live meters (Trust and Attention) play as overlays, and your run is saved to `localStorage` (`cytc.v1`) to carry into later chapters.
 
-The chapter walks through five scenes:
+The drive moves through five beats:
 
-1. **Human driving** — A fatigued, distracted midnight drive. Your choice about a phone notification is scored against real reaction-time and braking-distance data.
-2. **L2 assistance** — The car takes over lane keeping and adaptive cruise. You confront the question of who is actually responsible.
-3. **The edge case** — Lane markings vanish in a construction zone and the system demands an instant takeover. How long your window lasts depends on how much attention you have left; choosing to grab the wheel opens a hold-to-take-control interaction that measures your real reaction time. Illustrates "automation-induced complacency" and the long-tail problem.
-4. **Choose your car** — Compare L0, L2, and L4 vehicles. Your pick, along with the rest of your run, is saved to `localStorage` (`cytc.v1`) to carry into future chapters.
-5. **Debrief** — A personalized recap: a timeline of every choice and its consequence, your final Trust and Attention meters, your takeover reaction time, and a closing verdict written from the specific path you took.
+1. **Human driving** — A fatigued midnight drive. An **iMessage arrives on the car's central touchscreen**; your choice about it is scored against real reaction-time and braking-distance data.
+2. **L2 assistance** — Rain, and the car takes over steering and speed. You confront who is actually responsible.
+3. **The takeover** — A stalled car blocks your lane and the system hands control back. You must **change lanes in time** — a 3D dodge that measures your real reaction time. Illustrates "automation-induced complacency."
+4. **Choose your car** — Compare L0, L2, and L4 vehicles. Your pick, and the rest of your run, is saved to `cytc.v1`.
+5. **Debrief** — A personalized recap: a timeline of every choice and its consequence, your final Trust and Attention meters, your takeover reaction time, and a closing verdict written from the path you took — then on to Chapter 2.
 
 The content is based on interviews with autonomous-driving industry professionals in China and reflects the legal and technical landscape as of 2026.
 
-### Chapter 1 (3D rebuild) — `can_you_trust_your_car_drive.html`
-
-A real 3D WebGL rebuild of the Chapter 1 drive, using [Three.js](https://threejs.org). You sit
-in a first-person cockpit modelled after a minimalist EV interior (no brand marks) and drive a
-two-carriageway night highway with a median wall, lane markings, and NPC traffic in both
-directions. The car holds a constant speed; you change lanes with **A/D** or the **arrow keys**
-(a discrete, banked, pre-animated lane switch — you can't drift off the road). Audio is a
-synthesized EV powertrain (whine rising with speed + wind bed) plus an adaptive night score. The
-incoming message arrives as an **iMessage on the car's central touchscreen**. The full branching
-story, takeover (now a 3D lane-dodge that measures your reaction time), and debrief are layered on
-as DOM overlays, sharing the same `cytc.v1` save as the canvas version.
-
-> **Portability note:** this file **inlines** Three.js so it stays a single, offline,
-> double-clickable page. A `WEBSITE-TODO` comment marks where to swap the inlined library for a
-> CDN importmap once the chapters are served as part of a website.
+> **Portability note:** Chapter 1 **inlines** Three.js so it stays a single, offline, double-clickable page. A `WEBSITE-TODO` comment marks where to swap the inlined library for a CDN importmap once the chapters are served as part of a website.
 
 ## Chapter 2 — Inside the Machine
 
@@ -78,8 +64,7 @@ Or double-click the file in your file manager.
 
 ```
 .
-├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Last Human Decision (canvas)
-├── can_you_trust_your_car_drive.html      # Chapter 1 — 3D driving-sim rebuild (Three.js, inlined)
+├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Night Drive (3D, Three.js inlined)
 ├── can_you_trust_your_car_chapter2.html   # Chapter 2 — Inside the Machine
 ├── can_you_trust_your_car_chapter3.html   # Chapter 3 — The Long Tail
 └── README.md

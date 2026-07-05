@@ -212,7 +212,7 @@
 <div id="start">
   <div class="eyebrow">Can You Trust Your Car? · Chapter 2</div>
   <div class="title">Inside the Machine</div>
-  <div class="sub">Same road, same night. This time you see what the car sees — every sensor, every guess. When they disagree, who do you believe?</div>
+  <div class="sub">Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?</div>
   <button id="startbtn">See through its eyes →</button>
 </div>
 
@@ -855,7 +855,7 @@ window.AUDIO=(function(){
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who?'— '+d.who:'';
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
@@ -864,35 +864,35 @@ window.AUDIO=(function(){
   /* ---- content ---- */
   const BEATS={
     intro:()=>[ {who:'You', tx:(S.car?("Back on the G2, in the "+ (carName[S.car]||'car') +" from last time."):"Back on the G2 at night.")+" Tonight the dashboard shows you something new."},
-      {who:'Car', tx:"Perception online. Every object it tracks, it draws for you — a camera box, a LiDAR cloud, a radar bracket, and a number: how sure it is."} ],
+      {who:'Car', tx:"Perception online. Every object it tracks, it draws for you: a camera box, a LiDAR cloud, a radar bracket, and a number for how sure it is."} ],
     see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR, amber is radar. When they agree, the number climbs."} ],
     fuse_intro:[ {who:'', tx:"A figure waits at the roadside ahead. Each sensor has an opinion about it. You decide how much to trust each one."} ],
-    fuse_after:(c)=>[ {who:'You', tx:(c>=70?"Weighted right, the read is confident — all three sensors pointing the same way.":"The read is shaky; the sensors don't fully agree yet.")} ],
+    fuse_after:(c)=>[ {who:'You', tx:(c>=70?"Weighted right, the read holds. All three sensors point the same way.":"The read is shaky. The sensors don't fully agree yet.")} ],
     fail_intro:[ {who:'', tx:"Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses."},
       {who:'Car', tx:"CAMERA DEGRADED. What's left is LiDAR and radar. Re-weight them, or let the car decide."} ],
     fail_after:[ {who:'You', tx:"Lean on the sensors that can still see, and the figure stays tracked through the glare. That is graceful degradation."} ],
-    decide_intro:[ {who:'', tx:"Camera still blind. An object sits in your lane — LiDAR paints it solid; the camera insists on empty road. You have to call it."} ]
+    decide_intro:[ {who:'', tx:"Camera still blind. An object sits in your lane. LiDAR paints it solid; the camera insists on empty road. You have to call it."} ]
   };
   const DECISIONS={
     decide:{eyebrow:'01:12 · Camera blind · Object in lane', urgent:true, q:'The camera sees clear road. LiDAR and radar see something solid ahead. What do you do?',
       opts:[
         {k:'A',t:'Brake for the LiDAR return', outcome:{big:'Stopped',label:'Believed the sensors that could see',danger:'none',
-          ctx:'You brake. It was a stalled car running dark — invisible to the blinded camera, obvious to LiDAR.',
+          ctx:'You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.',
           stats:[{v:'LiDAR',l:'Trusted',c:'good'},{v:'Safe',l:'Outcome',c:'good'}],
           ins:'Redundancy is the whole point: when one sensor fails, the others carry the read. Believing them is the hard part.',who:'Sensor-fusion engineer'}},
         {k:'B',t:'Trust the fused read', outcome:{big:'Slowed',label:'Let the fusion arbitrate',danger:'mid',
-          ctx:'You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time — this time.',
+          ctx:'You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.',
           stats:[{v:'Fusion',l:'Trusted',c:'ok'},{v:'Close',l:'Outcome',c:'ok'}],
           ins:'Fusion usually wins, but "usually" is doing a lot of work. The weighting that saves you here can betray you elsewhere.',who:'Perception lead'}},
-        {k:'C',t:'Assume the camera is right — false alarm', outcome:{big:'Impact',label:'Trusted the blind sensor',danger:'high',crash:true,
+        {k:'C',t:'Assume the camera is right (false alarm)', outcome:{big:'Impact',label:'Trusted the blind sensor',danger:'high',crash:true,
           stats:[{v:'Camera',l:'Trusted',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-          ins:'A blinded camera reports nothing — not "nothing there." Treating that silence as confidence is exactly how these crashes happen.',who:'Safety-validation engineer'}}
+          ins:'A blinded camera reports nothing. That is not the same as reporting nothing is there. Treating its silence as confidence is how these crashes happen.',who:'Safety-validation engineer'}}
       ]}
   };
   function verdict(){ const k=S.decision;
-    if(k==='A') return "You trusted the sensors that could still see and stopped for something the camera never showed you. That is the promise of fusion — and the discipline it demands.";
+    if(k==='A') return "You trusted the sensors that could still see, and stopped for something the camera never showed you. That is what fusion promises, and the discipline it asks for.";
     if(k==='B') return "You let the fusion arbitrate and it held this time. Redundancy bought the margin; next time the weighting has to be right before you need it.";
-    return "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing, not safety — the gap between those is where the crash lives.";
+    return "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing. It does not report safety. The crash lives in the gap between the two.";
   }
 
   /* ---- debrief (reuses #debrief shell) ---- */

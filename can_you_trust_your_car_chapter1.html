@@ -729,7 +729,7 @@ window.AUDIO=(function(){
     $('o-label').textContent=d.label||'';$('o-ctx').textContent=d.ctx||'';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
     $('o-delta').innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{const up=c.delta>=0;return '<span class="chip '+(up?'up':'down')+'">'+c.label+' '+(up?'+':'')+c.delta+'</span>';}).join('');
-    $('o-quote').querySelector('.tx').textContent=d.ins||'';$('o-quote').querySelector('.who').textContent=d.who?'— '+d.who:'';
+    $('o-quote').querySelector('.tx').textContent=d.ins||'';$('o-quote').querySelector('.who').textContent=d.who||'';
     const o=$('outcome');o.classList.remove('ready');o.classList.add('show');
     $('o-cont').onclick=()=>{o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont();};
     const kc=ev=>{if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){document.removeEventListener('keydown',kc);$('o-cont').click();}};
@@ -770,7 +770,7 @@ window.AUDIO=(function(){
       opts:[
         {k:'A',t:'The car',effects:{trust:15,flag:'overtrust'},outcome:{big:'You',label:'Wrong. You are liable',danger:'mid',
           ctx:'This is a Level 2 system. It assists; you drive. Every legal consequence still lands on you.',
-          stats:[{v:'Incorrect',l:'Your answer',c:'bad'}],ins:'Names like Autopilot sell exactly this confusion.',who:'Regulatory affairs specialist'}},
+          stats:[{v:'Incorrect',l:'Your answer',c:'bad'}],ins:'Names like Autopilot sell this exact confusion.',who:'Regulatory affairs specialist'}},
         {k:'B',t:'Me',effects:{trust:5,flag:'calibrated'},outcome:{big:'You',label:'Right, and it is hard',danger:'none',
           ctx:'Correct. The car owns routine inputs; you own monitoring and every edge case.',
           stats:[{v:'Correct',l:'Your answer',c:'good'},{v:'~40 s',l:'Until attention drifts',c:'ok'}],ins:'Most drivers check out within ~40 s of switching L2 on.',who:'Human-factors lead'}},

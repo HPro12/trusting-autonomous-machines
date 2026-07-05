@@ -151,11 +151,40 @@
   #st-run{background:rgba(63,224,245,.14);border:1px solid rgba(63,224,245,.4)!important;color:#bdeefb}
   #st-go{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a}
   @media (prefers-reduced-motion: reduce){ #wstop .recdot,#flag{animation:none} }
+
+  /* ---- Chapter 3: review-station boot/intro animation ---- */
+  #review-boot{position:fixed;inset:0;z-index:12;display:none;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(1200px 720px at 50% 40%,#0a1220,#05070d 80%);overflow:hidden}
+  #review-boot.show{display:flex}
+  #review-boot.gone{opacity:0;transition:opacity .6s;pointer-events:none}
+  #review-boot .rb-scan{position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(0deg,rgba(120,180,255,.05) 0 2px,transparent 2px 4px);animation:rbScan 6s linear infinite}
+  @keyframes rbScan{from{background-position-y:0}to{background-position-y:200px}}
+  #review-boot .rb-inner{position:relative;text-align:center;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+  #review-boot .rb-rec{display:inline-flex;align-items:center;gap:9px;color:#ff5a6a;font-weight:800;letter-spacing:.22em;font-size:clamp(13px,1.6vw,16px);margin-bottom:1.4rem}
+  #review-boot .rb-dot{width:11px;height:11px;border-radius:50%;background:#ff5a6a;box-shadow:0 0 10px #ff5a6a;animation:blink 1s infinite}
+  #review-boot .rb-title{font-size:clamp(24px,4.2vw,44px);font-weight:800;letter-spacing:.18em;color:#dbe6ff;text-shadow:0 0 20px rgba(63,224,245,.25)}
+  #review-boot .rb-sub{margin-top:.6rem;color:#7d89a6;letter-spacing:.16em;font-size:clamp(11px,1.4vw,14px)}
+  #review-boot .rb-load{width:min(360px,72vw);height:6px;border-radius:4px;background:#141d2c;overflow:hidden;margin:1.8rem auto .8rem}
+  #review-boot .rb-bar{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,#3fe0f5,#6ea8ff);transition:width .25s linear}
+  #review-boot .rb-status{color:#9aa6c2;letter-spacing:.1em;font-size:clamp(11px,1.3vw,13px);min-height:1.2em}
+  @media (prefers-reduced-motion: reduce){ #review-boot .rb-scan,#review-boot .rb-dot{animation:none} #review-boot.gone{transition:none} }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="footbox"><div class="fb-box"></div><div class="fb-lbl">PEDESTRIAN</div></div>
+
+<div id="review-boot">
+  <div class="rb-scan"></div>
+  <div class="rb-inner">
+    <div class="rb-rec"><span class="rb-dot"></span> REC</div>
+    <div class="rb-title">SAFETY REVIEW STATION</div>
+    <div class="rb-sub">Fleet validation · Log #4471</div>
+    <div class="rb-load"><div class="rb-bar" id="rb-bar"></div></div>
+    <div class="rb-status" id="rb-status">Loading fleet footage…</div>
+  </div>
+</div>
 
 <div id="wstop">
   <span class="rec"><span class="recdot"></span> REC · SAFETY REVIEW</span>
@@ -353,8 +382,8 @@ window.AUDIO=(function(){
 
   const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,0.1,2000);
 
-  // dim night ambience + a low cool moon
-  scene.add(new THREE.HemisphereLight(0x2a3a5c,0x070a12,0.45));
+  // dim night ambience + a low cool moon (Chapter 3 switches this to day)
+  const hemi=new THREE.HemisphereLight(0x2a3a5c,0x070a12,0.45); scene.add(hemi);
   const moon=new THREE.DirectionalLight(0x9fb4e0,0.55); moon.position.set(-60,80,30); scene.add(moon);
 
   /* ========================= WORLD CONSTANTS ========================= */
@@ -647,7 +676,15 @@ window.AUDIO=(function(){
   function mood(name){
     if(name==='rain'){ scene.fog.density=0.011; scene.fog.color.setHex(0x0a0e18); scene.background.setHex(0x0a0e18); moon.color.setHex(0x9fb4e0); moon.intensity=0.35; if(window.AUDIO)AUDIO.setScene('tense'); }
     else if(name==='dawn'){ scene.fog.density=0.005; scene.fog.color.setHex(0x243a52); scene.background.setHex(0x243a52); moon.color.setHex(0xffd9a0); moon.intensity=0.75; if(window.AUDIO)AUDIO.setScene('dawn'); }
-    else { scene.fog.density=0.0075; scene.fog.color.setHex(NIGHT); scene.background.setHex(NIGHT); moon.color.setHex(0x9fb4e0); moon.intensity=0.55; if(window.AUDIO)AUDIO.setScene('calm'); }
+    else if(name==='day'){ scene.fog.density=0.0032; scene.fog.color.setHex(0xbcd4ee); scene.background.setHex(0xa9c7ea);
+      moon.color.setHex(0xfff4e0); moon.intensity=1.5; moon.position.set(40,95,40);
+      hemi.color.setHex(0x9fc0ea); hemi.groundColor.setHex(0x5b5540); hemi.intensity=1.0;
+      sky.traverse(o=>{ if(o.isPoints||o.isSprite) o.visible=false; if(o.isMesh&&o.material&&o.material.side===THREE.BackSide) o.visible=false; });
+      if(window.AUDIO)AUDIO.setScene('calm'); }
+    else { scene.fog.density=0.0075; scene.fog.color.setHex(NIGHT); scene.background.setHex(NIGHT); moon.color.setHex(0x9fb4e0); moon.intensity=0.55; moon.position.set(-60,80,30);
+      hemi.color.setHex(0x2a3a5c); hemi.groundColor.setHex(0x070a12); hemi.intensity=0.45;
+      sky.traverse(o=>{ if(o.isPoints||o.isSprite) o.visible=true; if(o.isMesh&&o.material&&o.material.side===THREE.BackSide) o.visible=true; });
+      if(window.AUDIO)AUDIO.setScene('calm'); }
   }
   let obstacle=null;
   function edgeEvent(onResolve){
@@ -807,7 +844,7 @@ window.AUDIO=(function(){
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who?'— '+d.who:'';
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
@@ -832,8 +869,8 @@ window.AUDIO=(function(){
       const pct=Math.max(0,Math.min(100,(Math.log10(miles)-6)/(Math.log10(11e9)-6)*100)); $('st-fill').style.width=pct+'%';
       let note;
       if(miles<275e6) note="Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.";
-      else if(miles<11e9) note="You've reached the human-safety bar (~275M miles, RAND). But <b>real proof</b> — that it is meaningfully <i>safer</i> — needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.";
-      else note="Even here, the <b>long tail</b> of rare events never fully closes. You cannot test your way to certainty — there is always one more situation you haven't seen.";
+      else if(miles<11e9) note="You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.";
+      else note="Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.";
       $('st-note').innerHTML=note;
     }
     render();
@@ -845,9 +882,9 @@ window.AUDIO=(function(){
   const BEATS={
     intro:[ {who:'', tx:"You've left the driver's seat. Now you're at a review station, and ten thousand kilometres of fleet footage wait on the screen."},
             {who:'', tx:"Your job isn't to drive. It's to decide whether this car is safe enough to put on the road for everyone."} ],
-    review_intro:[ {who:'', tx:"Most of it is nothing — clean, uneventful kilometres. Scan through the logs until something flags."} ],
+    review_intro:[ {who:'', tx:"Most of it is nothing. Clean, uneventful kilometres. Scan the logs until something flags."} ],
     nearmiss:[ {who:'System', tx:"NEAR-MISS · km 6,213. A pedestrian stepped off the kerb. The car braked with four tenths of a second to spare."},
-               {who:'You', tx:"Four tenths of a second. Was that the system working — or getting lucky once?"} ],
+               {who:'You', tx:"Four tenths of a second. Was that the system working, or getting lucky once?"} ],
     stats_intro:[ {who:'You', tx:"One near-miss in ten thousand kilometres. So how many kilometres would it take to prove this car is actually safe?"} ],
     reco_intro:[ {who:'You', tx:"You can't test your way to certainty. But the car ships or it doesn't, and that call is yours."} ]
   };
@@ -855,32 +892,32 @@ window.AUDIO=(function(){
     classify:{eyebrow:'01 · Classify the near-miss', q:'What was the near-miss at km 6,213?',
       opts:[
         {k:'A',t:'A software bug', outcome:{big:'Bug?',label:'Something to fix',danger:'none',
-          ctx:"Maybe. But you can't reproduce it, and the logs read nominal. A bug you can't reproduce is the hardest kind to fix — or to rule out.",
+          ctx:"Maybe. You can't reproduce it, and the logs read nominal. A bug you can't reproduce is the hardest kind to fix, and the hardest to rule out.",
           stats:[{v:'Unrepro- ducible',l:'Status',c:'ok'}],ins:'Calling it a bug promises a fix. Promising a fix you cannot verify is its own risk.',who:'Simulation lead, AV program'}},
         {k:'B',t:'A rare edge case', outcome:{big:'Long tail',label:'Too rare to train, too common to ignore',danger:'none',
           ctx:'The long tail: a situation too rare to have appeared in training, yet certain to recur somewhere across a whole fleet, every day.',
           stats:[{v:'Rare',l:'Frequency',c:'ok'},{v:'Fleet-wide',l:'Exposure',c:'bad'}],ins:'The edge cases are individually unlikely and collectively inevitable. That is the whole problem of proving safety.',who:'Safety-validation engineer'}},
         {k:'C',t:'Acceptable statistical risk', outcome:{big:'Risk',label:'A number wearing a value',danger:'mid',
-          ctx:"Defensible — every system has a failure rate, humans included. But 'acceptable' is a judgment about who bears the risk, dressed up as a statistic.",
+          ctx:"Defensible. Every system has a failure rate, humans included. But 'acceptable' is a judgment about who bears the risk, dressed up as a statistic.",
           stats:[{v:'Non-zero',l:'Failure rate',c:'ok'}],ins:'Someone decides which failure rate is acceptable, and someone else lives with it. The math cannot make that choice for you.',who:'Policy researcher'}}
       ]},
     reco:{eyebrow:'02 · Your recommendation', q:'Under that uncertainty, what do you recommend?',
       opts:[
-        {k:'A',t:'Deploy — it beats humans already', outcome:{big:'Ship',label:'Bet on better-than-average',danger:'mid',
+        {k:'A',t:'Deploy: it beats humans already', outcome:{big:'Ship',label:'Bet on better-than-average',danger:'mid',
           ctx:'You ship it, betting that better-than-human on average is good enough while the rare cases get counted in the field.',
-          stats:[{v:'Scale',l:'Upside',c:'good'},{v:'Field risk',l:'Downside',c:'bad'}],ins:'This bet is how the technology reaches the scale that saves lives — and how its worst headlines get written.',who:'Deployment lead'}},
-        {k:'B',t:'Keep testing — the tail is open', outcome:{big:'Hold',label:'Wait for a proof that never arrives',danger:'mid',
+          stats:[{v:'Scale',l:'Upside',c:'good'},{v:'Field risk',l:'Downside',c:'bad'}],ins:'This bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.',who:'Deployment lead'}},
+        {k:'B',t:'Keep testing: the tail is open', outcome:{big:'Hold',label:'Wait for a proof that never arrives',danger:'mid',
           ctx:'You hold it back until the long tail is closed. It never fully closes.',
           stats:[{v:'Safer lot',l:'Upside',c:'ok'},{v:'Helps no one',l:'Downside',c:'bad'}],ins:'The safest car is also the one parked in a test lot, helping no one. Waiting has a body count too.',who:'Program director'}},
         {k:'C',t:'Limited, supervised rollout', outcome:{big:'Pilot',label:'Real roads, real limits',danger:'none',
           ctx:'Mapped zones, a safety driver, tight operating limits. Real roads, real data, contained risk.',
-          stats:[{v:'Contained',l:'Risk',c:'good'},{v:'Slow',l:'Scale',c:'ok'}],ins:'The honest answer to a question with no clean one — and the slowest path to scale.',who:'Regulatory affairs lead'}}
+          stats:[{v:'Contained',l:'Risk',c:'good'},{v:'Slow',l:'Scale',c:'ok'}],ins:'The honest answer to a question with no clean one, and the slowest path to scale.',who:'Regulatory affairs lead'}}
       ]}
   };
   function verdict(){ const k=S.reco;
-    if(k==='A') return "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives — and how its worst headlines get written.";
-    if(k==='B') return "You held it back until the long tail is closed. It never fully closes; the safest car is the one parked in a test lot, helping no one. Waiting has a cost too.";
-    return "You chose real roads with real limits and a human still watching. It's the honest answer to a question that has no clean one — and the slowest path to the scale where it finally helps.";
+    if(k==='A') return "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.";
+    if(k==='B') return "You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.";
+    return "You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.";
   }
 
   /* ---- debrief / finale ---- */
@@ -904,15 +941,23 @@ window.AUDIO=(function(){
   }
   function continueCh4(){ save();
     try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished Chapter 3 of Can You Trust Your Car. Design me the full Chapter 4 experience.'); return; } }catch(e){}
-    $('db-verdict').textContent="That's the end of the built chapters — you drove it, saw through its eyes, and judged whether it's safe enough. Further chapters are planned. Thanks for playing.";
+    $('db-verdict').textContent="That's the end of the built chapters. You drove it, saw through its eyes, and judged whether it's safe enough. Further chapters are planned. Thanks for playing.";
     const b=$('db-ch2'); b.textContent='Thanks for playing'; b.disabled=true; b.style.opacity=.6; b.style.cursor='default';
   }
   $('db-ch2').addEventListener('click',continueCh4);
   $('db-replay').addEventListener('click',()=>location.reload());
 
   /* ---- director ---- */
+  function reviewBoot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
+    const bar=$('rb-bar'), status=$('rb-status');
+    const steps=[[8,'Loading fleet footage…'],[38,'Indexing 10,000 km of logs…'],[74,'Calibrating detection overlay…'],[100,'Ready.']];
+    if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
+    let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
+      else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
+  }); }
   async function begin(){ if(STORY.running)return; STORY.running=true; const st=$('start'); if(st)st.classList.add('hide');
-    if(window.TD){ TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.state.started=true; TD.mood('night'); }
+    if(window.TD){ TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.state.started=true; TD.mood('day'); }
+    await reviewBoot();
     $('wstop').classList.add('show');
     try{
       await beats(BEATS.intro);

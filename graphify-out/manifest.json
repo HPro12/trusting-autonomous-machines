@@ -1,12 +1,37 @@
 {
   "README.md": {
-    "mtime": 1782795630.8920133,
-    "ast_hash": "66a38de6ea5639f5d504c6755952fc0e",
-    "semantic_hash": "66a38de6ea5639f5d504c6755952fc0e"
+    "mtime": 1783263435.659807,
+    "ast_hash": "37b4d193dd942ad59a01804b7f1781e6",
+    "semantic_hash": "37b4d193dd942ad59a01804b7f1781e6"
   },
   "can_you_trust_your_car_chapter1.html": {
-    "mtime": 1782622061.5839915,
-    "ast_hash": "beae99af6900e791176082ee569f1da9",
-    "semantic_hash": "beae99af6900e791176082ee569f1da9"
+    "mtime": 1783256537.127654,
+    "ast_hash": "c3e5c01596ab62f1887aebd657c2f91c",
+    "semantic_hash": "c3e5c01596ab62f1887aebd657c2f91c"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1782897988.4335997,
+    "ast_hash": "338be4ef9fa607cc05144fce7706b59b",
+    "semantic_hash": "338be4ef9fa607cc05144fce7706b59b"
+  },
+  "PRODUCT.md": {
+    "mtime": 1783239917.7913628,
+    "ast_hash": "ecdbcf9b7a6d64bd6e99faf159d793fe",
+    "semantic_hash": "ecdbcf9b7a6d64bd6e99faf159d793fe"
+  },
+  "can_you_trust_your_car_chapter2.html": {
+    "mtime": 1782893033.1341193,
+    "ast_hash": "bc25e4d3d11db68ede1442fad86e95bd",
+    "semantic_hash": "bc25e4d3d11db68ede1442fad86e95bd"
+  },
+  "can_you_trust_your_car_chapter3.html": {
+    "mtime": 1782894382.45148,
+    "ast_hash": "a118fbc8a1e2e511b30412dbc1949645",
+    "semantic_hash": "a118fbc8a1e2e511b30412dbc1949645"
+  },
+  "can_you_trust_your_car_drive.html": {
+    "mtime": 1783266113.984516,
+    "ast_hash": "a973c509499f95d78457647f7066f613",
+    "semantic_hash": "a973c509499f95d78457647f7066f613"
   }
 }

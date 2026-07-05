@@ -33,6 +33,8 @@ You keep driving, but now you can see what the car sees. Augmented-reality overl
 
 Central themes: sensor fusion, redundancy, adaptive weighting, and graceful degradation.
 
+Chapter 2 runs on the same real-3D (Three.js) engine as Chapter 1 — the perception overlays are projected onto the live 3D world — and reads your car pick from Chapter 1's `cytc.v1` save.
+
 ## Chapter 3 — The Long Tail
 
 *How do you prove a machine is safe enough?*
@@ -46,6 +48,12 @@ You step out of the car and into the role of a safety evaluator at an AV company
 
 Central themes: the long tail, the limits of statistical proof, simulation, and deciding under uncertainty.
 
+Chapter 3 reuses the Three.js engine as the reviewed dashcam footage (the cockpit is hidden for a forward-camera look, and the flagged pedestrian gets a live detection box). It's the last built chapter, so it ends on a graceful finale rather than a link to a not-yet-built Chapter 4.
+
+### Continuity
+
+All three chapters share one `localStorage` save (`cytc.v1`, merge-on-write): Chapter 1 records your car pick and drive, Chapter 2 your sensor-trust, Chapter 3 your verdict — none clobbers the others. Each chapter's **Continue** button first tries a host `sendPrompt(...)`, then falls back to navigating to the next file (`chapter1 → chapter2 → chapter3`), so the trilogy plays as one connected flow in a plain browser.
+
 ## Running it
 
 The chapter is a single static HTML file with all CSS and JavaScript inlined — no build step, dependencies, or server required.
@@ -58,7 +66,7 @@ open can_you_trust_your_car_chapter1.html
 
 Or double-click the file in your file manager.
 
-> **Note:** The "Continue to Chapter 2" button first tries a `sendPrompt(...)` function intended to be provided by a host environment; when that is absent (a standalone browser), it falls back to navigating directly to `can_you_trust_your_car_chapter2.html`. Audio is synthesized with the Web Audio API and stays silent until your first interaction; a mute toggle (top-right, or the **M** key) persists across reloads.
+> **Note:** Each chapter inlines Three.js and runs from `file://` with no build or server. Audio is synthesized with the Web Audio API and stays silent until your first interaction; a mute toggle (top-right, or the **M** key) persists across reloads. See **Continuity** above for how the chapters chain together and share the `cytc.v1` save.
 
 ## Project structure
 

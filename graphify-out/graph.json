@@ -13,7 +13,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Reader should feel the 68 meters before reading the number; experience precedes explanation so understanding is earned, not lectured.",
-      "community": 11,
+      "community": 10,
       "norm_label": "show, don't lecture",
       "id": "product_show_dont_lecture"
     },
@@ -27,7 +27,7 @@
       "author": null,
       "contributor": null,
       "rationale": "HUD elements belong to the car; timestamps and locations are story, not chrome, to preserve the night-drive documentary immersion.",
-      "community": 9,
+      "community": 8,
       "norm_label": "diegetic ui",
       "id": "product_diegetic_ui"
     },
@@ -41,7 +41,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Every decision changes state the reader sees again at the debrief, making consequences personal.",
-      "community": 0,
+      "community": 1,
       "norm_label": "choices leave marks",
       "id": "product_choices_leave_marks"
     },
@@ -55,7 +55,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Real reaction-time, takeover, and liability figures are the payload of every outcome; statistics carry the drama rather than gamification.",
-      "community": 1,
+      "community": 5,
       "norm_label": "data is the drama",
       "id": "product_data_is_the_drama"
     },
@@ -69,7 +69,7 @@
       "author": null,
       "contributor": null,
       "rationale": "One HTML file per chapter, everything inlined, works from file:// \u2014 no build step, assets, or server required.",
-      "community": 10,
+      "community": 9,
       "norm_label": "portable by construction",
       "id": "product_portable_by_construction"
     },
@@ -83,7 +83,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Core success criterion: a reader can articulate why Level 2 assistance is not autonomy without being lectured.",
-      "community": 0,
+      "community": 1,
       "norm_label": "l2 = autonomous",
       "id": "product_l2_not_autonomous"
     },
@@ -97,7 +97,7 @@
       "author": null,
       "contributor": null,
       "rationale": "Full keyboard path, prefers-reduced-motion support, \u22654.5:1 body contrast, no flashing above 3 Hz.",
-      "community": 7,
+      "community": 6,
       "norm_label": "accessibility & inclusion",
       "id": "product_accessibility"
     },
@@ -111,182 +111,9 @@
       "author": null,
       "contributor": null,
       "rationale": "A night-drive documentary, not a quiz app; the interface never celebrates or gamifies a crash.",
-      "community": 8,
+      "community": 7,
       "norm_label": "cinematic, grounded, sober brand",
       "id": "product_brand_personality"
-    },
-    {
-      "label": "Chapter 2 \u2014 Inside the Machine",
-      "file_type": "document",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "chapter 2 \u2014 inside the machine",
-      "id": "can_you_trust_your_car_chapter2_inside_the_machine"
-    },
-    {
-      "label": "Sensor operation (camera/LiDAR/radar)",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "sensor operation (camera/lidar/radar)",
-      "id": "can_you_trust_your_car_chapter2_sensor_operation"
-    },
-    {
-      "label": "Sensor fusion",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "sensor fusion",
-      "id": "can_you_trust_your_car_chapter2_sensor_fusion"
-    },
-    {
-      "label": "Adaptive weighting",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "The car weighs each sensor by how reliable it is right now (AUTO mode), not by fixed priority.",
-      "community": 3,
-      "norm_label": "adaptive weighting",
-      "id": "can_you_trust_your_car_chapter2_adaptive_weighting"
-    },
-    {
-      "label": "Sensor redundancy",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "sensor redundancy",
-      "id": "can_you_trust_your_car_chapter2_redundancy"
-    },
-    {
-      "label": "Sensor failure / glare",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "sensor failure / glare",
-      "id": "can_you_trust_your_car_chapter2_sensor_failure"
-    },
-    {
-      "label": "Graceful degradation",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 3,
-      "norm_label": "graceful degradation",
-      "id": "can_you_trust_your_car_chapter2_graceful_degradation"
-    },
-    {
-      "label": "Chapter 3 \u2014 The Long Tail",
-      "file_type": "document",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 4,
-      "norm_label": "chapter 3 \u2014 the long tail",
-      "id": "can_you_trust_your_car_chapter3_the_long_tail"
-    },
-    {
-      "label": "Log review",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 4,
-      "norm_label": "log review",
-      "id": "can_you_trust_your_car_chapter3_log_review"
-    },
-    {
-      "label": "Near-miss classification",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "Bug vs rare edge case vs acceptable statistical risk \u2014 each defensible, none clearly right.",
-      "community": 4,
-      "norm_label": "near-miss classification",
-      "id": "can_you_trust_your_car_chapter3_classification"
-    },
-    {
-      "label": "Statistical impossibility (~275M miles, RAND)",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "You'd need ~275 million miles (RAND) to show with confidence a car is as safe as a human, and billions for real proof \u2014 no fleet has driven that incident-free.",
-      "community": 4,
-      "norm_label": "statistical impossibility (~275m miles, rand)",
-      "id": "can_you_trust_your_car_chapter3_statistical_impossibility"
-    },
-    {
-      "label": "The long tail",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 4,
-      "norm_label": "the long tail",
-      "id": "can_you_trust_your_car_chapter3_long_tail"
-    },
-    {
-      "label": "Deciding under uncertainty",
-      "file_type": "concept",
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "Under irreducible uncertainty you must still advise: deploy, keep testing, or a limited supervised rollout.",
-      "community": 4,
-      "norm_label": "deciding under uncertainty",
-      "id": "can_you_trust_your_car_chapter3_deploy_under_uncertainty"
     },
     {
       "label": "Chapter 1 \u2014 Can You Trust Your Car? (The Night Drive)",
@@ -297,9 +124,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_night_drive",
-      "community": 2,
-      "norm_label": "chapter 1 \u2014 can you trust your car? (the night drive)"
+      "community": 4,
+      "norm_label": "chapter 1 \u2014 can you trust your car? (the night drive)",
+      "id": "can_you_trust_your_car_chapter1_night_drive"
     },
     {
       "label": "first-person cockpit driving sim",
@@ -310,9 +137,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_first_person_cockpit_sim",
-      "community": 5,
-      "norm_label": "first-person cockpit driving sim"
+      "community": 4,
+      "norm_label": "first-person cockpit driving sim",
+      "id": "can_you_trust_your_car_chapter1_first_person_cockpit_sim"
     },
     {
       "label": "Three.js / WebGL engine",
@@ -323,9 +150,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_threejs_webgl_engine",
-      "community": 6,
-      "norm_label": "three.js / webgl engine"
+      "community": 4,
+      "norm_label": "three.js / webgl engine",
+      "id": "can_you_trust_your_car_chapter1_threejs_webgl_engine"
     },
     {
       "label": "inlined three.js (single-file, offline, file://) with WEBSITE-TODO to swap to CDN",
@@ -336,9 +163,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_inlined_threejs",
-      "community": 6,
-      "norm_label": "inlined three.js (single-file, offline, file://) with website-todo to swap to cdn"
+      "community": 4,
+      "norm_label": "inlined three.js (single-file, offline, file://) with website-todo to swap to cdn",
+      "id": "can_you_trust_your_car_chapter1_inlined_threejs"
     },
     {
       "label": "constant forward speed",
@@ -349,9 +176,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_constant_forward_speed",
-      "community": 5,
-      "norm_label": "constant forward speed"
+      "community": 4,
+      "norm_label": "constant forward speed",
+      "id": "can_you_trust_your_car_chapter1_constant_forward_speed"
     },
     {
       "label": "discrete pre-animated banked lane change (A/D or arrows, low sensitivity, cannot leave road)",
@@ -362,9 +189,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_discrete_lane_change",
-      "community": 1,
-      "norm_label": "discrete pre-animated banked lane change (a/d or arrows, low sensitivity, cannot leave road)"
+      "community": 5,
+      "norm_label": "discrete pre-animated banked lane change (a/d or arrows, low sensitivity, cannot leave road)",
+      "id": "can_you_trust_your_car_chapter1_discrete_lane_change"
     },
     {
       "label": "two-carriageway highway with median wall and \u22652 lanes per side",
@@ -375,9 +202,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_two_carriageway_highway",
-      "community": 1,
-      "norm_label": "two-carriageway highway with median wall and \u22652 lanes per side"
+      "community": 5,
+      "norm_label": "two-carriageway highway with median wall and \u22652 lanes per side",
+      "id": "can_you_trust_your_car_chapter1_two_carriageway_highway"
     },
     {
       "label": "NPC traffic (same-direction and oncoming)",
@@ -388,9 +215,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_npc_traffic",
-      "community": 1,
-      "norm_label": "npc traffic (same-direction and oncoming)"
+      "community": 5,
+      "norm_label": "npc traffic (same-direction and oncoming)",
+      "id": "can_you_trust_your_car_chapter1_npc_traffic"
     },
     {
       "label": "night sky with stars/moon and distant city skyline",
@@ -401,9 +228,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_night_sky_skyline",
-      "community": 2,
-      "norm_label": "night sky with stars/moon and distant city skyline"
+      "community": 4,
+      "norm_label": "night sky with stars/moon and distant city skyline",
+      "id": "can_you_trust_your_car_chapter1_night_sky_skyline"
     },
     {
       "label": "Tesla-style minimalist cockpit (no brand logos, copyright-safe)",
@@ -414,9 +241,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_tesla_style_cockpit",
-      "community": 5,
-      "norm_label": "tesla-style minimalist cockpit (no brand logos, copyright-safe)"
+      "community": 1,
+      "norm_label": "tesla-style minimalist cockpit (no brand logos, copyright-safe)",
+      "id": "can_you_trust_your_car_chapter1_tesla_style_cockpit"
     },
     {
       "label": "iMessage on the central touchscreen",
@@ -427,9 +254,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_imessage_touchscreen",
-      "community": 5,
-      "norm_label": "imessage on the central touchscreen"
+      "community": 1,
+      "norm_label": "imessage on the central touchscreen",
+      "id": "can_you_trust_your_car_chapter1_imessage_touchscreen"
     },
     {
       "label": "synthesized EV powertrain audio (whine rising with speed + wind bed) and adaptive score",
@@ -440,9 +267,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_ev_powertrain_audio",
-      "community": 5,
-      "norm_label": "synthesized ev powertrain audio (whine rising with speed + wind bed) and adaptive score"
+      "community": 4,
+      "norm_label": "synthesized ev powertrain audio (whine rising with speed + wind bed) and adaptive score",
+      "id": "can_you_trust_your_car_chapter1_ev_powertrain_audio"
     },
     {
       "label": "a decision pauses/freezes the sim",
@@ -453,9 +280,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_decision_pauses_sim",
-      "community": 0,
-      "norm_label": "a decision pauses/freezes the sim"
+      "community": 1,
+      "norm_label": "a decision pauses/freezes the sim",
+      "id": "can_you_trust_your_car_chapter1_decision_pauses_sim"
     },
     {
       "label": "L2 assistance",
@@ -466,9 +293,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_l2_assistance",
-      "community": 0,
-      "norm_label": "l2 assistance"
+      "community": 1,
+      "norm_label": "l2 assistance",
+      "id": "can_you_trust_your_car_chapter1_l2_assistance"
     },
     {
       "label": "automation-induced complacency",
@@ -479,9 +306,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_automation_induced_complacency",
       "community": 1,
-      "norm_label": "automation-induced complacency"
+      "norm_label": "automation-induced complacency",
+      "id": "can_you_trust_your_car_chapter1_automation_induced_complacency"
     },
     {
       "label": "trust calibration (Trust & Attention meters)",
@@ -492,9 +319,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_trust_calibration",
-      "community": 0,
-      "norm_label": "trust calibration (trust & attention meters)"
+      "community": 1,
+      "norm_label": "trust calibration (trust & attention meters)",
+      "id": "can_you_trust_your_car_chapter1_trust_calibration"
     },
     {
       "label": "takeover / edge case as 3D lane-dodge measuring reaction time",
@@ -505,9 +332,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_takeover_edge_case",
-      "community": 1,
-      "norm_label": "takeover / edge case as 3d lane-dodge measuring reaction time"
+      "community": 5,
+      "norm_label": "takeover / edge case as 3d lane-dodge measuring reaction time",
+      "id": "can_you_trust_your_car_chapter1_takeover_edge_case"
     },
     {
       "label": "braking distance (68 metres)",
@@ -518,9 +345,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_braking_distance",
-      "community": 1,
-      "norm_label": "braking distance (68 metres)"
+      "community": 5,
+      "norm_label": "braking distance (68 metres)",
+      "id": "can_you_trust_your_car_chapter1_braking_distance"
     },
     {
       "label": "reaction time",
@@ -531,9 +358,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_reaction_time",
-      "community": 1,
-      "norm_label": "reaction time"
+      "community": 5,
+      "norm_label": "reaction time",
+      "id": "can_you_trust_your_car_chapter1_reaction_time"
     },
     {
       "label": "automation levels (L0/L2/L4)",
@@ -544,9 +371,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_automation_levels",
-      "community": 0,
-      "norm_label": "automation levels (l0/l2/l4)"
+      "community": 1,
+      "norm_label": "automation levels (l0/l2/l4)",
+      "id": "can_you_trust_your_car_chapter1_automation_levels"
     },
     {
       "label": "L2 \u2260 autonomous",
@@ -557,9 +384,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_l2_not_autonomous",
-      "community": 0,
-      "norm_label": "l2 = autonomous"
+      "community": 1,
+      "norm_label": "l2 = autonomous",
+      "id": "can_you_trust_your_car_chapter1_l2_not_autonomous"
     },
     {
       "label": "branching decisions, outcomes, and a personalized debrief",
@@ -570,9 +397,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_branching_decisions_debrief",
-      "community": 0,
-      "norm_label": "branching decisions, outcomes, and a personalized debrief"
+      "community": 1,
+      "norm_label": "branching decisions, outcomes, and a personalized debrief",
+      "id": "can_you_trust_your_car_chapter1_branching_decisions_debrief"
     },
     {
       "label": "cytc.v1 localStorage save",
@@ -583,9 +410,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_cytc_localstorage_save",
-      "community": 0,
-      "norm_label": "cytc.v1 localstorage save"
+      "community": 1,
+      "norm_label": "cytc.v1 localstorage save",
+      "id": "can_you_trust_your_car_chapter1_cytc_localstorage_save"
     },
     {
       "label": "Continue to Chapter 2 link",
@@ -596,25 +423,12 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "can_you_trust_your_car_chapter1_continue_to_chapter_2",
-      "community": 2,
-      "norm_label": "continue to chapter 2 link"
+      "community": 4,
+      "norm_label": "continue to chapter 2 link",
+      "id": "can_you_trust_your_car_chapter1_continue_to_chapter_2"
     },
     {
       "label": "Trusting Autonomous Machines (project)",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "readme_trusting_autonomous_machines",
-      "community": 2,
-      "norm_label": "trusting autonomous machines (project)"
-    },
-    {
-      "label": "Chapter 1 \u2014 Can You Trust Your Car? (The Night Drive)",
       "file_type": "concept",
       "source_file": "README.md",
       "source_location": null,
@@ -622,9 +436,22 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_chapter_1",
-      "community": 2,
-      "norm_label": "chapter 1 \u2014 can you trust your car? (the night drive)"
+      "id": "readme_project",
+      "community": 3,
+      "norm_label": "trusting autonomous machines (project)"
+    },
+    {
+      "label": "Chapter 1 \u2014 Can You Trust Your Car? (3D Night Drive)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_chapter1",
+      "community": 3,
+      "norm_label": "chapter 1 \u2014 can you trust your car? (3d night drive)"
     },
     {
       "label": "Chapter 2 \u2014 Inside the Machine",
@@ -635,8 +462,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_chapter_2",
-      "community": 2,
+      "id": "readme_chapter2",
+      "community": 3,
       "norm_label": "chapter 2 \u2014 inside the machine"
     },
     {
@@ -648,12 +475,12 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_chapter_3",
-      "community": 2,
+      "id": "readme_chapter3",
+      "community": 0,
       "norm_label": "chapter 3 \u2014 the long tail"
     },
     {
-      "label": "3D night-drive (WebGL/Three.js first-person expressway)",
+      "label": "Shared real-3D Three.js/WebGL engine",
       "file_type": "concept",
       "source_file": "README.md",
       "source_location": null,
@@ -661,12 +488,77 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_3d_night_drive",
-      "community": 6,
-      "norm_label": "3d night-drive (webgl/three.js first-person expressway)"
+      "id": "readme_shared_3d_engine",
+      "community": 3,
+      "norm_label": "shared real-3d three.js/webgl engine"
     },
     {
-      "label": "inlined Three.js with WEBSITE-TODO to swap for CDN importmap",
+      "label": "cytc.v1 shared localStorage continuity (merge-on-write)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_cytc_continuity",
+      "community": 3,
+      "norm_label": "cytc.v1 shared localstorage continuity (merge-on-write)"
+    },
+    {
+      "label": "Sensor fusion, redundancy, adaptive weighting (Ch2 themes)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_sensor_fusion",
+      "community": 3,
+      "norm_label": "sensor fusion, redundancy, adaptive weighting (ch2 themes)"
+    },
+    {
+      "label": "Graceful degradation under sensor failure",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_graceful_degradation",
+      "community": 2,
+      "norm_label": "graceful degradation under sensor failure"
+    },
+    {
+      "label": "The long tail of rare events",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_long_tail",
+      "community": 0,
+      "norm_label": "the long tail of rare events"
+    },
+    {
+      "label": "Statistical impossibility of proving AV safety (~275M / billions of miles)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "readme_statistical_impossibility",
+      "community": 0,
+      "norm_label": "statistical impossibility of proving av safety (~275m / billions of miles)"
+    },
+    {
+      "label": "Deciding under irreducible uncertainty",
       "file_type": "rationale",
       "source_file": "README.md",
       "source_location": null,
@@ -674,9 +566,269 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_inlined_threejs_website_todo",
-      "community": 6,
-      "norm_label": "inlined three.js with website-todo to swap for cdn importmap"
+      "id": "readme_deciding_under_uncertainty",
+      "community": 0,
+      "norm_label": "deciding under irreducible uncertainty"
+    },
+    {
+      "label": "Inside the Machine \u2014 3D perception chapter",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "community": 2,
+      "norm_label": "inside the machine \u2014 3d perception chapter"
+    },
+    {
+      "label": "Shares Ch1 3D engine, cockpit, and audio",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_shared_3d_engine",
+      "community": 3,
+      "norm_label": "shares ch1 3d engine, cockpit, and audio"
+    },
+    {
+      "label": "AR perception overlay (camera boxes, LiDAR points, radar brackets)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_ar_perception_overlay",
+      "community": 2,
+      "norm_label": "ar perception overlay (camera boxes, lidar points, radar brackets)"
+    },
+    {
+      "label": "Sensor-fusion weight sliders (Camera/LiDAR/Radar)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_sensor_fusion_sliders",
+      "community": 2,
+      "norm_label": "sensor-fusion weight sliders (camera/lidar/radar)"
+    },
+    {
+      "label": "Live certainty score",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_certainty_score",
+      "community": 2,
+      "norm_label": "live certainty score"
+    },
+    {
+      "label": "AUTO reliability-based weighting",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_auto_reliability_weighting",
+      "community": 2,
+      "norm_label": "auto reliability-based weighting"
+    },
+    {
+      "label": "Camera glare collapse forces re-weighting (graceful degradation)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_camera_glare_degradation",
+      "community": 2,
+      "norm_label": "camera glare collapse forces re-weighting (graceful degradation)"
+    },
+    {
+      "label": "Trust-the-sensor A/B/C decision (possible crash)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_trust_the_sensor_decision",
+      "community": 2,
+      "norm_label": "trust-the-sensor a/b/c decision (possible crash)"
+    },
+    {
+      "label": "Trust calibration (Ch2 theme)",
+      "file_type": "rationale",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_trust_calibration",
+      "community": 2,
+      "norm_label": "trust calibration (ch2 theme)"
+    },
+    {
+      "label": "Reads Ch1 car pick, writes chapter2 to cytc.v1",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter2_cytc_save",
+      "community": 3,
+      "norm_label": "reads ch1 car pick, writes chapter2 to cytc.v1"
+    },
+    {
+      "label": "The Long Tail \u2014 3D dashcam safety review",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_the_long_tail",
+      "community": 0,
+      "norm_label": "the long tail \u2014 3d dashcam safety review"
+    },
+    {
+      "label": "Reuses Three.js engine as reviewed dashcam footage (cockpit hidden)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_shared_3d_engine",
+      "community": 0,
+      "norm_label": "reuses three.js engine as reviewed dashcam footage (cockpit hidden)"
+    },
+    {
+      "label": "Control-room review station (scrubber, near-miss flag, stats panel)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_review_station",
+      "community": 0,
+      "norm_label": "control-room review station (scrubber, near-miss flag, stats panel)"
+    },
+    {
+      "label": "Flagged pedestrian gets live detection box",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_pedestrian_detection_box",
+      "community": 0,
+      "norm_label": "flagged pedestrian gets live detection box"
+    },
+    {
+      "label": "Scan 10,000 km of fleet logs to near-miss at km 6,213",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_fleet_log_scan",
+      "community": 0,
+      "norm_label": "scan 10,000 km of fleet logs to near-miss at km 6,213"
+    },
+    {
+      "label": "Classify near-miss (bug / edge case / acceptable risk)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_near_miss_classification",
+      "community": 0,
+      "norm_label": "classify near-miss (bug / edge case / acceptable risk)"
+    },
+    {
+      "label": "Statistical-impossibility panel (275M miles RAND, 11B for proof)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_statistical_impossibility",
+      "community": 0,
+      "norm_label": "statistical-impossibility panel (275m miles rand, 11b for proof)"
+    },
+    {
+      "label": "Recommendation (deploy / keep testing / limited rollout)",
+      "file_type": "rationale",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_recommendation",
+      "community": 0,
+      "norm_label": "recommendation (deploy / keep testing / limited rollout)"
+    },
+    {
+      "label": "Graceful finale (no Chapter 4 link)",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_graceful_finale",
+      "community": 0,
+      "norm_label": "graceful finale (no chapter 4 link)"
+    },
+    {
+      "label": "Writes chapter3 to cytc.v1",
+      "file_type": "concept",
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "can_you_trust_your_car_chapter3_cytc_save",
+      "community": 3,
+      "norm_label": "writes chapter3 to cytc.v1"
     }
   ],
   "links": [
@@ -714,176 +866,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
-      "target": "can_you_trust_your_car_chapter2_graceful_degradation"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
-      "target": "can_you_trust_your_car_chapter2_sensor_fusion"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
-      "target": "can_you_trust_your_car_chapter2_sensor_operation"
-    },
-    {
-      "relation": "references",
-      "confidence": "INFERRED",
-      "confidence_score": 0.75,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
-      "target": "can_you_trust_your_car_chapter3_the_long_tail"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_sensor_fusion",
-      "target": "can_you_trust_your_car_chapter2_sensor_operation"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_sensor_fusion",
-      "target": "can_you_trust_your_car_chapter2_adaptive_weighting"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_sensor_fusion",
-      "target": "can_you_trust_your_car_chapter2_redundancy"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_sensor_failure",
-      "target": "can_you_trust_your_car_chapter2_adaptive_weighting"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.75,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_redundancy",
-      "target": "can_you_trust_your_car_chapter2_graceful_degradation"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter2.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter2_sensor_failure",
-      "target": "can_you_trust_your_car_chapter2_graceful_degradation"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_the_long_tail",
-      "target": "can_you_trust_your_car_chapter3_classification"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_the_long_tail",
-      "target": "can_you_trust_your_car_chapter3_deploy_under_uncertainty"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_the_long_tail",
-      "target": "can_you_trust_your_car_chapter3_log_review"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_the_long_tail",
-      "target": "can_you_trust_your_car_chapter3_statistical_impossibility"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.75,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_classification",
-      "target": "can_you_trust_your_car_chapter3_deploy_under_uncertainty"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_statistical_impossibility",
-      "target": "can_you_trust_your_car_chapter3_deploy_under_uncertainty"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "can_you_trust_your_car_chapter3.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter3_statistical_impossibility",
-      "target": "can_you_trust_your_car_chapter3_long_tail"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
       "source_file": "can_you_trust_your_car_chapter1.html",
       "source_location": null,
       "weight": 1.0,
@@ -909,16 +891,6 @@
       "weight": 1.0,
       "source": "can_you_trust_your_car_chapter1_night_drive",
       "target": "can_you_trust_your_car_chapter1_night_sky_skyline"
-    },
-    {
-      "relation": "semantically_similar_to",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_chapter_1",
-      "target": "can_you_trust_your_car_chapter1_night_drive"
     },
     {
       "relation": "conceptually_related_to",
@@ -969,26 +941,6 @@
       "weight": 1.0,
       "source": "can_you_trust_your_car_chapter1_inlined_threejs",
       "target": "can_you_trust_your_car_chapter1_threejs_webgl_engine"
-    },
-    {
-      "relation": "semantically_similar_to",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_3d_night_drive",
-      "target": "can_you_trust_your_car_chapter1_threejs_webgl_engine"
-    },
-    {
-      "relation": "semantically_similar_to",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_inlined_threejs_website_todo",
-      "target": "can_you_trust_your_car_chapter1_inlined_threejs"
     },
     {
       "relation": "conceptually_related_to",
@@ -1164,11 +1116,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "can_you_trust_your_car_chapter1.html",
+      "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "can_you_trust_your_car_chapter1_continue_to_chapter_2",
-      "target": "readme_chapter_2"
+      "source": "readme_project",
+      "target": "readme_chapter1"
     },
     {
       "relation": "references",
@@ -1177,8 +1129,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_trusting_autonomous_machines",
-      "target": "readme_chapter_1"
+      "source": "readme_project",
+      "target": "readme_chapter2"
     },
     {
       "relation": "references",
@@ -1187,8 +1139,18 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_trusting_autonomous_machines",
-      "target": "readme_chapter_2"
+      "source": "readme_project",
+      "target": "readme_chapter3"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter1",
+      "target": "readme_cytc_continuity"
     },
     {
       "relation": "references",
@@ -1197,8 +1159,28 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_trusting_autonomous_machines",
-      "target": "readme_chapter_3"
+      "source": "readme_chapter1",
+      "target": "readme_shared_3d_engine"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "readme_chapter2"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter2",
+      "target": "readme_cytc_continuity"
     },
     {
       "relation": "references",
@@ -1207,8 +1189,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_chapter_1",
-      "target": "readme_3d_night_drive"
+      "source": "readme_chapter2",
+      "target": "readme_graceful_degradation"
     },
     {
       "relation": "references",
@@ -1217,8 +1199,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_chapter_1",
-      "target": "readme_chapter_2"
+      "source": "readme_chapter2",
+      "target": "readme_sensor_fusion"
     },
     {
       "relation": "references",
@@ -1227,20 +1209,370 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_chapter_2",
-      "target": "readme_chapter_3"
+      "source": "readme_chapter2",
+      "target": "readme_shared_3d_engine"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "readme_chapter3"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter3",
+      "target": "readme_cytc_continuity"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter3",
+      "target": "readme_long_tail"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter3",
+      "target": "readme_shared_3d_engine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "readme_chapter3",
+      "target": "readme_statistical_impossibility"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_shared_3d_engine",
+      "target": "readme_shared_3d_engine"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_shared_3d_engine",
+      "target": "readme_shared_3d_engine"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_cytc_save",
+      "target": "readme_cytc_continuity"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_cytc_save",
+      "target": "readme_cytc_continuity"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_sensor_fusion_sliders",
+      "target": "readme_sensor_fusion"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_camera_glare_degradation",
+      "target": "readme_graceful_degradation"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_near_miss_classification",
+      "target": "readme_long_tail"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_statistical_impossibility",
+      "target": "readme_statistical_impossibility"
     },
     {
       "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "readme_inlined_threejs_website_todo",
-      "target": "readme_3d_night_drive"
+      "source": "readme_statistical_impossibility",
+      "target": "readme_deciding_under_uncertainty"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_ar_perception_overlay"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_camera_glare_degradation"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_cytc_save"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_sensor_fusion_sliders"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_shared_3d_engine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_inside_the_machine",
+      "target": "can_you_trust_your_car_chapter2_trust_the_sensor_decision"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_sensor_fusion_sliders",
+      "target": "can_you_trust_your_car_chapter2_auto_reliability_weighting"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_sensor_fusion_sliders",
+      "target": "can_you_trust_your_car_chapter2_certainty_score"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_camera_glare_degradation",
+      "target": "can_you_trust_your_car_chapter2_auto_reliability_weighting"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_camera_glare_degradation",
+      "target": "can_you_trust_your_car_chapter2_trust_the_sensor_decision"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_trust_the_sensor_decision",
+      "target": "can_you_trust_your_car_chapter2_trust_calibration"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "can_you_trust_your_car_chapter2.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter2_cytc_save",
+      "target": "can_you_trust_your_car_chapter3_cytc_save"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "can_you_trust_your_car_chapter3_cytc_save"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "can_you_trust_your_car_chapter3_graceful_finale"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "can_you_trust_your_car_chapter3_review_station"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "can_you_trust_your_car_chapter3_shared_3d_engine"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_the_long_tail",
+      "target": "can_you_trust_your_car_chapter3_statistical_impossibility"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_shared_3d_engine",
+      "target": "can_you_trust_your_car_chapter3_pedestrian_detection_box"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_review_station",
+      "target": "can_you_trust_your_car_chapter3_fleet_log_scan"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_fleet_log_scan",
+      "target": "can_you_trust_your_car_chapter3_near_miss_classification"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_near_miss_classification",
+      "target": "can_you_trust_your_car_chapter3_recommendation"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "can_you_trust_your_car_chapter3.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "can_you_trust_your_car_chapter3_statistical_impossibility",
+      "target": "can_you_trust_your_car_chapter3_recommendation"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "75999802cb99e167c3bf19524bd8911b457b3c34"
+  "built_at_commit": "1daaa79e1a06d2ff8d23c14e1f2d143ee64dc0ad"
 }

@@ -1,8 +1,8 @@
 {
   "README.md": {
-    "mtime": 1783267814.9113028,
-    "ast_hash": "78b2b2b86bce5bdbfadf4e4dd917c3bb",
-    "semantic_hash": "78b2b2b86bce5bdbfadf4e4dd917c3bb"
+    "mtime": 1783272829.5267203,
+    "ast_hash": "79a78b7b9fa7ff8ced5ea350af6fb4f4",
+    "semantic_hash": "79a78b7b9fa7ff8ced5ea350af6fb4f4"
   },
   "can_you_trust_your_car_chapter1.html": {
     "mtime": 1783267485.2064412,
@@ -20,13 +20,13 @@
     "semantic_hash": "ecdbcf9b7a6d64bd6e99faf159d793fe"
   },
   "can_you_trust_your_car_chapter2.html": {
-    "mtime": 1782893033.1341193,
-    "ast_hash": "bc25e4d3d11db68ede1442fad86e95bd",
-    "semantic_hash": "bc25e4d3d11db68ede1442fad86e95bd"
+    "mtime": 1783271139.281721,
+    "ast_hash": "77f3749802a8e1a51b91bea9c79fd073",
+    "semantic_hash": "77f3749802a8e1a51b91bea9c79fd073"
   },
   "can_you_trust_your_car_chapter3.html": {
-    "mtime": 1782894382.45148,
-    "ast_hash": "a118fbc8a1e2e511b30412dbc1949645",
-    "semantic_hash": "a118fbc8a1e2e511b30412dbc1949645"
+    "mtime": 1783272096.873177,
+    "ast_hash": "cdd6f3876061b42c65ef246d4c4def8e",
+    "semantic_hash": "cdd6f3876061b42c65ef246d4c4def8e"
   }
 }

@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trust the Machine: an interactive experience in autonomous driving</title>
+<meta name="description" content="Experience autonomous driving before you decide what you think of it. A five-chapter interactive experience about when we should trust machines, and how much.">
+<style>
+  /* =========================================================================
+     Palette "Deliberate" — calm, intelligent, cinematic.
+     Near-monochrome graphite base, ONE restrained moonlight-blue accent,
+     an Apple-style near-white primary action. No neon, no oversaturation.
+     ========================================================================= */
+  :root{
+    --bg:#0B0C0F;          /* off-black graphite, faint cool */
+    --bg-soft:#0E1014;     /* ambient wash */
+    --surface:#14161C;     /* elevated panel */
+    --surface-2:#1B1E25;   /* panel-in-panel */
+    --line:1px solid rgba(255,255,255,.08);
+    --line-strong:1px solid rgba(255,255,255,.15);
+
+    --ink:#ECEEF2;         /* primary text */
+    --sub:#B7BCC6;         /* secondary text */
+    --mut:#888D98;         /* labels, meta (AA on --bg) */
+
+    --accent:#8AB0E0;      /* moonlight azure — the only accent */
+    --accent-strong:#A6C4EC;
+    --accent-tint:rgba(138,176,224,.13);
+    --accent-line:rgba(138,176,224,.34);
+
+    --cta-ink:#0B0C0F;
+    --shadow:0 14px 44px rgba(0,0,0,.40);
+    --shadow-soft:0 8px 30px rgba(0,0,0,.30);
+
+    --ease:cubic-bezier(.22,.68,0,1);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --wrap:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{
+    margin:0; font-family:var(--font); color:var(--ink); background:var(--bg);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+    letter-spacing:.005em;
+  }
+  a{color:inherit}
+  ::selection{background:rgba(138,176,224,.26)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px}
+
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:0 clamp(22px,5vw,44px)}
+  .eyebrow{font-size:clamp(11px,1.3vw,13px); letter-spacing:.24em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  .gradtext{background:linear-gradient(180deg,#FFFFFF,#C2CAD8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+
+  /* ---------------- floating nav ---------------- */
+  .nav{position:fixed; top:0; left:0; right:0; z-index:40; display:flex; justify-content:center; pointer-events:none;
+       opacity:0; transform:translateY(-10px); transition:opacity .55s var(--ease), transform .55s var(--ease)}
+  .nav.show{opacity:1; transform:none}
+  .nav-inner{pointer-events:auto; margin-top:clamp(12px,2vh,20px); display:flex; align-items:center; gap:clamp(16px,3vw,30px);
+    padding:8px 8px 8px 22px; border-radius:999px; border:var(--line); background:rgba(14,16,20,.7); backdrop-filter:blur(14px); box-shadow:var(--shadow-soft)}
+  .nav-mark{font-weight:700; font-size:14px; letter-spacing:.01em; white-space:nowrap}
+  .nav-links{display:flex; gap:clamp(12px,2vw,22px)}
+  .nav-links a{font-size:12.5px; color:var(--mut); text-decoration:none; letter-spacing:.02em; transition:color .25s var(--ease)}
+  .nav-links a:hover{color:var(--ink)}
+  @media (max-width:640px){ .nav-links{display:none} }
+
+  /* ---------------- hero ---------------- */
+  .hero{position:relative; min-height:100dvh; display:flex; align-items:center; overflow:hidden}
+  #bg{position:absolute; inset:0; width:100%; height:100%; z-index:0; display:block}
+  .hero-veil{position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(1200px 780px at 50% 32%, rgba(24,30,42,.22), rgba(11,12,15,.74) 66%, rgba(11,12,15,.97));}
+  .hero .wrap{position:relative; z-index:2; padding-top:15vh; padding-bottom:15vh}
+  .hero .eyebrow{margin-bottom:1.6rem}
+  .hero h1{font-size:clamp(44px,8.6vw,98px); line-height:.98; font-weight:800; margin:0 0 1.6rem; letter-spacing:-.015em; max-width:14ch}
+  .hero .lede{font-size:clamp(17px,2.2vw,23px); line-height:1.6; color:var(--sub); max-width:46ch; margin:0 0 2.8rem; font-weight:400}
+
+  /* primary CTA — Apple-style near-white pill, with nested-circle arrow */
+  .cta{display:inline-flex; align-items:center; gap:14px; cursor:pointer; border:none; text-decoration:none;
+    padding:14px 16px 14px 28px; border-radius:999px; font-family:var(--font); font-weight:700; font-size:clamp(15px,1.8vw,18px);
+    color:var(--cta-ink); background:linear-gradient(180deg,#FCFDFF,#E8EBF1);
+    box-shadow:var(--shadow-soft); transition:transform .32s var(--ease), box-shadow .32s var(--ease), filter .32s var(--ease)}
+  .cta:hover{transform:translateY(-2px); box-shadow:var(--shadow); filter:brightness(1.02)}
+  .cta:active{transform:translateY(0) scale(.985)}
+  .cta .arw{width:34px; height:34px; border-radius:999px; display:grid; place-items:center; flex:none;
+    background:rgba(11,12,15,.08); transition:transform .32s var(--ease)}
+  .cta:hover .arw{transform:translateX(3px)}
+  .cta .arw svg{width:16px; height:16px}
+  .cta-row{display:flex; align-items:center; gap:24px; flex-wrap:wrap}
+  .restart{background:none; border:none; color:var(--mut); font-family:var(--font); font-size:13.5px; cursor:pointer;
+    letter-spacing:.02em; padding:6px 2px; border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease)}
+  .restart:hover{color:var(--ink); border-color:var(--accent-line)}
+  .restart[hidden]{display:none}
+
+  /* ---------------- generic section ---------------- */
+  section{position:relative; padding:clamp(104px,16vh,184px) 0}
+  .sec-head{max-width:58ch}
+  .sec-head .eyebrow{margin-bottom:1.3rem}
+  .sec-head h2{font-size:clamp(30px,4.6vw,54px); line-height:1.05; font-weight:800; margin:0 0 1.3rem; letter-spacing:-.015em}
+  .sec-head p{font-size:clamp(16px,1.8vw,20px); line-height:1.65; color:var(--sub); margin:0}
+
+  /* "what this is" — three quiet principle lines */
+  .about{border-top:var(--line)}
+  .tenets{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(20px,2.6vw,34px); margin-top:clamp(48px,7vh,76px)}
+  .tenet{padding:30px 26px; border-radius:18px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft)}
+  .tenet .n{font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  .tenet h3{font-size:clamp(18px,2vw,22px); font-weight:700; margin:.85rem 0 .55rem; line-height:1.2}
+  .tenet p{font-size:14.5px; line-height:1.6; color:var(--mut); margin:0}
+  @media (max-width:760px){ .tenets{grid-template-columns:1fr} }
+
+  /* ---------------- the arc / the road ---------------- */
+  .arc{border-top:var(--line); background:radial-gradient(1100px 720px at 84% -8%, rgba(138,176,224,.07), transparent 58%)}
+  .road{margin-top:clamp(48px,8vh,80px); position:relative; padding-left:66px}
+  .road::before{content:""; position:absolute; left:23px; top:10px; bottom:10px; width:2px;
+    background:repeating-linear-gradient(rgba(255,255,255,.20) 0 15px, transparent 15px 33px)}
+  .road::after{content:""; position:absolute; left:22px; top:10px; width:4px; height:calc((100% - 20px) * var(--progress,0));
+    border-radius:4px; background:linear-gradient(var(--accent),rgba(138,176,224,.2)); transition:height 1.1s var(--ease)}
+  .stop{position:relative; display:block; text-decoration:none; color:inherit; padding:26px 26px; margin-bottom:22px;
+    border-radius:18px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft);
+    transition:transform .2s var(--ease), border-color .28s var(--ease), background .28s var(--ease), opacity .4s var(--ease)}
+  .stop:hover{transform:translateY(-3px); border-color:var(--accent-line); background:var(--surface-2)}
+  .stop .node{position:absolute; left:-54px; top:26px; width:40px; height:40px; border-radius:999px; display:grid; place-items:center;
+    font-weight:700; font-size:15px; background:var(--surface-2); color:var(--mut); border:1px solid rgba(255,255,255,.14);
+    transition:all .3s var(--ease)}
+  .stop .top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+  .stop .role{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--mut); font-weight:600}
+  .stop h3{font-size:clamp(20px,2.3vw,26px); font-weight:700; margin:.4rem 0 .6rem; line-height:1.1; letter-spacing:-.01em}
+  .stop .q{font-size:15px; line-height:1.55; color:var(--sub); margin:0; max-width:54ch}
+  .stop .emo{margin-top:16px; display:inline-block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+    padding:5px 13px; border-radius:999px; border:1px solid var(--accent-line); background:var(--accent-tint)}
+  /* states */
+  .stop.done .node{background:var(--accent-tint); color:var(--accent-strong); border-color:var(--accent-line)}
+  .stop.current{border-color:var(--accent-line); background:var(--surface-2)}
+  .stop.current .node{background:linear-gradient(180deg,var(--accent-strong),var(--accent)); color:var(--cta-ink); border-color:transparent}
+  .stop.upcoming{opacity:.6}
+  .stop .badge{position:absolute; top:26px; right:26px; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:600; color:var(--mut)}
+  .stop.done .badge,.stop.current .badge{color:var(--accent)}
+  @media (max-width:560px){
+    .road{padding-left:46px}
+    .road::before{left:15px} .road::after{left:14px}
+    .stop .node{left:-42px; width:32px; height:32px; font-size:13px}
+    .stop .badge{position:static; display:block; margin-bottom:10px}
+  }
+
+  /* ---------------- research ---------------- */
+  .research{border-top:var(--line)}
+  .research .grid{display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(34px,5vw,66px); align-items:start}
+  .research ul{list-style:none; margin:clamp(30px,5vh,46px) 0 0; padding:0; display:grid; gap:20px}
+  .research li{position:relative; padding-left:28px; font-size:15.5px; line-height:1.6; color:var(--sub)}
+  .research li::before{content:""; position:absolute; left:0; top:9px; width:7px; height:7px; border-radius:2px; background:var(--accent)}
+  .stance{padding:32px 28px; border-radius:18px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft)}
+  .stance .n{font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  .stance p{font-size:15.5px; line-height:1.65; color:var(--sub)}
+  .stance p:first-of-type{margin-top:1.1rem}
+  .stance strong{color:var(--ink); font-weight:700}
+  @media (max-width:820px){ .research .grid{grid-template-columns:1fr} }
+
+  /* ---------------- footer ---------------- */
+  footer{border-top:var(--line); padding:clamp(60px,9vh,92px) 0}
+  .foot{display:flex; justify-content:space-between; gap:28px; flex-wrap:wrap; align-items:flex-start}
+  .foot .col{max-width:54ch}
+  .foot h4{font-size:15px; font-weight:700; margin:0 0 .6rem}
+  .foot p{font-size:13px; line-height:1.65; color:var(--mut); margin:0}
+  .foot .keys{color:var(--sub)}
+
+  /* ---------------- reveal-on-scroll ---------------- */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .85s var(--ease), transform .85s var(--ease)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none}
+    .cta,.stop,.nav,.nav-links a,.road::after{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <span class="nav-mark">Trust&nbsp;the&nbsp;Machine</span>
+    <div class="nav-links">
+      <a href="#about">The experience</a>
+      <a href="#arc">The road</a>
+      <a href="#research">The research</a>
+    </div>
+    <a class="cta" id="nav-cta" href="can_you_trust_your_car_chapter1.html" style="padding:8px 10px 8px 18px; font-size:13.5px; box-shadow:none">
+      <span id="nav-cta-label">Begin</span>
+      <span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0C0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+</nav>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero" id="top">
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="eyebrow">An interactive experience · autonomous driving</div>
+    <h1 class="gradtext">Trust&nbsp;the Machine</h1>
+    <p class="lede">Experience autonomous driving from the inside, as driver, engineer, regulator, and citizen, before you decide what you think of it.</p>
+    <div class="cta-row">
+      <a class="cta" id="begin" href="can_you_trust_your_car_chapter1.html">
+        <span id="begin-label">Begin the experience</span>
+        <span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0C0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <button class="restart" id="restart-hero" hidden type="button">Start over from the beginning</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ WHAT THIS IS ============================ -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="gradtext">You don't read about it.<br>You drive it.</h2>
+      <p>Ten to fifteen minutes, five chapters, one road. It won't try to convince you that self-driving cars are good or bad. It lets you feel why the question is hard, so you leave with better questions instead of a borrowed opinion.</p>
+    </div>
+    <div class="tenets">
+      <div class="tenet reveal">
+        <div class="n">Experience first</div>
+        <h3>Feel it before you're told</h3>
+        <p>Every idea arrives through something you do: a lane change, a sensor you have to trust, a verdict you have to sign. Never a paragraph you have to believe.</p>
+      </div>
+      <div class="tenet reveal">
+        <div class="n">Your choices stay</div>
+        <h3>The road remembers</h3>
+        <p>What you decide follows you. The final chapter reads your whole path back to you: the trust you gave, and where it took you.</p>
+      </div>
+      <div class="tenet reveal">
+        <div class="n">No verdict handed down</div>
+        <h3>Better questions, not answers</h3>
+        <p>The perspective changes each chapter; the world stays the same. By the end the goal isn't agreement. It's understanding why experts disagree.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THE ROAD ============================ -->
+<section class="arc" id="arc">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The road · five chapters</div>
+      <h2 class="gradtext">One road. Five ways of seeing it.</h2>
+      <p>You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.</p>
+    </div>
+    <div class="road" id="road"><!-- chapters injected --></div>
+  </div>
+</section>
+
+<!-- ============================ THE RESEARCH ============================ -->
+<section class="research" id="research">
+  <div class="wrap">
+    <div class="grid">
+      <div class="reveal">
+        <div class="sec-head">
+          <h2 class="gradtext">Grounded, not guessed.</h2>
+          <p>A public-interest education project, built on primary research rather than headlines.</p>
+        </div>
+        <ul>
+          <li>Based on interviews with autonomous-driving professionals working in China: engineers, safety, and operations.</li>
+          <li>Reflects the legal and technical landscape as of 2026: what's deployed, what's assisted, and what the law actually says about fault.</li>
+          <li>Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.</li>
+          <li>The crashes and testimonies are dramatized; the numbers and the insights behind them are not.</li>
+        </ul>
+      </div>
+      <div class="stance reveal">
+        <div class="n">Where we stand</div>
+        <p><strong>Nowhere on purpose.</strong> This project takes no position on whether autonomous driving should be trusted. That's the one thing it deliberately refuses to do.</p>
+        <p>Instead it hands you the same uncertainty the people building and regulating these systems live with every day, and lets you sit in it. What you conclude is yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer>
+  <div class="wrap foot">
+    <div class="col">
+      <h4>Trust the Machine</h4>
+      <p>An interactive experience about when we should trust machines, and how much. Best on a laptop or desktop, with sound on. <span class="keys">Controls live in the car: A/D or arrow keys to steer, M to mute, Space or Enter to advance.</span></p>
+    </div>
+    <button class="restart" id="restart-foot" hidden type="button">Start over and clear my progress</button>
+  </div>
+</footer>
+
+<script>
+/* ---------- save (shares cytc.v1 with the chapters; merge-on-write) ---------- */
+var KEY='cytc.v1';
+function readStore(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
+
+var CHAPTERS=[
+  {n:1, file:'can_you_trust_your_car_chapter1.html', role:'You are the driver',      title:'The Night Drive',    q:'Nearly midnight on the expressway. Can you trust your car? Can it trust you?', emo:'Confidence'},
+  {n:2, file:'can_you_trust_your_car_chapter2.html', role:'You are the passenger',   title:'Inside the Machine', q:'You can finally see what the car sees. How does it perceive the world, and what does it miss?', emo:'Curiosity'},
+  {n:3, file:'can_you_trust_your_car_chapter3.html', role:'You are the evaluator',   title:'The Long Tail',      q:'A near-miss flags in ten thousand kilometres of logs. How do you prove a machine is safe enough?', emo:'Responsibility'},
+  {n:4, file:'can_you_trust_your_car_chapter4.html', role:'You are the regulator',   title:"Who's Responsible?", q:'A car under assistance struck a pedestrian. It saw her. When a machine causes harm, who answers for it?', emo:'Humility'},
+  {n:5, file:'can_you_trust_your_car_chapter5.html', role:'You are the city',        title:'The Trust Gap',      q:'Robotaxis want your district. Almost no one has ridden one. When is trust earned, and when is it built?', emo:'Reflection'}
+];
+
+function firstIncomplete(store){
+  for(var i=0;i<CHAPTERS.length;i++){ var c=store['chapter'+CHAPTERS[i].n]; if(!(c&&c.completed)) return CHAPTERS[i].n; }
+  return 6; // all done
+}
+
+function render(){
+  var store=readStore();
+  var next=firstIncomplete(store);
+  var doneCount=0;
+
+  var road=document.getElementById('road');
+  road.innerHTML='';
+  CHAPTERS.forEach(function(c){
+    var done=!!(store['chapter'+c.n]&&store['chapter'+c.n].completed);
+    if(done) doneCount++;
+    var state = done ? 'done' : (c.n===next ? 'current' : (c.n<next ? 'done' : 'upcoming'));
+    var badge = done ? 'Completed' : (c.n===next ? (next===1?'Start here':'You are here') : 'Chapter '+c.n);
+    var a=document.createElement('a');
+    a.className='stop reveal '+state;
+    a.href=c.file;
+    a.innerHTML=
+      '<span class="node" aria-hidden="true">'+(done?'✓':c.n)+'</span>'+
+      '<span class="badge">'+badge+'</span>'+
+      '<div class="top"><span class="role">'+c.role+'</span></div>'+
+      '<h3>'+c.title+'</h3>'+
+      '<p class="q">'+c.q+'</p>'+
+      '<span class="emo">'+c.emo+'</span>';
+    road.appendChild(a);
+  });
+  var prog = Math.max(0, Math.min(doneCount,CHAPTERS.length)) / CHAPTERS.length;
+  road.style.setProperty('--progress', prog.toFixed(3));
+
+  var began = doneCount>0 && next<=5;
+  var allDone = next===6;
+  var target = allDone ? CHAPTERS[0].file : CHAPTERS[Math.max(0,next-1)].file;
+  var label = doneCount===0 ? 'Begin the experience' : (allDone ? 'Replay from the start' : 'Resume Chapter '+next);
+  var begin=document.getElementById('begin'); begin.href=target; document.getElementById('begin-label').textContent=label;
+  var navcta=document.getElementById('nav-cta'); navcta.href=target;
+  document.getElementById('nav-cta-label').textContent = doneCount===0 ? 'Begin' : (allDone ? 'Replay' : 'Resume');
+  document.getElementById('restart-hero').hidden=!began;
+  document.getElementById('restart-foot').hidden=!(doneCount>0);
+
+  observeReveals();
+}
+
+/* ---------- start over: drop chapter keys, keep version + settings.muted ---------- */
+function startOver(){
+  var store=readStore();
+  for(var n=1;n<=5;n++){ delete store['chapter'+n]; }
+  try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){}
+  render();
+  document.getElementById('arc').scrollIntoView({behavior:(matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});
+}
+document.getElementById('restart-hero').addEventListener('click',startOver);
+document.getElementById('restart-foot').addEventListener('click',startOver);
+
+/* ---------- reveal on scroll ---------- */
+var revealObs=null;
+function observeReveals(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var items=document.querySelectorAll('.reveal:not(.in)');
+  if(reduce){ items.forEach(function(el){el.classList.add('in');}); return; }
+  if(!('IntersectionObserver' in window)){ items.forEach(function(el){el.classList.add('in');}); return; }
+  if(!revealObs){
+    revealObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+    },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+  }
+  items.forEach(function(el){ revealObs.observe(el); });
+}
+
+/* ---------- floating nav appears past the hero ---------- */
+(function(){
+  var nav=document.getElementById('nav'), hero=document.getElementById('top');
+  if(!('IntersectionObserver' in window)){ nav.classList.add('show'); return; }
+  new IntersectionObserver(function(e){ nav.classList.toggle('show', !e[0].isIntersecting); },{threshold:.08})
+    .observe(hero);
+})();
+
+/* ---------- hero backdrop: night-drive starfield + receding lane lines ---------- */
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv=document.getElementById('bg'), ctx=cv.getContext('2d');
+  var W=0,H=0,DPR=Math.min(window.devicePixelRatio||1,2), stars=[], t=0, raf=null, running=false;
+
+  function resize(){
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    var count=Math.round(Math.min(150, (W*H)/9500));
+    stars=[]; for(var i=0;i<count;i++){ stars.push({x:Math.random()*W, y:Math.random()*H*0.62, z:Math.random(), tw:Math.random()*Math.PI*2}); }
+  }
+
+  function frame(){
+    var vpx=W*0.5, vpy=H*0.42;
+    ctx.clearRect(0,0,W,H);
+
+    // stars — gentle twinkle + slow drift (neutral white, restrained)
+    for(var i=0;i<stars.length;i++){ var s=stars[i];
+      var a=0.22+0.42*(0.5+0.5*Math.sin(t*0.0015+s.tw))*s.z;
+      ctx.globalAlpha=a*0.6; ctx.fillStyle='#dfe4ee';
+      var r=s.z*1.3+0.3; ctx.fillRect(s.x, s.y, r, r);
+      s.x-=(0.015+s.z*0.04); if(s.x<0) s.x=W;
+    }
+    ctx.globalAlpha=1;
+
+    // road edges converging to the vanishing point (accent, very low alpha)
+    var baseY=H*1.02, halfW=W*0.62;
+    ctx.strokeStyle='rgba(138,176,224,0.09)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(vpx-halfW,baseY); ctx.lineTo(vpx,vpy); ctx.lineTo(vpx+halfW,baseY); ctx.stroke();
+
+    // dashed centre line — segments drifting toward the viewer
+    var N=14;
+    for(var k=0;k<N;k++){
+      var f=((k + (t*0.00026)) % 1);
+      var e=f*f;
+      var y=vpy + (baseY-vpy)*e;
+      var w=1+e*6.5, h=6+e*28;
+      ctx.globalAlpha=0.07+e*0.4; ctx.fillStyle='#8AB0E0';
+      ctx.fillRect(vpx-w/2, y-h, w, h);
+    }
+    ctx.globalAlpha=1;
+
+    t+=16; if(running) raf=requestAnimationFrame(frame);
+  }
+
+  function start(){ if(running||reduce) return; running=true; raf=requestAnimationFrame(frame); }
+  function stop(){ running=false; if(raf) cancelAnimationFrame(raf); }
+
+  window.addEventListener('resize', function(){ resize(); if(reduce) frame(); }, {passive:true});
+  document.addEventListener('visibilitychange', function(){ document.hidden?stop():start(); });
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){ e[0].isIntersecting?start():stop(); },{threshold:0.02})
+      .observe(document.getElementById('top'));
+  }
+  resize();
+  if(reduce){ frame(); } else { start(); }
+})();
+
+render();
+</script>
+</body>
+</html>

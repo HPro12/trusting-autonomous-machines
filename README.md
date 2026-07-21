@@ -18,7 +18,7 @@ The drive moves through five beats:
 
 The content is based on interviews with autonomous-driving industry professionals in China and reflects the legal and technical landscape as of 2026.
 
-> **Portability note:** Chapter 1 **inlines** Three.js so it stays a single, offline, double-clickable page. A `WEBSITE-TODO` comment marks where to swap the inlined library for a CDN importmap once the chapters are served as part of a website.
+> **Loading note:** The chapters now load Three.js from a CDN (`three` r128), so each file is lightweight (~30–90 KB) and served as part of the website. They need a network connection to fetch the 3D engine.
 
 ## Chapter 2 — Inside the Machine
 
@@ -82,23 +82,25 @@ All five chapters share one `localStorage` save (`cytc.v1`, merge-on-write): Cha
 
 ## Running it
 
-The chapter is a single static HTML file with all CSS and JavaScript inlined — no build step, dependencies, or server required.
+The site is plain static HTML/CSS/JS — no build step or dependencies. Start at `index.html`, the front door that frames the experience and launches Chapter 1.
 
-Open it directly in any modern browser:
+Because the chapters load Three.js from a CDN, serve the folder over http (rather than `file://`) so the 3D engine loads:
 
 ```sh
-open can_you_trust_your_car_chapter1.html
+python3 -m http.server 8000
+# then open http://localhost:8000/
 ```
 
-Or double-click the file in your file manager.
+To deploy, host the folder as static files (`index.html` as the entry). No server-side code is required.
 
-> **Note:** Each chapter inlines Three.js and runs from `file://` with no build or server. Audio is synthesized with the Web Audio API and stays silent until your first interaction; a mute toggle (top-right, or the **M** key) persists across reloads. See **Continuity** above for how the chapters chain together and share the `cytc.v1` save.
+> **Note:** No build step. Audio is synthesized with the Web Audio API and stays silent until your first interaction; a mute toggle (top-right, or the **M** key) persists across reloads. See **Continuity** above for how the chapters chain together and share the `cytc.v1` save.
 
 ## Project structure
 
 ```
 .
-├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Night Drive (3D, Three.js inlined)
+├── index.html                             # The website — front door + chapter road (launches Chapter 1)
+├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Night Drive (3D, Three.js via CDN)
 ├── can_you_trust_your_car_chapter2.html   # Chapter 2 — Inside the Machine
 ├── can_you_trust_your_car_chapter3.html   # Chapter 3 — The Long Tail
 ├── can_you_trust_your_car_chapter4.html   # Chapter 4 — Who's Responsible?

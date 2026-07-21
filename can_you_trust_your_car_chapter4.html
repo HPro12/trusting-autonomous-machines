@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Can You Trust Your Car? — Night Drive</title>
+<title>Can You Trust Your Car? — Who's Responsible?</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:#05070f;overflow:hidden}
@@ -169,6 +169,32 @@
   #review-boot .rb-bar{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,#3fe0f5,#6ea8ff);transition:width .25s linear}
   #review-boot .rb-status{color:#9aa6c2;letter-spacing:.1em;font-size:clamp(11px,1.3vw,13px);min-height:1.2em}
   @media (prefers-reduced-motion: reduce){ #review-boot .rb-scan,#review-boot .rb-dot{animation:none} #review-boot.gone{transition:none} }
+
+  /* ---- Chapter 4: evidence inspector + countdown ---- */
+  #evpanel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:min(580px,93vw);max-height:88vh;overflow:auto;display:none;
+    padding:clamp(18px,2.4vw,26px);border-radius:18px;background:linear-gradient(180deg,rgba(16,22,44,.96),rgba(9,13,28,.98));border:1px solid rgba(150,180,255,.16);box-shadow:0 22px 55px rgba(0,0,0,.6)}
+  #evpanel.show{display:block}
+  .ev-title{font-size:clamp(16px,2.2vw,21px);font-weight:800;margin-bottom:.3rem;text-wrap:balance}
+  .ev-sub{font-size:13px;color:#9aa6c2;line-height:1.5;margin-bottom:1rem}
+  .ev-list{display:flex;flex-direction:column;gap:9px;margin-bottom:1.1rem}
+  .ev-row{cursor:pointer;text-align:left;padding:12px 14px;border-radius:12px;background:rgba(20,28,52,.7);border:1px solid rgba(150,180,255,.14);transition:border-color .15s}
+  .ev-row:hover{border-color:#3fe0f5}
+  .ev-row.done{cursor:default}
+  .ev-r-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .ev-name{font-weight:700;font-size:15px;color:#eaf0ff}
+  .ev-tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .ev-tag.ok{color:#42d98a;background:rgba(66,217,138,.12);border:1px solid rgba(66,217,138,.4)}
+  .ev-tag.opaque{color:#ff5a6a;background:rgba(255,90,106,.12);border:1px solid rgba(255,90,106,.4)}
+  .ev-tag.wait{color:#9aa6c2;background:rgba(150,180,255,.08);border:1px solid rgba(150,180,255,.2)}
+  .ev-note{font-size:13px;line-height:1.55;color:#c7d2e6;margin-top:0;max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .ev-row.done .ev-note{max-height:180px;margin-top:9px}
+  #ev-go{width:100%;cursor:pointer;border:none;border-radius:11px;padding:12px 14px;font-weight:800;font-size:15px;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a}
+  #ev-go:disabled{filter:grayscale(.7);opacity:.5;cursor:default}
+  #d-timer{width:min(420px,82vw);margin:0 auto clamp(16px,2.6vh,26px);display:flex;flex-direction:column;gap:6px}
+  #d-timer .dt-label{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#ff8a95;font-weight:700}
+  #d-timer .dt-track{height:6px;border-radius:4px;background:#161d2c;overflow:hidden}
+  #d-timer .dt-fill{height:100%;width:100%;border-radius:4px;background:linear-gradient(90deg,#42d98a,#f5b13f,#ff5a6a);transition:width .25s linear}
+  @media (prefers-reduced-motion: reduce){ .ev-note,#d-timer .dt-fill{transition:none} }
 </style>
 </head>
 <body>
@@ -785,22 +811,46 @@ window.AUDIO=(function(){
 </script>
 
 <script>
-/* ========================= CHAPTER 3 DIRECTOR — safety-review control room over 3D footage ========================= */
+/* ========================= CHAPTER 4 DIRECTOR — accident investigation over reconstructed 3D footage =========================
+   Reuses the shared AUDIO + TD engine (cockpit hidden, night→rain reconstruction). All Chapter-4 chrome text is set here in
+   initChrome() so the copied HTML stays generic. Grounded in interviews with China AV professionals (anonymized). */
 (function(){
   "use strict";
   const $=id=>document.getElementById(id);
   const wait=ms=>new Promise(r=>setTimeout(r,ms));
   const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fmt=n=>Math.round(n).toLocaleString('en-US');
 
-  /* ---- state + cytc.v1 ---- */
-  const S={ classify:null, reco:null, maxMiles:3000000 };
+  /* ---- state + cytc.v1 (merge-on-write) ---- */
+  const S={ fault_t:null, fault_e:null, policy:null, inspected:0 };
   function readStore(){ try{return JSON.parse(localStorage.getItem('cytc.v1'))||{};}catch(e){return {};} }
   function save(){ try{ const s=readStore(); s.version=1; s.settings=Object.assign({muted:false},s.settings);
-    s.chapter3={completed:true,completedAt:new Date().toISOString(),classify:S.classify,reco:S.reco,milesReviewed:S.maxMiles};
+    s.chapter4={completed:true,completedAt:new Date().toISOString(),faultTestimony:S.fault_t,faultEvidence:S.fault_e,policy:S.policy};
     localStorage.setItem('cytc.v1',JSON.stringify(s)); }catch(e){} }
 
-  /* ---- footage detection box (projects onto the reviewed subject) ---- */
+  /* ---- one-time chrome text (keeps the copied HTML content-neutral) ---- */
+  function initChrome(){
+    const set=(id,html)=>{const e=$(id);if(e)e.innerHTML=html;};
+    // start screen
+    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent="Can You Trust Your Car? · Chapter 4";
+      st.querySelector('.title').textContent="Who's Responsible?";
+      st.querySelector('.sub').textContent="A car was driving itself when someone got hurt. You're the regulator now. The footage, the logs, and three people who each swear it wasn't their fault are on your desk. Someone has to answer for this.";
+      st.querySelector('#startbtn').textContent="Open the case file →"; }
+    // boot
+    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent="ACCIDENT INVESTIGATION";
+      rb.querySelector('.rb-sub').textContent="Incident file · Case #A-2291"; }
+    // case header
+    set('wstop','<span class="rec"><span class="recdot"></span> REC · INCIDENT REVIEW</span>'
+      +'<span id="ws-log">Case #A-2291 · G2 Expressway · 23:04</span>'
+      +'<span id="ws-km"><b>1</b> <small>INJURED</small></span>');
+    // transport (decorative frozen reconstruction timeline)
+    set('scrub','<button id="scan-btn">▶ Play reconstruction</button>'
+      +'<div class="sc-track"><div class="sc-fill" id="sc-fill"></div><div class="sc-mark" id="sc-mark"></div></div>'
+      +'<span id="sc-time">reconstruction · 0:00</span>');
+    // footage label
+    const fbl=document.querySelector('#footbox .fb-lbl'); if(fbl)fbl.textContent='PEDESTRIAN · DETECTED';
+  }
+
+  /* ---- detection box over the reconstructed subject (same projector as Ch3) ---- */
   let footOn=false;
   (function footLoop(){ const fb=$('footbox');
     if(footOn&&window.TD&&TD.pedestrian&&TD.pedestrian.visible){ const cam=TD.camera,p=TD.pedestrian.position.clone(); p.y+=1.0; p.project(cam);
@@ -809,7 +859,7 @@ window.AUDIO=(function(){
       else fb.classList.remove('show'); }
     else fb.classList.remove('show'); requestAnimationFrame(footLoop); })();
 
-  /* ---- beats ---- */
+  /* ---- beats (typewriter dialogue) ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
     who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
@@ -824,9 +874,10 @@ window.AUDIO=(function(){
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
     for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
 
-  /* ---- decisions ---- */
-  let curDecision=null,decResolve=null,decKey=null;
+  /* ---- decisions (with optional countdown for the policy call) ---- */
+  let curDecision=null,decResolve=null,decKey=null,timerRAF=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
+  function clearTimer(){ if(timerRAF){cancelAnimationFrame(timerRAF);timerRAF=null;} const t=$('d-timer'); if(t)t.remove(); }
   function askDecision(id){ const c=DECISIONS[id]; if(!c)return; if(window.TD)TD.pause(true);
     const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
     $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
@@ -835,12 +886,27 @@ window.AUDIO=(function(){
       b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
     curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
-    document.addEventListener('keydown',decKey); }
-  function choose(id,k){ if(curDecision!==id)return; curDecision=null; if(decKey){document.removeEventListener('keydown',decKey);decKey=null;}
-    const c=DECISIONS[id],o=c.opts.find(x=>x.k===k); const btn=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(btn)btn.classList.add('picked');
-    if(window.AUDIO)AUDIO.sfx('ui'); if(id==='classify')S.classify=k; else if(id==='reco')S.reco=k;
-    setTimeout(()=>{ $('decision').classList.remove('show'); showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; if(r)r(k); }); },240);
+    document.addEventListener('keydown',decKey);
+    if(c.timed){ startCountdown(id,c.timed,c.timeoutKey); }
   }
+  function startCountdown(id,secs,defKey){ clearTimer();
+    const t=document.createElement('div'); t.id='d-timer';
+    t.innerHTML='<div class="dt-label"><span>The board convenes</span><span id="dt-num"></span></div><div class="dt-track"><div class="dt-fill" id="dt-fill"></div></div>';
+    const dec=$('decision'); dec.insertBefore(t,$('d-eyebrow'));
+    const t0=performance.now(),ms=secs*1000;
+    (function tick(){ const el=performance.now()-t0,left=Math.max(0,ms-el),f=$('dt-fill'),n=$('dt-num');
+      if(!f){return;} f.style.width=(left/ms*100)+'%'; if(n)n.textContent=Math.ceil(left/1000)+'s';
+      if(left<=0){ if(curDecision===id){ if(window.AUDIO)AUDIO.sfx('warn'); choose(id,defKey,true); } return; }
+      timerRAF=requestAnimationFrame(tick); })();
+  }
+  function choose(id,k,timedout){ if(curDecision!==id)return; curDecision=null; clearTimer();
+    if(decKey){document.removeEventListener('keydown',decKey);decKey=null;}
+    const c=DECISIONS[id],o=c.opts.find(x=>x.k===k); const btn=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(btn)btn.classList.add('picked');
+    if(window.AUDIO)AUDIO.sfx('ui'); S[c.store]=timedout?('timeout:'+k):k;
+    setTimeout(()=>{ $('decision').classList.remove('show'); showOutcome(timedout&&c.timeoutOutcome?c.timeoutOutcome:o.outcome,()=>{ const r=decResolve; decResolve=null; if(r)r(k); }); },240);
+  }
+
+  /* ---- fact cutscene + insight beat ---- */
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
@@ -850,130 +916,215 @@ window.AUDIO=(function(){
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1400); }
 
-  /* ---- scan the logs → near-miss ---- */
-  function scanLogs(){ return new Promise(res=>{ const btn=$('scan-btn'); let km=0; const target=6213;
-    btn.disabled=false;
-    btn.onclick=()=>{ btn.disabled=true; if(window.AUDIO)AUDIO.sfx('ui');
-      const iv=setInterval(()=>{ km=Math.min(target,km+170); $('km-n').textContent=fmt(km); $('sc-fill').style.width=(km/10000*100)+'%'; $('sc-time').textContent='km '+fmt(km)+' / 10,000';
-        if(km>=target){ clearInterval(iv); $('flag').classList.add('show'); $('sc-mark').classList.add('show');
-          if(window.TD){ TD.spawnPedestrian(30); TD.pause(true); } footOn=true;
-          if(window.AUDIO){ AUDIO.setScene('tense'); AUDIO.sfx('warn'); }
-          setTimeout(res,1000); } },38);
-    };
+  /* ---- the reconstruction: rain, L2 handover, a pedestrian, impact ---- */
+  function showTakeover(main,sub){ const e=$('edgewarn'); e.innerHTML='⚠ '+main+'<small>'+sub+'</small>'; e.classList.add('show'); }
+  function hideTakeover(){ $('edgewarn').classList.remove('show'); }
+  async function reconstruction(){
+    if(!window.TD) return;
+    TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.mood('rain'); TD.state.started=true; TD.pause(false);
+    if(window.AUDIO)AUDIO.setScene('tense');
+    $('sc-time').textContent='reconstruction · 0:01'; $('sc-fill').style.width='18%';
+    await wait(RM?200:1100);
+    showTakeover('TAKEOVER REQUESTED','2.0 s to respond · the driver’s hands were off the wheel'); if(window.AUDIO)AUDIO.sfx('warn');
+    $('sc-time').textContent='reconstruction · 0:03'; $('sc-fill').style.width='55%';
+    await wait(RM?200:700);
+    TD.spawnPedestrian(46); footOn=true;
+    await wait(RM?150:450);
+    await new Promise(res=>{ let guard=0;
+      (function check(){ if(!TD.pedestrian){res();return;} const d=TD.pedestrian.position.z-TD.car.position.z; guard++;
+        if(d>=-4.2 || guard>1600){ TD.crashFx(); TD.pause(true); hideTakeover();
+          $('sc-mark').classList.add('show'); $('sc-fill').style.width='100%'; $('sc-time').textContent='reconstruction · 0:04 · IMPACT';
+          $('flag').innerHTML='⚠ COLLISION · 23:04:37<small>The vehicle struck a pedestrian crossing the carriageway. One person injured.</small>';
+          $('flag').classList.add('show'); setTimeout(res,RM?200:1000); return; }
+        requestAnimationFrame(check); })(); });
+  }
+
+  /* ---- evidence inspector (the black box: complete on the "what", opaque on the "why") ---- */
+  const EVIDENCE=[
+    {name:'Exterior perception log',tag:'ok',tagtx:'Complete',
+      note:'The pedestrian was detected 2.3 s before impact and tracked continuously. Classification confidence 0.91. The car saw her clearly.'},
+    {name:'Vehicle actuator log',tag:'ok',tagtx:'Complete',
+      note:'Brakes: never applied. Accelerator: pressed 0.6 s before impact. Steering: no evasive input. Every actuator is accounted for.'},
+    {name:'Driver-monitoring log',tag:'ok',tagtx:'Complete',
+      note:'Hands off the wheel for 41 s. Eyes off the road at the moment the takeover alert fired. The human was not ready to be the fallback.'},
+    {name:'Decision-layer reasoning',tag:'opaque',tagtx:'Unreadable',
+      note:'Why did the system hand control back instead of braking itself, when it had already detected her? Model output only. There is no step-by-step trace to reconstruct. The one log that would assign fault cannot be read.'}
+  ];
+  function evidenceReview(){ return new Promise(res=>{
+    let panel=$('evpanel');
+    if(!panel){ panel=document.createElement('div'); panel.id='evpanel'; document.body.appendChild(panel); }
+    panel.innerHTML='<div class="ev-title">The black box — four logs from the vehicle</div>'
+      +'<div class="ev-sub">The manufacturer already holds all of it. Inspect each log. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.</div>'
+      +'<div class="ev-list" id="ev-list"></div>'
+      +'<button id="ev-go" disabled>Close the inquiry →</button>';
+    EVIDENCE.forEach((e,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i;
+      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+e.name+'</span><span class="ev-tag wait">Not opened</span></div><div class="ev-note">'+e.note+'</div>';
+      row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done');
+        row.querySelector('.ev-tag').className='ev-tag '+e.tag; row.querySelector('.ev-tag').textContent=e.tagtx;
+        if(window.AUDIO)AUDIO.sfx(e.tag==='opaque'?'warn':'ui'); S.inspected++;
+        if(S.inspected>=EVIDENCE.length) $('ev-go').disabled=false; };
+      $('ev-list').appendChild(row); });
+    panel.classList.add('show'); if(window.TD)TD.pause(true);
+    $('ev-go').onclick=()=>{ if($('ev-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
   }); }
 
-  /* ---- the statistical-impossibility panel ---- */
-  function statsInteract(){ return new Promise(res=>{ if(window.TD)TD.pause(true); const panel=$('stats'); panel.classList.add('show');
-    let miles=3000000;
-    function render(){ S.maxMiles=Math.max(S.maxMiles,miles); $('st-miles').textContent=fmt(miles);
-      const pct=Math.max(0,Math.min(100,(Math.log10(miles)-6)/(Math.log10(11e9)-6)*100)); $('st-fill').style.width=pct+'%';
-      let note;
-      if(miles<275e6) note="Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.";
-      else if(miles<11e9) note="You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.";
-      else note="Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.";
-      $('st-note').innerHTML=note;
-    }
-    render();
-    $('st-run').onclick=()=>{ miles=Math.min(miles*10,5e10); if(window.AUDIO)AUDIO.sfx('ui'); render(); };
-    $('st-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
-  }); }
-
-  /* ---- content ---- */
+  /* ---- content: beats, decisions, insight quotes (anonymized, from primary interviews) ---- */
   const BEATS={
-    intro:[ {who:'', tx:"You've left the driver's seat. Now you're at a review station, and ten thousand kilometres of fleet footage wait on the screen."},
-            {who:'', tx:"Your job isn't to drive. It's to decide whether this car is safe enough to put on the road for everyone."} ],
-    review_intro:[ {who:'', tx:"Most of it is nothing. Clean, uneventful kilometres. Scan the logs until something flags."} ],
-    nearmiss:[ {who:'System', tx:"NEAR-MISS · km 6,213. A pedestrian stepped off the kerb. The car braked with four tenths of a second to spare."},
-               {who:'You', tx:"Four tenths of a second. Was that the system working, or getting lucky once?"} ],
-    stats_intro:[ {who:'You', tx:"One near-miss in ten thousand kilometres. So how many kilometres would it take to prove this car is actually safe?"} ],
-    reco_intro:[ {who:'You', tx:"You can't test your way to certainty. But the car ships or it doesn't, and that call is yours."} ]
+    intro:[ {who:'', tx:"You've never sat in this car. You weren't on that road. Everything you'll ever know about that night is in this room."},
+            {who:'', tx:"A car was driving itself under L2 assistance when it struck a pedestrian on the G2 Expressway. She survived. Barely. Now someone answers for it, and you decide who."} ],
+    recon_lead:[ {who:'', tx:"Start with the reconstruction. The car's own sensors stitched it together. Watch it once, the way the machine saw it."} ],
+    post_crash:[ {who:'You', tx:"It saw her. The detection box sits on her two full seconds out. Then it handed the wheel to a driver who wasn't watching."},
+                 {who:'You', tx:"Three people are waiting to tell you whose fault that was. No two of them agree."} ],
+    testi_lead:[ {who:'', tx:"Testimony. Three accounts of the same four seconds."} ],
+    t_engineer:[ {who:'Engineer who certified the system', tx:"The car was in L2. At 23:04:35 it issued a takeover request, exactly as built. In L2 the human is the fallback. We disclose that at purchase and on every drive."},
+                 {who:'Engineer who certified the system', tx:"The logs leave no room. The accelerator went down, not the brake. The system did its job. The man behind the wheel did not do his."} ],
+    t_legal:[ {who:'Counsel for the manufacturer', tx:"The handover met specification. Responsibility passed to the driver the instant the alert fired. The model stayed inside its defined domain."},
+              {who:'Counsel for the manufacturer', tx:"And we hid nothing. You hold the complete dataset, every parameter from the road to the cabin. Nobody had to subpoena it."} ],
+    t_family:[ {who:'Family of the injured pedestrian', tx:"It saw her. You just watched it see her. If it could warn a sleeping man, why could it not stop the car itself?"},
+               {who:'Family of the injured pedestrian', tx:"Two seconds. You want to tell me two seconds of a stranger's inattention is worth her spine. People forgive a human driver a mistake. Why does this machine get forgiven nothing, or everything?"} ],
+    ev_lead:[ {who:'You', tx:"Testimony is three stories. The car kept its own record. Open the black box."} ],
+    ev_after:[ {who:'You', tx:"Three logs are perfect. The fourth, the one that says why, can't be read at all. You have the whole crash except the single fact that decides fault."} ],
+    policy_lead:[ {who:'', tx:"This case won't be the last. The board wants more than a verdict on one crash. It wants a rule for the next thousand, and it wants it now."} ]
   };
   const DECISIONS={
-    classify:{eyebrow:'01 · Classify the near-miss', q:'What was the near-miss at km 6,213?',
+    fault_testimony:{store:'fault_t',eyebrow:'01 · On the testimony alone', q:'Three accounts, one crash. Where does the fault sit right now?',
       opts:[
-        {k:'A',t:'A software bug', outcome:{big:'Bug?',label:'Something to fix',danger:'none',
-          ctx:"Maybe. You can't reproduce it, and the logs read nominal. A bug you can't reproduce is the hardest kind to fix, and the hardest to rule out.",
-          stats:[{v:'Unrepro- ducible',l:'Status',c:'ok'}],ins:'Calling it a bug promises a fix. Promising a fix you cannot verify is its own risk.',who:'Simulation lead, AV program'}},
-        {k:'B',t:'A rare edge case', outcome:{big:'Long tail',label:'Too rare to train, too common to ignore',danger:'none',
-          ctx:'The long tail: a situation too rare to have appeared in training, yet certain to recur somewhere across a whole fleet, every day.',
-          stats:[{v:'Rare',l:'Frequency',c:'ok'},{v:'Fleet-wide',l:'Exposure',c:'bad'}],ins:'The edge cases are individually unlikely and collectively inevitable. That is the whole problem of proving safety.',who:'Safety-validation engineer'}},
-        {k:'C',t:'Acceptable statistical risk', outcome:{big:'Risk',label:'A number wearing a value',danger:'mid',
-          ctx:"Defensible. Every system has a failure rate, humans included. But 'acceptable' is a judgment about who bears the risk, dressed up as a statistic.",
-          stats:[{v:'Non-zero',l:'Failure rate',c:'ok'}],ins:'Someone decides which failure rate is acceptable, and someone else lives with it. The math cannot make that choice for you.',who:'Policy researcher'}}
+        {k:'A',t:'The driver failed the handover', s:'He was the fallback and he wasn’t ready',
+          outcome:{big:'The fallback',label:'A backup who wasn’t watching',danger:'none',
+            ctx:'It reads clean. L2 makes the human the safety net, and this net was asleep. A net that only holds when you don’t need it barely counts as one.',
+            stats:[{v:'41 s',l:'Hands off the wheel',c:'bad'},{v:'2.0 s',l:'Time to react',c:'bad'}],
+            ins:'On L2 the human is the backup. If the car drives badly it tells a person to take over. When that person mis-operates, the fault lands on them, and the only proof lives in the maker’s black box.',who:'Functional-safety engineer, AV program'}},
+        {k:'B',t:'The manufacturer warned too late', s:'It detected her and handed off anyway',
+          outcome:{big:'2.0 s',label:'The warning, and the whole window',danger:'mid',
+            ctx:'The car had already seen her when it asked a distracted human to save the day in two seconds. The maker designed the handover that way. The driver didn’t.',
+            stats:[{v:'2.3 s',l:'It had seen her',c:'ok'},{v:'0',l:'Brakes applied',c:'bad'}],
+            ins:'Nobody advertises what a finished system looks like. Companies say the model went from thirty points to eighty. They never say what the finish line is, or whether they reach it.',who:'AV deployment & data lead'}},
+        {k:'C',t:'It can’t be said yet', s:'The machine can’t explain itself',
+          outcome:{big:'Why?',label:'The question the logs won’t answer',danger:'none',
+            ctx:'Three certainties rest on one missing fact: why the car warned instead of braking. Without that, fault is a story, not a finding.',
+            stats:[{v:'3 stories',l:'On the record',c:'ok'},{v:'1 crash',l:'To explain',c:'bad'}],
+            ins:'The deepest problem isn’t the driving. A deep-learning model can’t explain itself. After a crash you can’t rebuild the decision step by step, and without that you can’t assign fault.',who:'AV perception & mapping engineer'}}
       ]},
-    reco:{eyebrow:'02 · Your recommendation', q:'Under that uncertainty, what do you recommend?',
+    fault_evidence:{store:'fault_e',eyebrow:'02 · With the black box open', q:'Everything is recorded except the reason. What can you conclude?',
       opts:[
-        {k:'A',t:'Deploy: it beats humans already', outcome:{big:'Ship',label:'Bet on better-than-average',danger:'mid',
-          ctx:'You ship it, betting that better-than-human on average is good enough while the rare cases get counted in the field.',
-          stats:[{v:'Scale',l:'Upside',c:'good'},{v:'Field risk',l:'Downside',c:'bad'}],ins:'This bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.',who:'Deployment lead'}},
-        {k:'B',t:'Keep testing: the tail is open', outcome:{big:'Hold',label:'Wait for a proof that never arrives',danger:'mid',
-          ctx:'You hold it back until the long tail is closed. It never fully closes.',
-          stats:[{v:'Safer lot',l:'Upside',c:'ok'},{v:'Helps no one',l:'Downside',c:'bad'}],ins:'The safest car is also the one parked in a test lot, helping no one. Waiting has a body count too.',who:'Program director'}},
-        {k:'C',t:'Limited, supervised rollout', outcome:{big:'Pilot',label:'Real roads, real limits',danger:'none',
-          ctx:'Mapped zones, a safety driver, tight operating limits. Real roads, real data, contained risk.',
-          stats:[{v:'Contained',l:'Risk',c:'good'},{v:'Slow',l:'Scale',c:'ok'}],ins:'The honest answer to a question with no clean one, and the slowest path to scale.',who:'Regulatory affairs lead'}}
-      ]}
+        {k:'A',t:'Fault is the driver’s', s:'The data shows his hands, his pedal',
+          outcome:{big:'On him',label:'What the record proves',danger:'none',
+            ctx:'The actuator and driver logs are complete and damning: hands off, eyes off, wrong pedal. You can prove what the man did. You can’t prove the car couldn’t have done better.',
+            stats:[{v:'Complete',l:'Driver log',c:'ok'},{v:'Unreadable',l:'Why it handed off',c:'bad'}],
+            ins:'The car owns the full dataset: the road, its own braking and steering, the driver’s every move, down to whether he was asleep or stamped the wrong pedal. The maker needs nobody to hand it over.',who:'AV commercialization strategist'}},
+        {k:'B',t:'Fault is the manufacturer’s', s:'It detected and chose not to brake',
+          outcome:{big:'On them',label:'A choice, not a limit',danger:'mid',
+            ctx:'It saw her, tracked her, and gave control back instead of stopping. Call that a design decision. You still can’t show the reasoning, because none of it exists in a form you can read.',
+            stats:[{v:'0.91',l:'Detection confidence',c:'ok'},{v:'0',l:'Derivations available',c:'bad'}],
+            ins:'The old rule-based stack was traceable. Every module’s input and output followed from the last. A deep-learning model is a pile of fitted parameters. Show it something new and you get the result, never the reason.',who:'AV algorithm developer'}},
+        {k:'C',t:'Undetermined: the "why" is unreconstructable', s:'The one log that matters is opaque',
+          outcome:{big:'Opaque',label:'Complete data, no explanation',danger:'none',
+            ctx:'Hundreds of parameters, and not one says why. You can describe the crash to the millisecond and still miss the only question a court asks. This is the honest finding and the uncomfortable one.',
+            stats:[{v:'Hundreds',l:'Parameters logged',c:'ok'},{v:'None',l:'Explain the decision',c:'bad'}],
+            ins:'Every carmaker draws the edge-case line in a different place. Without a higher, unified national law, that divergence turns into a real public-safety threat.',who:'Robotaxi product & operations manager'}}
+      ]},
+    policy:{store:'policy',eyebrow:'03 · Draft the recommendation', q:'One crash won’t be the last. What rule should govern the next thousand?', urgent:true, timed:35, timeoutKey:'D',
+      opts:[
+        {k:'A',t:'Mandate full transparency', s:'Publish every incident’s black box',
+          outcome:{big:'Open it',label:'Accountability in daylight',danger:'none',
+            ctx:'Every crash file goes public. Media, insurers, and the public do the scrutiny. Trust gets earned in the open. Each rare failure also gets its own headline, and one bad night can freeze the whole industry.',
+            stats:[{v:'Public',l:'Scrutiny',c:'good'},{v:'Volatile',l:'Trust',c:'bad'}],
+            ins:'In China we don’t publish every incident. The government acts as steward and manages what the public sees. In the US, safety reports are filed publicly and media and insurers push. Neither is obviously right.',who:'AV commercialization strategist'}},
+        {k:'B',t:'Keep the state as data steward', s:'Curated summaries, not raw files',
+          outcome:{big:'Hold it',label:'Managed trust',danger:'mid',
+            ctx:'The regulator keeps the black boxes and releases what the public needs. It kept the early electric-car fires from stalling the transition. It also asks people to trust an institution instead of the evidence, right up until they stop.',
+            stats:[{v:'Stable',l:'Public mood',c:'ok'},{v:'Opaque',l:'To the public',c:'bad'}],
+            ins:'China’s playbook runs deploy first, regulate later. Let it run, then tighten. Every real incident becomes the trigger that shapes the next rule, the insurance, the liability boundary.',who:'AV deployment & data lead'}},
+        {k:'C',t:'Require interpretability to certify', s:'No approval without a readable "why"',
+          outcome:{big:'Prove why',label:'A bar the tech may not clear',danger:'mid',
+            ctx:'No system ships until its decisions can be rebuilt and a national edge-case standard is met. It closes the fault gap you just hit. It may also be a bar today’s deep-learning cars cannot reach.',
+            stats:[{v:'Answerable',l:'Fault',c:'good'},{v:'Slower',l:'Deployment',c:'ok'}],
+            ins:'Governments pick the safety floor over the ceiling. The sensor-heavy, redundant route runs the harder roads. The data-only bet stays on simpler ones until its record proves out.',who:'AV commercialization strategist'}}
+      ],
+      timeoutOutcome:{big:'Gone',label:'The board moved on without you',danger:'high',
+        ctx:'You ran out the clock. No rule gets written, so the current framework stands: deploy first, converge the rules later, one incident at a time. Not deciding was a decision, and it favoured the status quo.',
+        stats:[{v:'No rule',l:'Written today',c:'bad'},{v:'Status quo',l:'Prevails',c:'ok'}],
+        ins:'One bad incident like Wuhan and policy tightens across the whole country overnight. Shifting government policy is the single biggest risk the industry manages.',who:'Robotaxi test-operations lead'}}
   };
-  function verdict(){ const k=S.reco;
-    if(k==='A') return "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.";
-    if(k==='B') return "You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.";
-    return "You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.";
+
+  function verdict(){
+    const p=(S.policy||'').replace('timeout:','');
+    const timedout=(S.policy||'').startsWith('timeout');
+    if(timedout) return "You let the clock run out, and the status quo won by default: deploy first, tighten later, one crash at a time. That rule already governs the road tonight. You declined to change it.";
+    if(p==='A') return "You chose daylight. Every black box opens to the public, and accountability stops depending on trust in an institution. You also accepted that the technology now lives and dies by its worst nights, broadcast in full.";
+    if(p==='B') return "You kept the state between the public and the data, betting a trusted steward calms a nervous public better than raw files would. It worked for the early electric cars. It holds right up until the public stops trusting the steward.";
+    if(p==='C') return "You asked a machine to explain itself before it earns the road. That one rule would have answered tonight’s crash. It may also be a bar the current cars cannot clear. You chose the answerable over the fast.";
+    return "You made the call. There was no clean one to make.";
   }
 
   /* ---- debrief / finale ---- */
   function setLabel(m,t){ const s=m.querySelector('.ml span'); if(s)s.textContent=t; }
-  function renderDebrief(){ save();
+  function renderDebrief(){ save(); const prior=readStore();
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Km reviewed'); if(meters[1]) setLabel(meters[1],'Proof reached');
-    const proofPct=Math.round(Math.max(0,Math.min(100,(Math.log10(S.maxMiles)-6)/(Math.log10(11e9)-6)*100)));
-    $('db-trust-v').textContent='10,000'; $('db-att-v').textContent=proofPct+'%';
-    setTimeout(()=>{ $('db-trust-f').style.width='100%'; $('db-att-f').style.width=proofPct+'%'; },90);
-    const cl={A:'Called it a bug',B:'Called it an edge case',C:'Called it acceptable risk'}[S.classify]||'—';
-    const rc={A:'Deploy',B:'Keep testing',C:'Limited rollout'}[S.reco]||'—';
-    const rows=[ {scene:'The near-miss · km 6,213',call:cl,cons:{t:'Classified',c:''}},
-      {scene:'Proving it safe',call:fmt(S.maxMiles)+' mi run',cons:{t:proofPct>=60?'~human bar':'far short',c:proofPct>=60?'':'bad'}},
-      {scene:'Your recommendation',call:rc,cons:{t:'On the record',c:S.reco==='C'?'good':''}} ];
-    document.querySelector('#debrief .db-head').textContent='Chapter 3 · The Long Tail';
-    document.querySelector('#debrief .db-title').textContent='The call is yours';
+    if(meters[0]) setLabel(meters[0],'Fault, on the record'); if(meters[1]) setLabel(meters[1],'The "why", recoverable');
+    $('db-trust-v').textContent = ({A:'Driver',B:'Maker',C:'Undet.'}[S.fault_e]||'—');
+    $('db-att-v').textContent='0%';
+    setTimeout(()=>{ $('db-trust-f').style.width='100%'; $('db-att-f').style.width='4%'; },90);
+    const ft={A:'Blamed the driver',B:'Blamed the maker',C:'Held: cannot be said'}[S.fault_t]||'—';
+    const fe={A:'Fault: the driver',B:'Fault: the maker',C:'Undetermined'}[S.fault_e]||'—';
+    const pol=(S.policy||'').startsWith('timeout')?'Ran out the clock':({A:'Mandate transparency',B:'State as steward',C:'Require interpretability'}[S.policy]||'—');
+    const rows=[ {scene:'On the testimony',call:ft,cons:{t:'Provisional',c:''}},
+      {scene:'With the black box open',call:fe,cons:{t:S.fault_e==='C'?'Honest':'On the record',c:S.fault_e==='C'?'good':''}},
+      {scene:'Your recommendation',call:pol,cons:{t:(S.policy||'').startsWith('timeout')?'By default':'Filed',c:(S.policy||'').startsWith('timeout')?'bad':'good'}} ];
+    document.querySelector('#debrief .db-head').textContent='Chapter 4 · Who’s Responsible?';
+    document.querySelector('#debrief .db-title').textContent='Someone had to answer';
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
-    $('db-verdict').textContent=verdict();
+    let v=verdict();
+    if(prior.chapter3&&prior.chapter3.reco){ const rc={A:'ship it',B:'hold it back',C:'a supervised pilot'}[prior.chapter3.reco];
+      if(rc) v+=" Back when you were the evaluator, you chose "+rc+". The car in tonight’s file was already on the road.";
+    }
+    $('db-verdict').textContent=v;
+    const b=$('db-ch2'); b.textContent='Who decides if it deploys? →';
     $('debrief').classList.add('show');
   }
-  function continueCh4(){ save();
-    try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished Chapter 3 of Can You Trust Your Car. Continue to Chapter 4.'); return; } }catch(e){}
-    location.href='can_you_trust_your_car_chapter4.html';
+  function continueCh5(){ save();
+    try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished Chapter 4 of Can You Trust Your Car. Continue to Chapter 5.'); return; } }catch(e){}
+    location.href='can_you_trust_your_car_chapter5.html';
   }
-  $('db-ch2').addEventListener('click',continueCh4);
-  $('db-replay').addEventListener('click',()=>location.reload());
 
-  /* ---- director ---- */
-  function reviewBoot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
+  /* ---- boot ---- */
+  function boot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
     const bar=$('rb-bar'), status=$('rb-status');
-    const steps=[[8,'Loading fleet footage…'],[38,'Indexing 10,000 km of logs…'],[74,'Calibrating detection overlay…'],[100,'Ready.']];
+    const steps=[[10,'Sealing the incident file…'],[42,'Loading vehicle black box…'],[78,'Reconstructing from sensor logs…'],[100,'Ready.']];
     if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
     let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
       else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
   }); }
+
+  /* ---- director ---- */
   async function begin(){ if(STORY.running)return; STORY.running=true; const st=$('start'); if(st)st.classList.add('hide');
-    if(window.TD){ TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.state.started=true; TD.mood('day'); }
-    await reviewBoot();
+    await boot();
     $('wstop').classList.add('show');
     try{
       await beats(BEATS.intro);
       $('scrub').classList.add('show');
-      await beats(BEATS.review_intro);
-      await scanLogs();
-      await beats(BEATS.nearmiss);
-      await ask('classify');
+      await beats(BEATS.recon_lead);
+      await reconstruction();
+      await beats(BEATS.post_crash);
+      await beats(BEATS.testi_lead);
+      await beats(BEATS.t_engineer);
+      await beats(BEATS.t_legal);
+      await beats(BEATS.t_family);
+      await ask('fault_testimony');
       footOn=false; $('footbox').classList.remove('show'); $('flag').classList.remove('show'); if(window.TD)TD.hidePedestrian();
-      await beats(BEATS.stats_intro);
-      await statsInteract();
-      await beats(BEATS.reco_intro);
-      await ask('reco');
+      await beats(BEATS.ev_lead);
+      await evidenceReview();
+      await beats(BEATS.ev_after);
+      await ask('fault_evidence');
+      await beats(BEATS.policy_lead);
+      await ask('policy');
       $('scrub').classList.remove('show'); $('wstop').classList.remove('show');
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  initChrome();
+  $('db-ch2').addEventListener('click',continueCh5);
+  $('db-replay').addEventListener('click',()=>location.reload());
   const STORY={running:false,begin,S}; window.STORY=STORY;
 })();
 </script>

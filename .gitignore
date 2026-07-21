@@ -1,2 +1,5 @@
 .DS_Store
 .vendor/
+
+# Primary-research interview material — kept local only (real names + large media)
+Interviews/

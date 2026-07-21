@@ -169,6 +169,41 @@
   #review-boot .rb-bar{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,#3fe0f5,#6ea8ff);transition:width .25s linear}
   #review-boot .rb-status{color:#9aa6c2;letter-spacing:.1em;font-size:clamp(11px,1.3vw,13px);min-height:1.2em}
   @media (prefers-reduced-motion: reduce){ #review-boot .rb-scan,#review-boot .rb-dot{animation:none} #review-boot.gone{transition:none} }
+
+  /* ---- Chapter 5: deployment dossier (charts + pitch fact-check) ---- */
+  #dossier{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:min(620px,94vw);max-height:90vh;overflow:auto;display:none;
+    padding:clamp(18px,2.4vw,26px);border-radius:18px;background:linear-gradient(180deg,rgba(16,22,44,.96),rgba(9,13,28,.98));border:1px solid rgba(150,180,255,.16);box-shadow:0 22px 55px rgba(0,0,0,.6)}
+  #dossier.show{display:block}
+  .ds-title{font-size:clamp(16px,2.2vw,21px);font-weight:800;margin-bottom:.3rem;text-wrap:balance}
+  .ds-sub{font-size:13px;color:#9aa6c2;line-height:1.5;margin-bottom:1.1rem}
+  .ch{margin-bottom:1.3rem}
+  .ch-h{font-size:13px;font-weight:700;letter-spacing:.03em;color:#dbe6ff;margin-bottom:2px}
+  .ch-src{font-size:11px;color:#7d89a6;margin-bottom:.7rem}
+  .barrow{display:grid;grid-template-columns:118px 1fr auto;gap:10px;align-items:center;margin:7px 0}
+  .barrow .bl{font-size:12px;color:#c3cde6;text-align:right;line-height:1.2}
+  .bar-track{height:16px;border-radius:5px;background:#141d2c;overflow:hidden}
+  .bar-fill{height:100%;width:0;border-radius:5px;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+  .barrow .bv{font-size:12px;font-weight:800;color:#eaf0ff;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ch-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+  .ch-legend span{font-size:11px;color:#9aa6c2;display:inline-flex;align-items:center;gap:6px}
+  .ch-legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .ds-note{font-size:13px;line-height:1.55;color:#c7d2e6;border-left:3px solid #f5b13f;padding-left:12px;margin:0 0 1.1rem}
+  .ev-list{display:flex;flex-direction:column;gap:9px;margin-bottom:1.1rem}
+  .ev-row{cursor:pointer;text-align:left;padding:12px 14px;border-radius:12px;background:rgba(20,28,52,.7);border:1px solid rgba(150,180,255,.14);transition:border-color .15s}
+  .ev-row:hover{border-color:#3fe0f5}
+  .ev-row.done{cursor:default}
+  .ev-r-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .ev-name{font-weight:700;font-size:15px;color:#eaf0ff}
+  .ev-tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .ev-tag.ok{color:#42d98a;background:rgba(66,217,138,.12);border:1px solid rgba(66,217,138,.4)}
+  .ev-tag.warn{color:#f5b13f;background:rgba(245,177,63,.12);border:1px solid rgba(245,177,63,.4)}
+  .ev-tag.wait{color:#9aa6c2;background:rgba(150,180,255,.08);border:1px solid rgba(150,180,255,.2)}
+  .ev-note{font-size:13px;line-height:1.55;color:#c7d2e6;max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .ev-row.done .ev-note{max-height:200px;margin-top:9px}
+  .ev-note b{color:#eaf0ff}
+  #ds-go{width:100%;cursor:pointer;border:none;border-radius:11px;padding:12px 14px;font-weight:800;font-size:15px;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a}
+  #ds-go:disabled{filter:grayscale(.7);opacity:.5;cursor:default}
+  @media (prefers-reduced-motion: reduce){ .bar-fill,.ev-note{transition:none} }
 </style>
 </head>
 <body>
@@ -785,29 +820,37 @@ window.AUDIO=(function(){
 </script>
 
 <script>
-/* ========================= CHAPTER 3 DIRECTOR — safety-review control room over 3D footage ========================= */
+/* ========================= CHAPTER 5 DIRECTOR — district deployment review over a daytime robotaxi feed =========================
+   Reuses the shared AUDIO + TD engine (cockpit hidden, sunny district drive). The finale of the five-chapter arc: ties Ch1–Ch4
+   together in the debrief. Grounded in interviews with China AV professionals (anonymized). Survey figures are diegetic and
+   labelled as such — no representative public poll exists; the real numbers (fleet scarcity, capability) are cited honestly. */
 (function(){
   "use strict";
   const $=id=>document.getElementById(id);
   const wait=ms=>new Promise(r=>setTimeout(r,ms));
   const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fmt=n=>Math.round(n).toLocaleString('en-US');
 
-  /* ---- state + cytc.v1 ---- */
-  const S={ classify:null, reco:null, maxMiles:3000000 };
+  const S={ read:null, pitch:null, voice:null, deploy:null, frame:null, checked:0 };
   function readStore(){ try{return JSON.parse(localStorage.getItem('cytc.v1'))||{};}catch(e){return {};} }
   function save(){ try{ const s=readStore(); s.version=1; s.settings=Object.assign({muted:false},s.settings);
-    s.chapter3={completed:true,completedAt:new Date().toISOString(),classify:S.classify,reco:S.reco,milesReviewed:S.maxMiles};
+    s.chapter5={completed:true,completedAt:new Date().toISOString(),read:S.read,pitch:S.pitch,voice:S.voice,deploy:S.deploy,frame:S.frame};
     localStorage.setItem('cytc.v1',JSON.stringify(s)); }catch(e){} }
 
-  /* ---- footage detection box (projects onto the reviewed subject) ---- */
-  let footOn=false;
-  (function footLoop(){ const fb=$('footbox');
-    if(footOn&&window.TD&&TD.pedestrian&&TD.pedestrian.visible){ const cam=TD.camera,p=TD.pedestrian.position.clone(); p.y+=1.0; p.project(cam);
-      if(p.z<1){ const sx=(p.x*0.5+0.5)*innerWidth, sy=(-p.y*0.5+0.5)*innerHeight, cw=cam.getWorldPosition(new THREE.Vector3()),dist=cw.distanceTo(TD.pedestrian.position),h=Math.max(30,820/Math.max(dist,6)),w=h*0.42;
-        fb.classList.add('show'); fb.style.left=sx+'px'; fb.style.top=sy+'px'; fb.style.width=w+'px'; fb.style.height=h+'px'; }
-      else fb.classList.remove('show'); }
-    else fb.classList.remove('show'); requestAnimationFrame(footLoop); })();
+  function initChrome(){
+    const set=(id,html)=>{const e=$(id);if(e)e.innerHTML=html;};
+    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent="Can You Trust Your Car? · Chapter 5";
+      st.querySelector('.title').textContent="The Trust Gap";
+      st.querySelector('.sub').textContent="A company wants to put driverless taxis on your district's streets. You're the city official who says yes or no. You have their numbers, the public's mood, and a decision that will be quoted back to you either way.";
+      st.querySelector('#startbtn').textContent="Open the deployment file →"; }
+    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent="DEPLOYMENT REVIEW";
+      rb.querySelector('.rb-sub').textContent="District office · Application R-118 · robotaxi service"; }
+    set('wstop','<span class="rec"><span class="recdot"></span> LIVE · DISTRICT FEED</span>'
+      +'<span id="ws-log">Application R-118 · robotaxi deployment</span>'
+      +'<span id="ws-km"><b>1</b> <small>DECISION DUE</small></span>');
+    set('scrub','<button id="scan-btn" disabled>● Live</button>'
+      +'<div class="sc-track"><div class="sc-fill" id="sc-fill" style="width:100%"></div></div>'
+      +'<span id="sc-time">district feed · daytime</span>');
+  }
 
   /* ---- beats ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
@@ -827,7 +870,7 @@ window.AUDIO=(function(){
   /* ---- decisions ---- */
   let curDecision=null,decResolve=null,decKey=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
-  function askDecision(id){ const c=DECISIONS[id]; if(!c)return; if(window.TD)TD.pause(true);
+  function askDecision(id){ const c=DECISIONS[id]; if(!c)return;
     const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
     $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
@@ -838,7 +881,7 @@ window.AUDIO=(function(){
     document.addEventListener('keydown',decKey); }
   function choose(id,k){ if(curDecision!==id)return; curDecision=null; if(decKey){document.removeEventListener('keydown',decKey);decKey=null;}
     const c=DECISIONS[id],o=c.opts.find(x=>x.k===k); const btn=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(btn)btn.classList.add('picked');
-    if(window.AUDIO)AUDIO.sfx('ui'); if(id==='classify')S.classify=k; else if(id==='reco')S.reco=k;
+    if(window.AUDIO)AUDIO.sfx('ui'); S[c.store]=k;
     setTimeout(()=>{ $('decision').classList.remove('show'); showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; if(r)r(k); }); },240);
   }
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
@@ -850,130 +893,252 @@ window.AUDIO=(function(){
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1400); }
 
-  /* ---- scan the logs → near-miss ---- */
-  function scanLogs(){ return new Promise(res=>{ const btn=$('scan-btn'); let km=0; const target=6213;
-    btn.disabled=false;
-    btn.onclick=()=>{ btn.disabled=true; if(window.AUDIO)AUDIO.sfx('ui');
-      const iv=setInterval(()=>{ km=Math.min(target,km+170); $('km-n').textContent=fmt(km); $('sc-fill').style.width=(km/10000*100)+'%'; $('sc-time').textContent='km '+fmt(km)+' / 10,000';
-        if(km>=target){ clearInterval(iv); $('flag').classList.add('show'); $('sc-mark').classList.add('show');
-          if(window.TD){ TD.spawnPedestrian(30); TD.pause(true); } footOn=true;
-          if(window.AUDIO){ AUDIO.setScene('tense'); AUDIO.sfx('warn'); }
-          setTimeout(res,1000); } },38);
-    };
-  }); }
+  /* ---- the district feed (daytime robotaxi drive) ---- */
+  function districtDrive(){ if(!window.TD) return;
+    TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.mood('day'); TD.state.started=true; TD.pause(false);
+    if(window.AUDIO)AUDIO.setScene('calm'); }
 
-  /* ---- the statistical-impossibility panel ---- */
-  function statsInteract(){ return new Promise(res=>{ if(window.TD)TD.pause(true); const panel=$('stats'); panel.classList.add('show');
-    let miles=3000000;
-    function render(){ S.maxMiles=Math.max(S.maxMiles,miles); $('st-miles').textContent=fmt(miles);
-      const pct=Math.max(0,Math.min(100,(Math.log10(miles)-6)/(Math.log10(11e9)-6)*100)); $('st-fill').style.width=pct+'%';
-      let note;
-      if(miles<275e6) note="Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.";
-      else if(miles<11e9) note="You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.";
-      else note="Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.";
-      $('st-note').innerHTML=note;
-    }
-    render();
-    $('st-run').onclick=()=>{ miles=Math.min(miles*10,5e10); if(window.AUDIO)AUDIO.sfx('ui'); render(); };
-    $('st-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
+  /* ---- dossier: charts, then pitch fact-check (same panel, reused) ---- */
+  function ensureDossier(){ let p=$('dossier'); if(!p){ p=document.createElement('div'); p.id='dossier'; document.body.appendChild(p); } return p; }
+  function bar(label,val,pct,color){ return '<div class="barrow"><span class="bl">'+label+'</span>'
+    +'<div class="bar-track"><div class="bar-fill" data-pct="'+pct+'" style="background:'+color+'"></div></div>'
+    +'<span class="bv">'+val+'</span></div>'; }
+  function dataPanel(){ return new Promise(res=>{ const p=ensureDossier();
+    p.innerHTML='<div class="ds-title">The trust gap, in numbers</div>'
+      +'<div class="ds-sub">Two charts and one honest caveat. Read them before anyone starts talking.</div>'
+      +'<div class="ch"><div class="ch-h">Vehicles serving the district each day</div>'
+        +'<div class="ch-src">Operator figures, Guangzhou-scale pilots · 2024–25 interviews</div>'
+        +bar('Human-driven cabs','100,000+',100,'#6ea8ff')
+        +bar('Robotaxis','under 1,000',1.2,'#3fe0f5')
+        +'<div class="ch-legend"><span><i style="background:#3fe0f5"></i>Robotaxis</span><span><i style="background:#6ea8ff"></i>Human-driven cabs</span></div></div>'
+      +'<div class="ch"><div class="ch-h">"Would you take one for a daily trip?"</div>'
+        +'<div class="ch-src">District pilot survey · illustrative, small sample · no representative public poll exists</div>'
+        +bar('Have ridden one','78%',78,'#42d98a')
+        +bar('Never ridden one','31%',31,'#f5b13f')
+        +'<div class="ch-legend"><span><i style="background:#42d98a"></i>Riders</span><span><i style="background:#f5b13f"></i>Non-riders</span></div></div>'
+      +'<div class="ds-note">Almost no one here has ridden one, so there is no real public opinion yet to measure. The gap isn’t distrust of the machine. Trust hasn’t had the chance to form.</div>'
+      +'<button id="ds-go">I’ve read the file →</button>';
+    p.classList.add('show');
+    setTimeout(()=>{ p.querySelectorAll('.bar-fill').forEach(f=>{ f.style.width=f.dataset.pct+'%'; }); },120);
+    $('ds-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); res(); };
+  }); }
+  const CLAIMS=[
+    {name:'“Our cars are safer than human drivers.”',
+      note:'True as a floor, unproven as a ceiling. A sensor-heavy car <b>always stops safely but can miss a clever move</b>. A data-driven car has a veteran’s judgment and a lower floor. Everyone advertises the model “improved from 30 to 80.” <b>Nobody defines 100</b>, or says whether they reach it.'},
+    {name:'“Riders love it. Demand is overwhelming.”',
+      note:'You can’t read trust from ridership when the fleet is <b>under 1% of demand</b>. Every car runs full no matter what. The complaints that do exist aren’t about safety: <b>the car only stops at fixed points</b>, and it can’t roll down a window to negotiate the way a human cabbie does.'},
+    {name:'“The technology is finished and ready today.”',
+      note:'Technically it sits at a usable level. What’s missing isn’t the tech. It’s the law, the accountability rules, and public acceptance. “Ready” has no agreed finish line, and that undefined ceiling is the biggest hidden risk.'},
+    {name:'“It’s completely safe. It will never hurt anyone.”',
+      note:'No system runs at zero risk, and the public wants two things at once: never hurt anyone, and also be flawless. Worse, when an edge case goes wrong, a deep-learning model <b>can’t fully explain why it chose what it chose</b>.'}
+  ];
+  function pitchPanel(){ return new Promise(res=>{ const p=ensureDossier(); S.checked=0;
+    p.innerHTML='<div class="ds-title">The operator’s pitch</div>'
+      +'<div class="ds-sub">Four claims from the slide deck. Check each against what you actually know.</div>'
+      +'<div class="ev-list" id="cl-list"></div>'
+      +'<button id="ds-go" disabled>Heard enough →</button>';
+    CLAIMS.forEach((c,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i;
+      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+c.name+'</span><span class="ev-tag wait">Unchecked</span></div><div class="ev-note">'+c.note+'</div>';
+      row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done');
+        const t=row.querySelector('.ev-tag'); t.className='ev-tag warn'; t.textContent='Against the record';
+        if(window.AUDIO)AUDIO.sfx('ui'); S.checked++; if(S.checked>=CLAIMS.length)$('ds-go').disabled=false; };
+      $('cl-list').appendChild(row); });
+    p.classList.add('show');
+    $('ds-go').onclick=()=>{ if($('ds-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); res(); };
   }); }
 
   /* ---- content ---- */
   const BEATS={
-    intro:[ {who:'', tx:"You've left the driver's seat. Now you're at a review station, and ten thousand kilometres of fleet footage wait on the screen."},
-            {who:'', tx:"Your job isn't to drive. It's to decide whether this car is safe enough to put on the road for everyone."} ],
-    review_intro:[ {who:'', tx:"Most of it is nothing. Clean, uneventful kilometres. Scan the logs until something flags."} ],
-    nearmiss:[ {who:'System', tx:"NEAR-MISS · km 6,213. A pedestrian stepped off the kerb. The car braked with four tenths of a second to spare."},
-               {who:'You', tx:"Four tenths of a second. Was that the system working, or getting lucky once?"} ],
-    stats_intro:[ {who:'You', tx:"One near-miss in ten thousand kilometres. So how many kilometres would it take to prove this car is actually safe?"} ],
-    reco_intro:[ {who:'You', tx:"You can't test your way to certainty. But the car ships or it doesn't, and that call is yours."} ]
+    intro:[ {who:'', tx:"You've done this for the district before: bus routes, a night market, a bridge. This one drives itself."},
+            {who:'', tx:"A robotaxi operator wants to run driverless cars on your streets. The cameras outside show their live feed, gliding through the district in the afternoon sun. Whether it stays is your signature."} ],
+    data_lead:[ {who:'', tx:"Start with the file they'd rather you skip. The plain numbers under the pitch, before anyone starts talking."} ],
+    pitch_lead:[ {who:'Operator representative', tx:"Commissioner, thank you for the time. I'll keep it short, because the case makes itself. Let me show you why this district is ready."} ],
+    meeting_lead:[ {who:'', tx:"You could sign on the numbers. The numbers can't ride the bus home. So you open the floor, and the district files in."} ],
+    m_rider:[ {who:'Resident · rides one weekly', tx:"Honestly? I feel safer in the robot than in a cab. It won't move until my belt is on. Open a door while it's rolling and it warns me and pulls over. The rules aren't optional in there. They're enforced."} ],
+    m_skeptic:[ {who:'Resident · has never ridden', tx:"You all keep saying it's safer on average. I don't ride an average. If a person makes a mistake, I understand it. That's fate. If a machine makes one, who do I even look at? I expect a machine to be perfect. Unfair, maybe. It's still how I feel."} ],
+    m_driver:[ {who:'Resident · drives a cab for a living', tx:"Everyone in here argues about safety. Nobody asks what happens to the forty thousand of us behind a wheel. The safety office worries about crashes. The tech office wants the future. Who sits in the office that worries about me?"} ],
+    m_slow:[ {who:'Resident · came around slowly', tx:"I didn't trust it overnight. I tried it once on an easy road, then a harder one, decided each time it was fine, and widened it from there. Trust accumulated. You can't announce it into existence. People ride the curve themselves."} ],
+    m_ped:[ {who:'Resident · crossing guard', tx:"One thing nobody mentions. At the light-less crossing by the school, people used to wait for cars. Now they see it's a robot and walk straight out, because they know it will stop. The car taught them a new habit. I'm not sure it's a safe one."} ],
+    final_lead:[ {who:'', tx:"That's everyone. The room goes quiet and turns to you. Two questions now, and both get quoted tomorrow: what you allow, and what you tell them about it."} ]
   };
   const DECISIONS={
-    classify:{eyebrow:'01 · Classify the near-miss', q:'What was the near-miss at km 6,213?',
+    read:{store:'read',eyebrow:'01 · Read the trust gap', q:'The data is mostly an absence. What does it tell you to do?',
       opts:[
-        {k:'A',t:'A software bug', outcome:{big:'Bug?',label:'Something to fix',danger:'none',
-          ctx:"Maybe. You can't reproduce it, and the logs read nominal. A bug you can't reproduce is the hardest kind to fix, and the hardest to rule out.",
-          stats:[{v:'Unrepro- ducible',l:'Status',c:'ok'}],ins:'Calling it a bug promises a fix. Promising a fix you cannot verify is its own risk.',who:'Simulation lead, AV program'}},
-        {k:'B',t:'A rare edge case', outcome:{big:'Long tail',label:'Too rare to train, too common to ignore',danger:'none',
-          ctx:'The long tail: a situation too rare to have appeared in training, yet certain to recur somewhere across a whole fleet, every day.',
-          stats:[{v:'Rare',l:'Frequency',c:'ok'},{v:'Fleet-wide',l:'Exposure',c:'bad'}],ins:'The edge cases are individually unlikely and collectively inevitable. That is the whole problem of proving safety.',who:'Safety-validation engineer'}},
-        {k:'C',t:'Acceptable statistical risk', outcome:{big:'Risk',label:'A number wearing a value',danger:'mid',
-          ctx:"Defensible. Every system has a failure rate, humans included. But 'acceptable' is a judgment about who bears the risk, dressed up as a statistic.",
-          stats:[{v:'Non-zero',l:'Failure rate',c:'ok'}],ins:'Someone decides which failure rate is acceptable, and someone else lives with it. The math cannot make that choice for you.',who:'Policy researcher'}}
+        {k:'A',t:'The tech is ready, exposure will do the rest', s:'Approve broadly and let riding build trust',
+          outcome:{big:'Ready?',label:'Ready in what sense',danger:'none',
+            ctx:'The engineering may be there. Their “ready” means something narrower than yours. The car can drive. The law, the accountability, and the public’s comfort are the parts still missing.',
+            stats:[{v:'Usable',l:'The technology',c:'good'},{v:'Missing',l:'Law & acceptance',c:'bad'}],
+            ins:'Technically it already sits at a commercially usable level. What’s missing isn’t the tech. It’s the law, the accountability rules, and people trusting the car the way they trust a taxi today.',who:'AV technology & product manager'}},
+        {k:'B',t:'No trust has formed yet, go slow in public', s:'A small, visible pilot first',
+          outcome:{big:'<1%',label:'The share that drives itself',danger:'none',
+            ctx:'Trust can’t form from a fleet nobody has met. A small, visible pilot is how the first honest opinions get made, one rider at a time, on easy roads first.',
+            stats:[{v:'under 1,000',l:'Robotaxis',c:'ok'},{v:'100,000+',l:'Human cabs',c:''}],
+            ins:'The real starting point is getting more people to actually ride one. Then they stop imagining it’s either all-powerful or worse than a bad cabbie, and form an honest, first-hand judgment.',who:'AV perception & algorithms engineer'}},
+        {k:'C',t:'The data can’t answer this, ask the public', s:'Put it to a community hearing',
+          outcome:{big:'Who?',label:'Not one public, not one government',danger:'none',
+            ctx:'The file can’t tell you what people want, because too few have any basis for wanting. “The government” isn’t one voice either. The tech office, the safety office, and the labour office all want different things.',
+            stats:[{v:'No poll',l:'Exists',c:'bad'},{v:'3+ offices',l:'Disagree',c:'ok'}],
+            ins:'No developed government blocks this. It’s national competitiveness. But “the government” isn’t one voice: tech development pushes, traffic-safety resists, and the labour side worries about drivers’ jobs.',who:'AV commercialization strategist'}}
       ]},
-    reco:{eyebrow:'02 · Your recommendation', q:'Under that uncertainty, what do you recommend?',
+    pitch:{store:'pitch',eyebrow:'02 · Weigh the pitch', q:'You’ve checked their claims against the record. How much of the pitch do you take?',
       opts:[
-        {k:'A',t:'Deploy: it beats humans already', outcome:{big:'Ship',label:'Bet on better-than-average',danger:'mid',
-          ctx:'You ship it, betting that better-than-human on average is good enough while the rare cases get counted in the field.',
-          stats:[{v:'Scale',l:'Upside',c:'good'},{v:'Field risk',l:'Downside',c:'bad'}],ins:'This bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.',who:'Deployment lead'}},
-        {k:'B',t:'Keep testing: the tail is open', outcome:{big:'Hold',label:'Wait for a proof that never arrives',danger:'mid',
-          ctx:'You hold it back until the long tail is closed. It never fully closes.',
-          stats:[{v:'Safer lot',l:'Upside',c:'ok'},{v:'Helps no one',l:'Downside',c:'bad'}],ins:'The safest car is also the one parked in a test lot, helping no one. Waiting has a body count too.',who:'Program director'}},
-        {k:'C',t:'Limited, supervised rollout', outcome:{big:'Pilot',label:'Real roads, real limits',danger:'none',
-          ctx:'Mapped zones, a safety driver, tight operating limits. Real roads, real data, contained risk.',
-          stats:[{v:'Contained',l:'Risk',c:'good'},{v:'Slow',l:'Scale',c:'ok'}],ins:'The honest answer to a question with no clean one, and the slowest path to scale.',who:'Regulatory affairs lead'}}
+        {k:'A',t:'Take the safety case at face value', s:'Approve on the operator’s numbers',
+          outcome:{big:'80%',label:'What it can do of a human’s job',danger:'mid',
+            ctx:'Their numbers aren’t lies. The car really does most of the job well. Taking them at face value is fast, and it trusts the seller to mark their own homework.',
+            stats:[{v:'~80%',l:'Of a cabbie’s job',c:'ok'},{v:'Self-graded',l:'Safety case',c:'bad'}],
+            ins:'Everyone advertises that the model got better, thirty points, now eighty. Nobody ever says what 100 looks like, or whether we sit at the level we actually need.',who:'AV deployment & data lead'}},
+        {k:'B',t:'Trust the floor, not the ceiling', s:'Approve only what’s independently proven',
+          outcome:{big:'Floor',label:'What governments always choose',danger:'none',
+            ctx:'You bet on the guaranteed minimum, not the impressive maximum. It’s the conservative read, and the read regulators tend to make when a technology is young.',
+            stats:[{v:'High',l:'Safety floor',c:'good'},{v:'Capped',l:'Ambition',c:'ok'}],
+            ins:'Governments pick the safety floor over the ceiling. The sensor-heavy, redundant route gets the harder roads. The data-only bet stays on simpler ones until its record proves out.',who:'AV systems strategist'}},
+        {k:'C',t:'It’s marketing, demand verification', s:'No approval without independent data',
+          outcome:{big:'Whose data?',label:'The disclosure question',danger:'none',
+            ctx:'You refuse to certify a seller’s self-report. That forces the question nobody has settled: who holds the safety data, and who gets to see it.',
+            stats:[{v:'Independent',l:'Data demanded',c:'good'},{v:'Unsettled',l:'Who discloses',c:'ok'}],
+            ins:'In the US, disclosure is the law: safety reports get filed publicly, even if few read them. In China the government reasons that it sees more than the crowd and the public trusts it, so it needn’t publish it all. Neither is obviously right.',who:'AV commercialization strategist'}}
+      ]},
+    voice:{store:'voice',eyebrow:'03 · After the meeting', q:'Five voices, one room. Whose concern do you carry into the decision?',
+      opts:[
+        {k:'A',t:'The riders, trust is built by doing', s:'Weight the people who’ve tried it',
+          outcome:{big:'The curve',label:'Trust accrues, it doesn’t leap',danger:'none',
+            ctx:'The people who’ve ridden it speak from experience instead of imagination. Their trust is real. It’s also a curve you can’t rush for everyone else.',
+            stats:[{v:'First-hand',l:'Their view',c:'good'},{v:'Few',l:'So far',c:'ok'}],
+            ins:'I didn’t trust it all at once. I tried an easy road, decided it was fine, then widened it slowly. Trust accumulated. You go through it as an ordinary rider.',who:'Robotaxi product operations lead'}},
+        {k:'B',t:'The skeptics, earn it before you expand', s:'Weight the ones who expect perfection',
+          outcome:{big:'Not fate',label:'The forgiveness a machine doesn’t get',danger:'none',
+            ctx:'The skeptic isn’t being irrational. She names a real asymmetry. A machine’s mistake has no one to forgive, so it clears a higher bar than the humans it replaces.',
+            stats:[{v:'Higher',l:'Bar to clear',c:'ok'},{v:'Zero',l:'Margin for error',c:'bad'}],
+            ins:'People accept that a human driver makes mistakes and chalk it up to fate. They cannot accept a machine making mistakes. They expect the machine to be perfect.',who:'Robotaxi operations & AV specialist'}},
+        {k:'C',t:'The drivers, this isn’t only safety', s:'Weight the livelihoods at stake',
+          outcome:{big:'40,000',label:'The question no office owns',danger:'mid',
+            ctx:'Every safety debate skips the drivers whose work this ends. It isn’t a safety question, which is why it keeps falling through the cracks between the offices that decide.',
+            stats:[{v:'Tens of k',l:'Drivers affected',c:'bad'},{v:'No owner',l:'Of the problem',c:'bad'}],
+            ins:'The real fight isn’t the public against the machine. It’s between departments: tech development pushes, traffic-safety resists, and the labour side worries about drivers losing their jobs.',who:'AV commercialization strategist'}}
+      ]},
+    deploy:{store:'deploy',eyebrow:'04 · The decision', q:'Application R-118. What do you allow on your streets?', urgent:true,
+      opts:[
+        {k:'A',t:'Approve district-wide, now', s:'Full service, no geofence',
+          outcome:{big:'Open',label:'The fast road to scale',danger:'mid',
+            ctx:'You open everything at once. It’s how the technology reaches the scale where it finally helps, and how a single bad night reaches every street you govern at the same time.',
+            stats:[{v:'Fast',l:'To scale',c:'good'},{v:'District-wide',l:'Exposure',c:'bad'}],
+            ins:'One bad incident like Wuhan and policy tightens across the whole country overnight. It can overturn the rollout, the costs, the whole business model. Policy uncertainty is the hardest thing to manage.',who:'Robotaxi test-operations lead'}},
+        {k:'B',t:'Phased, geofenced rollout', s:'Earn each zone with a clean record',
+          outcome:{big:'Rings',label:'Prove it, then we open that door',danger:'none',
+            ctx:'You draw the map in rings. An outer zone first, and the next ring opens only after clean mileage and time. It’s the slowest honest path, and the one that lets trust form at the speed trust forms.',
+            stats:[{v:'Contained',l:'Risk',c:'good'},{v:'Slow',l:'To the centre',c:'ok'}],
+            ins:'China runs a whitelist. By default nothing is allowed. You prove one capability in one zone and they open precisely that. Guangzhou drew outer, middle, and inner rings. Earn the mileage, apply to move inward.',who:'Robotaxi business & operations lead'}},
+        {k:'C',t:'Deny until national standards exist', s:'No deployment without one rulebook',
+          outcome:{big:'Not yet',label:'Waiting has a cost too',danger:'mid',
+            ctx:'You hold the line for a national standard that doesn’t exist yet. It’s defensible, since fragmented rules are a real hazard. The safest street is also the one where nothing new is ever allowed to help.',
+            stats:[{v:'Uniform',l:'Standard sought',c:'ok'},{v:'Stalled',l:'Meanwhile',c:'bad'}],
+            ins:'Every company defines the edge-case behaviour differently. If a higher, nationwide law doesn’t set the boundary, the race to commercialize turns those differences into a genuine public-safety threat.',who:'Robotaxi product operations lead'}}
+      ]},
+    frame:{store:'frame',eyebrow:'05 · And what you tell them', q:'However you ruled, how do you announce it to the district?',
+      opts:[
+        {k:'A',t:'Publish everything, in the open', s:'Every incident, on the record',
+          outcome:{big:'Daylight',label:'Trust earned in public',danger:'none',
+            ctx:'You promise the full record: every stop, every incident, posted. Trust gets earned rather than granted. It also hands each rare failure a headline, and asks the public to hold their nerve through the bad days.',
+            stats:[{v:'Open',l:'The record',c:'good'},{v:'Volatile',l:'The mood',c:'ok'}],
+            ins:'In the US, disclosure is the law: Waymo and Tesla file public safety reports, and media and insurers do the pushing, even though most citizens never read them.',who:'AV commercialization strategist'}},
+        {k:'B',t:'Announce the benefits; the office holds the data', s:'You stay the trusted steward',
+          outcome:{big:'Steward',label:'Trust built, then verified',danger:'mid',
+            ctx:'You lead with the good and keep the raw data in the office, releasing what the public needs. It kept the electric-car transition calm through its early fires. It holds right up until the public stops trusting the steward.',
+            stats:[{v:'Calm',l:'Rollout',c:'ok'},{v:'On trust',l:'In the office',c:'bad'}],
+            ins:'When EVs arrived, plenty caught fire and people died. The government never published every incident, yet the transition stayed smooth and China now leads the world in EVs. This is the same story.',who:'AV commercialization strategist'}},
+        {k:'C',t:'Keep it small until the first month’s record is in', s:'Let the evidence speak first',
+          outcome:{big:'Quiet',label:'Neither earned nor built',danger:'mid',
+            ctx:'You keep the announcement small and let a month of real driving make the case before you make claims. It avoids overselling. Silence is its own message, and someone else fills it before you do.',
+            stats:[{v:'Evidence',l:'Leads',c:'ok'},{v:'A vacuum',l:'You leave',c:'bad'}],
+            ins:'Nobody advertises what 100 looks like. Say too much too early and you own a promise the technology hasn’t defined. Say nothing and the story gets told without you.',who:'AV deployment & data lead'}}
       ]}
   };
-  function verdict(){ const k=S.reco;
-    if(k==='A') return "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.";
-    if(k==='B') return "You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.";
-    return "You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.";
-  }
 
-  /* ---- debrief / finale ---- */
+  /* ---- finale debrief (whole arc) ---- */
   function setLabel(m,t){ const s=m.querySelector('.ml span'); if(s)s.textContent=t; }
-  function renderDebrief(){ save();
+  function finaleVerdict(prior){
+    const dep=S.deploy, fr=S.frame;
+    let v;
+    if(dep==='A') v="You opened the whole district at once. If it works, your streets are the proof the technology needed. If one night goes wrong, it goes wrong everywhere you govern, at once.";
+    else if(dep==='B') v="You drew the map in rings and made the machine earn each one. It is the slowest honest path, and the only one that lets trust form at the speed trust actually forms.";
+    else v="You held the line for a rulebook that doesn't exist yet. The hazard you named is real. So is the cost of the help your streets won't get while you wait.";
+    if(fr==='A') v+=" You promised to do it in daylight.";
+    else if(fr==='B') v+=" You kept yourself between the public and the data.";
+    else v+=" You let a month of driving talk before you did.";
+    return v;
+  }
+  function renderDebrief(){ save(); const prior=readStore();
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Km reviewed'); if(meters[1]) setLabel(meters[1],'Proof reached');
-    const proofPct=Math.round(Math.max(0,Math.min(100,(Math.log10(S.maxMiles)-6)/(Math.log10(11e9)-6)*100)));
-    $('db-trust-v').textContent='10,000'; $('db-att-v').textContent=proofPct+'%';
-    setTimeout(()=>{ $('db-trust-f').style.width='100%'; $('db-att-f').style.width=proofPct+'%'; },90);
-    const cl={A:'Called it a bug',B:'Called it an edge case',C:'Called it acceptable risk'}[S.classify]||'—';
-    const rc={A:'Deploy',B:'Keep testing',C:'Limited rollout'}[S.reco]||'—';
-    const rows=[ {scene:'The near-miss · km 6,213',call:cl,cons:{t:'Classified',c:''}},
-      {scene:'Proving it safe',call:fmt(S.maxMiles)+' mi run',cons:{t:proofPct>=60?'~human bar':'far short',c:proofPct>=60?'':'bad'}},
-      {scene:'Your recommendation',call:rc,cons:{t:'On the record',c:S.reco==='C'?'good':''}} ];
-    document.querySelector('#debrief .db-head').textContent='Chapter 3 · The Long Tail';
-    document.querySelector('#debrief .db-title').textContent='The call is yours';
+    if(meters[0]) setLabel(meters[0],'Room you left for trust to form');
+    if(meters[1]) setLabel(meters[1],'Road you opened to the machine');
+    const trustPct = S.deploy==='B'?86 : S.deploy==='C'?54 : 40;
+    const roadPct  = S.deploy==='A'?100 : S.deploy==='B'?55 : 8;
+    $('db-trust-v').textContent=trustPct+'%'; $('db-att-v').textContent=roadPct+'%';
+    setTimeout(()=>{ $('db-trust-f').style.width=trustPct+'%'; $('db-att-f').style.width=roadPct+'%'; },90);
+
+    // whole-arc timeline: only rows for chapters that were actually played
+    const rows=[];
+    const car={L0:'You drove it all yourself',L2:'You let it assist',L4:'You let it drive'}[prior.chapter1&&prior.chapter1.car];
+    if(car) rows.push({scene:'Ch1 · the night drive',call:car,cons:{t:'Human limits',c:''}});
+    if(prior.chapter2&&prior.chapter2.decision) rows.push({scene:'Ch2 · inside the machine',call:'You judged which sensor to trust',cons:{t:'Perception',c:''}});
+    if(prior.chapter3&&prior.chapter3.reco){ const rc={A:'Ship it',B:'Keep testing',C:'Supervised pilot'}[prior.chapter3.reco];
+      rows.push({scene:'Ch3 · the long tail',call:rc||'Judged it',cons:{t:'"Safe enough"',c:prior.chapter3.reco==='C'?'good':''}}); }
+    if(prior.chapter4&&prior.chapter4.policy){ const pol=(prior.chapter4.policy+'').startsWith('timeout')?'Ran out the clock':({A:'Mandate transparency',B:'State as steward',C:'Require interpretability'}[prior.chapter4.policy]);
+      rows.push({scene:'Ch4 · who’s responsible',call:pol||'Ruled on it',cons:{t:'Liability',c:''}}); }
+    const dep={A:'Approved district-wide',B:'Phased, ring by ring',C:'Denied for now'}[S.deploy]||'—';
+    rows.push({scene:'Ch5 · the trust gap',call:dep,cons:{t:'Deployment',c:S.deploy==='B'?'good':''}});
+
+    document.querySelector('#debrief .db-head').textContent='Chapter 5 · The Trust Gap · End of the arc';
+    document.querySelector('#debrief .db-title').textContent='When does trust get earned — and when is it built?';
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
-    $('db-verdict').textContent=verdict();
+    let v=finaleVerdict(prior);
+    v+=" Across five chapters you were the driver, the machine’s eyes, the evaluator, the regulator, and finally the official who says yes or no. The question was never whether the car can be trusted. It was who has to decide that it can, and you just did, five times over.";
+    $('db-verdict').textContent=v;
+    const b=$('db-ch2'); b.textContent='You’ve reached the end';
     $('debrief').classList.add('show');
   }
-  function continueCh4(){ save();
-    try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished Chapter 3 of Can You Trust Your Car. Continue to Chapter 4.'); return; } }catch(e){}
-    location.href='can_you_trust_your_car_chapter4.html';
+  function finish(){ save();
+    try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished all five chapters of Can You Trust Your Car. What did I just build, and what are natural next steps?'); return; } }catch(e){}
+    const b=$('db-ch2'); b.disabled=true; b.style.opacity=.6; b.style.cursor='default';
   }
-  $('db-ch2').addEventListener('click',continueCh4);
-  $('db-replay').addEventListener('click',()=>location.reload());
 
-  /* ---- director ---- */
-  function reviewBoot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
+  function boot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
     const bar=$('rb-bar'), status=$('rb-status');
-    const steps=[[8,'Loading fleet footage…'],[38,'Indexing 10,000 km of logs…'],[74,'Calibrating detection overlay…'],[100,'Ready.']];
+    const steps=[[10,'Opening application R-118…'],[44,'Loading district feed…'],[80,'Pulling public-trust file…'],[100,'Ready.']];
     if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
     let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
       else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
   }); }
+
   async function begin(){ if(STORY.running)return; STORY.running=true; const st=$('start'); if(st)st.classList.add('hide');
-    if(window.TD){ TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.state.started=true; TD.mood('day'); }
-    await reviewBoot();
-    $('wstop').classList.add('show');
+    districtDrive();
+    await boot();
+    $('wstop').classList.add('show'); $('scrub').classList.add('show');
     try{
       await beats(BEATS.intro);
-      $('scrub').classList.add('show');
-      await beats(BEATS.review_intro);
-      await scanLogs();
-      await beats(BEATS.nearmiss);
-      await ask('classify');
-      footOn=false; $('footbox').classList.remove('show'); $('flag').classList.remove('show'); if(window.TD)TD.hidePedestrian();
-      await beats(BEATS.stats_intro);
-      await statsInteract();
-      await beats(BEATS.reco_intro);
-      await ask('reco');
+      await beats(BEATS.data_lead);
+      await dataPanel();
+      await ask('read');
+      await beats(BEATS.pitch_lead);
+      await pitchPanel();
+      await ask('pitch');
+      await beats(BEATS.meeting_lead);
+      await beats(BEATS.m_rider);
+      await beats(BEATS.m_skeptic);
+      await beats(BEATS.m_driver);
+      await beats(BEATS.m_slow);
+      await beats(BEATS.m_ped);
+      await ask('voice');
+      await beats(BEATS.final_lead);
+      await ask('deploy');
+      await ask('frame');
       $('scrub').classList.remove('show'); $('wstop').classList.remove('show');
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  initChrome();
+  $('db-ch2').addEventListener('click',finish);
+  $('db-replay').addEventListener('click',()=>location.reload());
   const STORY={running:false,begin,S}; window.STORY=STORY;
 })();
 </script>

@@ -48,11 +48,37 @@ You step out of the car and into the role of a safety evaluator at an AV company
 
 Central themes: the long tail, the limits of statistical proof, simulation, and deciding under uncertainty.
 
-Chapter 3 reuses the Three.js engine as the reviewed dashcam footage (the cockpit is hidden for a forward-camera look, and the flagged pedestrian gets a live detection box). It's the last built chapter, so it ends on a graceful finale rather than a link to a not-yet-built Chapter 4.
+Chapter 3 reuses the Three.js engine as the reviewed dashcam footage (the cockpit is hidden for a forward-camera look, and the flagged pedestrian gets a live detection box).
+
+## Chapter 4 — Who's Responsible?
+
+*When a machine causes harm, who answers for it?*
+
+You leave the driver's seat again — this time as the **regulator** investigating a crash. A car was driving under L2 assistance when it struck a pedestrian, and you have to decide who is accountable:
+
+1. **The reconstruction** — the engine replays the incident as dashcam footage (rain, an L2 takeover request, a detected pedestrian, impact). The car *saw* her — the detection box is right there — and still handed control back to a distracted driver.
+2. **Three testimonies** — the engineer who certified the system, the manufacturer's counsel, and the injured party's family each give an account of the same four seconds. None agree.
+3. **The black box** — an interactive evidence inspector. Three logs (perception, actuators, driver-monitoring) are *complete*; the fourth — the decision-layer reasoning, the only one that says **why** — is unreadable. A deep-learning model can't reconstruct its own choice, so fault can't be cleanly assigned.
+4. **The policy call** — under a live countdown, you draft a rule for the next thousand crashes: mandate transparency, keep the state as data steward, or require interpretability to certify. Let the clock run out and the status quo wins by default.
+
+Central themes: the interpretability / black-box problem, L2 handover liability, and the transparency-vs-managed-trust fork. Grounded in the interviews (the crash, testimonies, and survey framing are dramatized; every stat and insight quote is from the primary research).
+
+## Chapter 5 — The Trust Gap
+
+*When does the public's trust in a technology need to be earned versus built?*
+
+You're a **city official** deciding whether to approve robotaxi deployment in your district. The engine runs as a live daytime feed of a robotaxi gliding through the district:
+
+1. **The trust gap, in numbers** — a data dossier: the real exposure gap (under 1,000 robotaxis against 100,000+ human cabs) and a clearly-labelled *illustrative* district pilot survey keyed on prior experience. The honest finding is an absence — almost no one has ridden one, so no real public opinion has had the chance to form.
+2. **The pitch** — the operator's slide deck. You fact-check four bold claims against what the research actually supports (safety floor vs. undefined ceiling, ridership ≠ demand, "ready" tech missing law and acceptance).
+3. **The community meeting** — five resident voices: an enthusiast, a skeptic who expects perfection from a machine, a cab driver whose livelihood is at stake, someone who came around slowly, and a crossing guard who's watched pedestrians learn to walk straight out in front of the cars.
+4. **The decision** — what you allow (approve district-wide, a phased geofenced rollout, or deny pending national standards) **and** how you announce it (full transparency, managed stewardship, or a quiet start).
+
+Central themes: real-world exposure as the engine of trust, claims-vs-reality, phased/whitelist rollout, and transparency. Chapter 5 is the **finale**: its debrief reads your whole five-chapter path back to you.
 
 ### Continuity
 
-All three chapters share one `localStorage` save (`cytc.v1`, merge-on-write): Chapter 1 records your car pick and drive, Chapter 2 your sensor-trust, Chapter 3 your verdict — none clobbers the others. Each chapter's **Continue** button first tries a host `sendPrompt(...)`, then falls back to navigating to the next file (`chapter1 → chapter2 → chapter3`), so the trilogy plays as one connected flow in a plain browser.
+All five chapters share one `localStorage` save (`cytc.v1`, merge-on-write): Chapter 1 records your car pick and drive, Chapter 2 your sensor-trust, Chapter 3 your safety verdict, Chapter 4 your fault findings and policy, Chapter 5 your deployment and framing calls — none clobbers the others, and Chapter 5's finale debrief reads the whole path back. Each chapter's **Continue** button first tries a host `sendPrompt(...)`, then falls back to navigating to the next file (`chapter1 → chapter2 → chapter3 → chapter4 → chapter5`), so the arc plays as one connected flow in a plain browser.
 
 ## Running it
 
@@ -75,9 +101,12 @@ Or double-click the file in your file manager.
 ├── can_you_trust_your_car_chapter1.html   # Chapter 1 — The Night Drive (3D, Three.js inlined)
 ├── can_you_trust_your_car_chapter2.html   # Chapter 2 — Inside the Machine
 ├── can_you_trust_your_car_chapter3.html   # Chapter 3 — The Long Tail
+├── can_you_trust_your_car_chapter4.html   # Chapter 4 — Who's Responsible?
+├── can_you_trust_your_car_chapter5.html   # Chapter 5 — The Trust Gap (finale)
+├── Interviews/                            # primary-research transcripts (9 professionals)
 └── README.md
 ```
 
 ## Status
 
-Prototype. Chapters 1–3 are complete; further chapters are planned.
+Prototype. All five chapters are complete and play as one connected arc. Chapters 4–5 are built on the same single-file Three.js engine as 1–3 (cockpit hidden for the regulator/official roles, per the Chapter 3 precedent) and are grounded in the interview transcripts in `Interviews/`.

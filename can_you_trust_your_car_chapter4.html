@@ -83,9 +83,11 @@
   #o-big{font-size:clamp(46px,11vw,120px);font-weight:800;line-height:.92;color:#fff}
   #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:1rem}
   #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;max-width:min(680px,92vw)}
+  #o-plain{font-size:clamp(13px,1.6vw,17px);color:#dbe6ff;line-height:1.5;margin-top:1.1rem;max-width:min(680px,92vw);
+    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.7rem 1rem;text-align:left}
   .o-stats{display:flex;gap:clamp(16px,3vw,48px);margin-top:clamp(16px,3vh,30px);flex-wrap:wrap;justify-content:center}
   .o-stat .v{font-size:clamp(22px,3vw,34px);font-weight:800}.o-stat .v.bad{color:#ff5a6a}.o-stat .v.ok{color:#f5b13f}.o-stat .v.good{color:#42d98a}
-  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}.o-cite{display:block;font-size:clamp(9px,1vw,11px);color:#7f8db0;text-decoration:none;margin-top:5px;border-bottom:1px dotted #566}.o-cite:hover{color:#9fb0d8}
   .o-delta{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;justify-content:center}
   .chip{font-size:clamp(11px,1.3vw,14px);font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(150,180,255,.14);background:rgba(24,32,58,.72);color:#9aa6c2}
   .chip.up{color:#42d98a;border-color:rgba(66,217,138,.4)}.chip.down{color:#ff5a6a;border-color:rgba(255,90,106,.4)}
@@ -190,6 +192,8 @@
   .ev-row.done .ev-note{max-height:180px;margin-top:9px}
   #ev-go{width:100%;cursor:pointer;border:none;border-radius:11px;padding:12px 14px;font-weight:800;font-size:15px;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a}
   #ev-go:disabled{filter:grayscale(.7);opacity:.5;cursor:default}
+  .ev-count{font-size:13px;font-weight:700;color:#ffc659;text-align:center;margin-bottom:.7rem}
+  .ev-count.done{color:#42d98a}
   #d-timer{width:min(420px,82vw);margin:0 auto clamp(16px,2.6vh,26px);display:flex;flex-direction:column;gap:6px}
   #d-timer .dt-label{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#ff8a95;font-weight:700}
   #d-timer .dt-track{height:6px;border-radius:4px;background:#161d2c;overflow:hidden}
@@ -236,6 +240,7 @@
   <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
   <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
+  <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
 
 <div id="flash"></div>
@@ -250,7 +255,7 @@
 </div>
 
 <div id="outcome"><div style="display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)">
-  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div>
+  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
   <button class="cont" id="o-cont">Continue →</button>
@@ -290,11 +295,11 @@ window.AUDIO=(function(){
   function saveMuted(){ try{const s=readStore();s.version=1;s.settings=Object.assign({},s.settings,{muted});localStorage.setItem('cytc.v1',JSON.stringify(s));}catch(e){} }
   function init(){ if(ac)return; const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
     ac=new AC(); master=ac.createGain(); master.gain.value=muted?0:0.9; master.connect(ac.destination);
-    bed=ac.createGain(); bed.gain.value=0.4; bed.connect(master);
+    bed=ac.createGain(); bed.gain.value=0.18; bed.connect(master);  // ponytail: engine bed toned down per playtest
     sfxG=ac.createGain(); sfxG.gain.value=0.9; sfxG.connect(master);
     musicG=ac.createGain(); musicG.gain.value=0.0; musicG.connect(master); }
   function noise(){ const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0); for(let i=0;i<n;i++)d[i]=Math.random()*2-1; return b; }
-  function unlock(){ init(); if(ac&&ac.state==='suspended')ac.resume(); engineOn(); padOn(); }
+  function unlock(){ init(); if(ac&&ac.state==='suspended')ac.resume(); engineOn(); musicOn(); }
 
   /* ---- EV powertrain bed: inverter whine (rises with speed) + wind + low hum ---- */
   function engineOn(){ if(!ac||P.eng)return;
@@ -320,25 +325,21 @@ window.AUDIO=(function(){
     P.eng.whineG.gain.setTargetAtTime(0.01+r*0.028,t,0.3); P.eng.wg.gain.setTargetAtTime(r*0.05,t,0.3); }
 
   /* ---- adaptive score: pad + slow arp; setScene() shifts tension; ducks under sfx ---- */
-  const SCENES={ calm:{root:110,cutoff:520,notes:[0,7,12,7],tempo:2.4,gain:0.16},
-                 tense:{root:98,cutoff:900,notes:[0,1,7,8],tempo:1.1,gain:0.20},
-                 dawn:{root:130.8,cutoff:700,notes:[0,4,7,11],tempo:2.8,gain:0.14} };
+  const SCENES={ calm:{root:110,cutoff:520,notes:[0,7,12,16,12,7],tempo:2.4,gain:0.26},
+                 tense:{root:98,cutoff:900,notes:[0,1,7,8],tempo:1.1,gain:0.32},
+                 dawn:{root:130.8,cutoff:700,notes:[0,4,7,11,12,7],tempo:2.8,gain:0.24} };
   let scene='calm';
-  function padOn(){ if(!ac||P.pad)return; const t=ac.currentTime;
-    const o1=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),lp=ac.createBiquadFilter(),lfo=ac.createOscillator(),lg=ac.createGain();
-    o1.type='triangle';o2.type='sine';o2.detune.value=6; lp.type='lowpass';lp.frequency.value=520;g.gain.value=0.5;
-    lfo.frequency.value=0.06;lg.gain.value=120;lfo.connect(lg);lg.connect(lp.frequency);
-    o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(musicG);o1.start();o2.start();lfo.start();
-    P.pad={o1,o2,lp}; musicG.gain.setTargetAtTime(SCENES[scene].gain,t,2.0); setScene(scene,true);
-    startArp(); }
-  let arpTimer=null,arpStep=0;
-  function startArp(){ stopArp(); const tick=()=>{ const s=SCENES[scene]; const semis=s.notes[arpStep%s.notes.length];
-    ping((s.root*2)*Math.pow(2,semis/12),0.9,'triangle',0.06,musicG); arpStep++; arpTimer=setTimeout(tick,s.tempo*1000); }; tick(); }
-  function stopArp(){ if(arpTimer){clearTimeout(arpTimer);arpTimer=null;} }
+  // background score: the licensed mp3 (bgm.mp3), routed through musicG so mute + SFX-ducking still apply
+  let musicVol=0.6;
+  function musicOn(){ if(!ac||P.bgm)return; const el=document.getElementById('bgm'); if(!el)return;
+    let src; try{ src=ac.createMediaElementSource(el); }catch(e){ return; } // throws if already wired
+    src.connect(musicG); el.loop=true; if(el.play)el.play().catch(()=>{});
+    P.bgm=src; musicG.gain.setTargetAtTime(muted?0:musicVol,ac.currentTime,2.0); }
   function setScene(name,quiet){ if(!SCENES[name])return; scene=name; if(!ac||!P.pad)return; const s=SCENES[name],t=ac.currentTime;
     P.pad.o1.frequency.setTargetAtTime(s.root,t,1.5); P.pad.o2.frequency.setTargetAtTime(s.root*1.5,t,1.5);
+    if(P.pad.sub)P.pad.sub.frequency.setTargetAtTime(s.root/2,t,1.5);
     P.pad.lp.frequency.setTargetAtTime(s.cutoff,t,1.5); if(!quiet)musicG.gain.setTargetAtTime(muted?0:s.gain,t,1.5); }
-  function duck(){ if(!musicG||!ac)return; const t=ac.currentTime,g=SCENES[scene].gain; musicG.gain.cancelScheduledValues(t);
+  function duck(){ if(!musicG||!ac)return; const t=ac.currentTime,g=musicVol; musicG.gain.cancelScheduledValues(t);
     musicG.gain.setTargetAtTime(g*0.3,t,0.08); musicG.gain.setTargetAtTime(muted?0:g,t+1.0,0.5); }
 
   /* ---- one-shots ---- */
@@ -895,7 +896,8 @@ window.AUDIO=(function(){
   /* ---- fact cutscene + insight beat ---- */
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
+    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
     $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
@@ -928,9 +930,9 @@ window.AUDIO=(function(){
   /* ---- evidence inspector (the black box: complete on the "what", opaque on the "why") ---- */
   const EVIDENCE=[
     {name:'Exterior perception log',tag:'ok',tagtx:'Complete',
-      note:'The pedestrian was detected 2.3 s before impact and tracked continuously. Classification confidence 0.91. The car saw her clearly.'},
+      note:'The pedestrian was detected 2.3 s before impact and tracked continuously. Detection confidence 0.91 — how sure the car was it saw a person, on a 0-to-1 scale. The car saw her clearly.'},
     {name:'Vehicle actuator log',tag:'ok',tagtx:'Complete',
-      note:'Brakes: never applied. Accelerator: pressed 0.6 s before impact. Steering: no evasive input. Every actuator is accounted for.'},
+      note:'Actuators are the parts that physically move the car — brakes, throttle, steering. Brakes: never applied. Accelerator: pressed 0.6 s before impact. Steering: no evasive input. Every one is accounted for.'},
     {name:'Driver-monitoring log',tag:'ok',tagtx:'Complete',
       note:'Hands off the wheel for 41 s. Eyes off the road at the moment the takeover alert fired. The human was not ready to be the fallback.'},
     {name:'Decision-layer reasoning',tag:'opaque',tagtx:'Unreadable',
@@ -940,15 +942,17 @@ window.AUDIO=(function(){
     let panel=$('evpanel');
     if(!panel){ panel=document.createElement('div'); panel.id='evpanel'; document.body.appendChild(panel); }
     panel.innerHTML='<div class="ev-title">The black box — four logs from the vehicle</div>'
-      +'<div class="ev-sub">The manufacturer already holds all of it. Inspect each log. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.</div>'
+      +'<div class="ev-sub">The manufacturer already holds all of it. Click each log to open it. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.</div>'
       +'<div class="ev-list" id="ev-list"></div>'
+      +'<div class="ev-count" id="ev-count">0 of 4 logs opened — open all four to close the inquiry</div>'
       +'<button id="ev-go" disabled>Close the inquiry →</button>';
     EVIDENCE.forEach((e,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i;
-      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+e.name+'</span><span class="ev-tag wait">Not opened</span></div><div class="ev-note">'+e.note+'</div>';
+      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+e.name+'</span><span class="ev-tag wait">Not opened · click</span></div><div class="ev-note">'+e.note+'</div>';
       row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done');
         row.querySelector('.ev-tag').className='ev-tag '+e.tag; row.querySelector('.ev-tag').textContent=e.tagtx;
         if(window.AUDIO)AUDIO.sfx(e.tag==='opaque'?'warn':'ui'); S.inspected++;
-        if(S.inspected>=EVIDENCE.length) $('ev-go').disabled=false; };
+        const c=$('ev-count'); if(S.inspected>=EVIDENCE.length){ c.textContent='All 4 logs opened — you can close the inquiry'; c.classList.add('done'); $('ev-go').disabled=false; }
+        else c.textContent=S.inspected+' of 4 logs opened — open all four to close the inquiry'; };
       $('ev-list').appendChild(row); });
     panel.classList.add('show'); if(window.TD)TD.pause(true);
     $('ev-go').onclick=()=>{ if($('ev-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
@@ -957,20 +961,21 @@ window.AUDIO=(function(){
   /* ---- content: beats, decisions, insight quotes (anonymized, from primary interviews) ---- */
   const BEATS={
     intro:[ {who:'', tx:"You've never sat in this car. You weren't on that road. Everything you'll ever know about that night is in this room."},
-            {who:'', tx:"A car was driving itself under L2 assistance when it struck a pedestrian on the G2 Expressway. She survived. Barely. Now someone answers for it, and you decide who."} ],
+            {who:'', tx:"A car was driving itself under L2 assistance — the car steers and brakes, but a human must stay ready to grab the wheel — when it struck a pedestrian on the G2 Expressway. She survived. Barely. Now someone answers for it, and you decide who."} ],
     recon_lead:[ {who:'', tx:"Start with the reconstruction. The car's own sensors stitched it together. Watch it once, the way the machine saw it."} ],
     post_crash:[ {who:'You', tx:"It saw her. The detection box sits on her two full seconds out. Then it handed the wheel to a driver who wasn't watching."},
                  {who:'You', tx:"Three people are waiting to tell you whose fault that was. No two of them agree."} ],
     testi_lead:[ {who:'', tx:"Testimony. Three accounts of the same four seconds."} ],
-    t_engineer:[ {who:'Engineer who certified the system', tx:"The car was in L2. At 23:04:35 it issued a takeover request, exactly as built. In L2 the human is the fallback. We disclose that at purchase and on every drive."},
+    t_engineer:[ {who:'Engineer who certified the system', tx:"The car was in L2. At 23:04:35 it issued a takeover request — an alert telling the driver to take the wheel immediately — exactly as built. In L2 the human is the fallback. We disclose that at purchase and on every drive."},
                  {who:'Engineer who certified the system', tx:"The logs leave no room. The accelerator went down, not the brake. The system did its job. The man behind the wheel did not do his."} ],
-    t_legal:[ {who:'Counsel for the manufacturer', tx:"The handover met specification. Responsibility passed to the driver the instant the alert fired. The model stayed inside its defined domain."},
+    t_legal:[ {who:'Counsel for the manufacturer', tx:"The handover — the car giving control back to the human — met specification. Responsibility passed to the driver the instant the alert fired. The model stayed inside its defined domain: the exact conditions, roads and weather it was approved to drive in."},
               {who:'Counsel for the manufacturer', tx:"And we hid nothing. You hold the complete dataset, every parameter from the road to the cabin. Nobody had to subpoena it."} ],
     t_family:[ {who:'Family of the injured pedestrian', tx:"It saw her. You just watched it see her. If it could warn a sleeping man, why could it not stop the car itself?"},
                {who:'Family of the injured pedestrian', tx:"Two seconds. You want to tell me two seconds of a stranger's inattention is worth her spine. People forgive a human driver a mistake. Why does this machine get forgiven nothing, or everything?"} ],
     ev_lead:[ {who:'You', tx:"Testimony is three stories. The car kept its own record. Open the black box."} ],
     ev_after:[ {who:'You', tx:"Three logs are perfect. The fourth, the one that says why, can't be read at all. You have the whole crash except the single fact that decides fault."} ],
-    policy_lead:[ {who:'', tx:"This case won't be the last. The board wants more than a verdict on one crash. It wants a rule for the next thousand, and it wants it now."} ]
+    policy_lead:[ {who:'', tx:"This case won't be the last. The board wants more than a verdict on one crash. It wants a rule for the next thousand, and it wants it now."},
+                  {who:'', tx:"This one's on a clock. A countdown runs while you decide — pick A, B or C before it hits zero, or the board moves on and nothing changes."} ]
   };
   const DECISIONS={
     fault_testimony:{store:'fault_t',eyebrow:'01 · On the testimony alone', q:'Three accounts, one crash. Where does the fault sit right now?',
@@ -978,16 +983,19 @@ window.AUDIO=(function(){
         {k:'A',t:'The driver failed the handover', s:'He was the fallback and he wasn’t ready',
           outcome:{big:'The fallback',label:'A backup who wasn’t watching',danger:'none',
             ctx:'It reads clean. L2 makes the human the safety net, and this net was asleep. A net that only holds when you don’t need it barely counts as one.',
-            stats:[{v:'41 s',l:'Hands off the wheel',c:'bad'},{v:'2.0 s',l:'Time to react',c:'bad'}],
+            plain:'What you did: put the fault on the driver. In L2 he was supposed to be watching and ready — and he was on his phone with his hands off the wheel.',
+            stats:[{v:'~6 s',l:'Operator’s eyes down before impact',c:'bad',src:'NTSB HAR-19/03',url:'https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf'},{v:'Streaming',l:'On her phone',c:'bad'}],
             ins:'On L2 the human is the backup. If the car drives badly it tells a person to take over. When that person mis-operates, the fault lands on them, and the only proof lives in the maker’s black box.',who:'Functional-safety engineer, AV program'}},
         {k:'B',t:'The manufacturer warned too late', s:'It detected her and handed off anyway',
           outcome:{big:'2.0 s',label:'The warning, and the whole window',danger:'mid',
             ctx:'The car had already seen her when it asked a distracted human to save the day in two seconds. The maker designed the handover that way. The driver didn’t.',
-            stats:[{v:'2.3 s',l:'It had seen her',c:'ok'},{v:'0',l:'Brakes applied',c:'bad'}],
+            plain:'What you did: put the fault on the manufacturer. Its car spotted her early, then handed a distracted human two seconds to react — a design choice the maker made, not the driver.',
+            stats:[{v:'5.6 s',l:'System first detected her',c:'ok',src:'NTSB HAR-19/03',url:'https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf'},{v:'0',l:'Autonomous brakes applied',c:'bad',src:'NTSB',url:'https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf'}],
             ins:'Nobody advertises what a finished system looks like. Companies say the model went from thirty points to eighty. They never say what the finish line is, or whether they reach it.',who:'AV deployment & data lead'}},
         {k:'C',t:'It can’t be said yet', s:'The machine can’t explain itself',
           outcome:{big:'Why?',label:'The question the logs won’t answer',danger:'none',
             ctx:'Three certainties rest on one missing fact: why the car warned instead of braking. Without that, fault is a story, not a finding.',
+            plain:"What you did: refused to assign fault yet. The one thing that would settle it — why the car warned instead of braking — isn't in any log you can read.",
             stats:[{v:'3 stories',l:'On the record',c:'ok'},{v:'1 crash',l:'To explain',c:'bad'}],
             ins:'The deepest problem isn’t the driving. A deep-learning model can’t explain itself. After a crash you can’t rebuild the decision step by step, and without that you can’t assign fault.',who:'AV perception & mapping engineer'}}
       ]},
@@ -996,16 +1004,19 @@ window.AUDIO=(function(){
         {k:'A',t:'Fault is the driver’s', s:'The data shows his hands, his pedal',
           outcome:{big:'On him',label:'What the record proves',danger:'none',
             ctx:'The actuator and driver logs are complete and damning: hands off, eyes off, wrong pedal. You can prove what the man did. You can’t prove the car couldn’t have done better.',
+            plain:'What you did: ruled the driver at fault, on the evidence. The logs prove exactly what he did wrong — but they can’t show whether the car could have stopped on its own.',
             stats:[{v:'Complete',l:'Driver log',c:'ok'},{v:'Unreadable',l:'Why it handed off',c:'bad'}],
             ins:'The car owns the full dataset: the road, its own braking and steering, the driver’s every move, down to whether he was asleep or stamped the wrong pedal. The maker needs nobody to hand it over.',who:'AV commercialization strategist'}},
         {k:'B',t:'Fault is the manufacturer’s', s:'It detected and chose not to brake',
           outcome:{big:'On them',label:'A choice, not a limit',danger:'mid',
             ctx:'It saw her, tracked her, and gave control back instead of stopping. Call that a design decision. You still can’t show the reasoning, because none of it exists in a form you can read.',
-            stats:[{v:'0.91',l:'Detection confidence',c:'ok'},{v:'0',l:'Derivations available',c:'bad'}],
+            plain:'What you did: ruled the manufacturer at fault. The car detected her and chose to hand off rather than brake — but you can’t point to the reasoning, because the car keeps no record a human can read.',
+            stats:[{v:'0.91',l:'Detection confidence',c:'ok'},{v:'0',l:'Derivations available',c:'bad'},{v:'1.0 s',l:'Braking suppressed by design',c:'bad',src:'NTSB HAR-19/03',url:'https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf'}],
             ins:'The old rule-based stack was traceable. Every module’s input and output followed from the last. A deep-learning model is a pile of fitted parameters. Show it something new and you get the result, never the reason.',who:'AV algorithm developer'}},
         {k:'C',t:'Undetermined: the "why" is unreconstructable', s:'The one log that matters is opaque',
           outcome:{big:'Opaque',label:'Complete data, no explanation',danger:'none',
             ctx:'Hundreds of parameters, and not one says why. You can describe the crash to the millisecond and still miss the only question a court asks. This is the honest finding and the uncomfortable one.',
+            plain:'What you did: found it can’t be determined. The car logged hundreds of details about the crash, but not the one that decides fault — why it made the choice it did.',
             stats:[{v:'Hundreds',l:'Parameters logged',c:'ok'},{v:'None',l:'Explain the decision',c:'bad'}],
             ins:'Every carmaker draws the edge-case line in a different place. Without a higher, unified national law, that divergence turns into a real public-safety threat.',who:'Robotaxi product & operations manager'}}
       ]},
@@ -1014,21 +1025,25 @@ window.AUDIO=(function(){
         {k:'A',t:'Mandate full transparency', s:'Publish every incident’s black box',
           outcome:{big:'Open it',label:'Accountability in daylight',danger:'none',
             ctx:'Every crash file goes public. Media, insurers, and the public do the scrutiny. Trust gets earned in the open. Each rare failure also gets its own headline, and one bad night can freeze the whole industry.',
+            plain:'What you did: made the rule total transparency — every crash file open to the public. Anyone can check the makers, so trust is earned in daylight, but every rare failure becomes a headline.',
             stats:[{v:'Public',l:'Scrutiny',c:'good'},{v:'Volatile',l:'Trust',c:'bad'}],
             ins:'In China we don’t publish every incident. The government acts as steward and manages what the public sees. In the US, safety reports are filed publicly and media and insurers push. Neither is obviously right.',who:'AV commercialization strategist'}},
         {k:'B',t:'Keep the state as data steward', s:'Curated summaries, not raw files',
           outcome:{big:'Hold it',label:'Managed trust',danger:'mid',
             ctx:'The regulator keeps the black boxes and releases what the public needs. It kept the early electric-car fires from stalling the transition. It also asks people to trust an institution instead of the evidence, right up until they stop.',
+            plain:'What you did: made the government the gatekeeper — it holds the crash data and releases summaries, and it decides where legal blame falls (the "liability boundary"). Calmer for the public, but they have to trust the institution over the raw evidence.',
             stats:[{v:'Stable',l:'Public mood',c:'ok'},{v:'Opaque',l:'To the public',c:'bad'}],
             ins:'China’s playbook runs deploy first, regulate later. Let it run, then tighten. Every real incident becomes the trigger that shapes the next rule, the insurance, the liability boundary.',who:'AV deployment & data lead'}},
         {k:'C',t:'Require interpretability to certify', s:'No approval without a readable "why"',
           outcome:{big:'Prove why',label:'A bar the tech may not clear',danger:'mid',
             ctx:'No system ships until its decisions can be rebuilt and a national edge-case standard is met. It closes the fault gap you just hit. It may also be a bar today’s deep-learning cars cannot reach.',
+            plain:'What you did: set a hard bar — no car ships until it can explain its own decisions and clears a national minimum safety standard (a "safety floor"). It would have answered tonight’s crash, but today’s cars may not be able to meet it.',
             stats:[{v:'Answerable',l:'Fault',c:'good'},{v:'Slower',l:'Deployment',c:'ok'}],
             ins:'Governments pick the safety floor over the ceiling. The sensor-heavy, redundant route runs the harder roads. The data-only bet stays on simpler ones until its record proves out.',who:'AV commercialization strategist'}}
       ],
       timeoutOutcome:{big:'Gone',label:'The board moved on without you',danger:'high',
         ctx:'You ran out the clock. No rule gets written, so the current framework stands: deploy first, converge the rules later, one incident at a time. Not deciding was a decision, and it favoured the status quo.',
+        plain:'What happened: the clock ran out before you chose. Deciding nothing let the current hands-off rules stand — so by not choosing, you chose to change nothing.',
         stats:[{v:'No rule',l:'Written today',c:'bad'},{v:'Status quo',l:'Prevails',c:'ok'}],
         ins:'One bad incident like Wuhan and policy tightens across the whole country overnight. Shifting government policy is the single biggest risk the industry manages.',who:'Robotaxi test-operations lead'}}
   };

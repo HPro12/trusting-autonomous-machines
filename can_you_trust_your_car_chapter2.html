@@ -20,6 +20,8 @@
     font-size:clamp(11px,1.4vw,14px);color:#9aa6c2;letter-spacing:.03em;opacity:.75}
   #hint kbd{background:rgba(30,40,72,.7);border:1px solid rgba(150,180,255,.18);border-radius:6px;
     padding:2px 7px;font-family:inherit;font-size:.92em;color:#dbe6ff}
+  #hint.warm{opacity:1;animation:hintpulse 1.1s ease-in-out infinite}
+  @keyframes hintpulse{0%,100%{opacity:.5}50%{opacity:1}}
 
   #mute{position:absolute;top:clamp(10px,2.2vh,18px);right:clamp(12px,2.4vw,26px);pointer-events:auto;cursor:pointer;
     display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#9aa6c2;
@@ -83,9 +85,12 @@
   #o-big{font-size:clamp(46px,11vw,120px);font-weight:800;line-height:.92;color:#fff}
   #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:1rem}
   #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;max-width:min(680px,92vw)}
+  #o-plain{font-size:clamp(13px,1.6vw,17px);color:#dbe6ff;line-height:1.5;margin-top:1.1rem;max-width:min(680px,92vw);
+    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.7rem 1rem;text-align:left}
+  .fz-help{font-size:clamp(11px,1.3vw,13px);color:#9aa6c2;margin:2px 0 10px}
   .o-stats{display:flex;gap:clamp(16px,3vw,48px);margin-top:clamp(16px,3vh,30px);flex-wrap:wrap;justify-content:center}
   .o-stat .v{font-size:clamp(22px,3vw,34px);font-weight:800}.o-stat .v.bad{color:#ff5a6a}.o-stat .v.ok{color:#f5b13f}.o-stat .v.good{color:#42d98a}
-  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}.o-cite{display:block;font-size:clamp(9px,1vw,11px);color:#7f8db0;text-decoration:none;margin-top:5px;border-bottom:1px dotted #566}.o-cite:hover{color:#9fb0d8}
   .o-delta{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;justify-content:center}
   .chip{font-size:clamp(11px,1.3vw,14px);font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(150,180,255,.14);background:rgba(24,32,58,.72);color:#9aa6c2}
   .chip.up{color:#42d98a;border-color:rgba(66,217,138,.4)}.chip.down{color:#ff5a6a;border-color:rgba(255,90,106,.4)}
@@ -109,7 +114,7 @@
   .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
   .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
-  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent{animation:none} }
+  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm{animation:none} }
 
   /* ---- Chapter 2: sensor HUD, perception overlays, fusion panel ---- */
   #sensorhud{position:absolute;top:clamp(10px,2.2vh,18px);left:50%;transform:translateX(-50%);display:flex;gap:8px;opacity:0;transition:opacity .5s}
@@ -160,6 +165,7 @@
   <div class="fz-row"><label>📷 Camera</label><input type="range" id="w-cam" min="0" max="100" value="60"><span id="w-cam-v">60</span></div>
   <div class="fz-row"><label>🟦 LiDAR</label><input type="range" id="w-lidar" min="0" max="100" value="50"><span id="w-lidar-v">50</span></div>
   <div class="fz-row"><label>📡 Radar</label><input type="range" id="w-radar" min="0" max="100" value="40"><span id="w-radar-v">40</span></div>
+  <div class="fz-help">Drag each slider to set how much the car trusts that sensor, then Lock it in.</div>
   <div class="fz-cert"><span>Certainty</span><b id="fz-cert-v">—</b></div>
   <div class="fz-bar"><div class="fz-fill" id="fz-fill"></div></div>
   <div class="fz-actions"><button id="fz-auto">AUTO — let the car weigh them</button><button id="fz-go">Lock it in →</button></div>
@@ -174,6 +180,7 @@
     <span class="sbadge" id="sb-radar">📡 Radar</span>
   </div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
+  <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
 
 <div id="flash"></div>
@@ -188,7 +195,7 @@
 </div>
 
 <div id="outcome"><div style="display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)">
-  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div>
+  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
   <button class="cont" id="o-cont">Continue →</button>
@@ -228,11 +235,11 @@ window.AUDIO=(function(){
   function saveMuted(){ try{const s=readStore();s.version=1;s.settings=Object.assign({},s.settings,{muted});localStorage.setItem('cytc.v1',JSON.stringify(s));}catch(e){} }
   function init(){ if(ac)return; const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
     ac=new AC(); master=ac.createGain(); master.gain.value=muted?0:0.9; master.connect(ac.destination);
-    bed=ac.createGain(); bed.gain.value=0.4; bed.connect(master);
+    bed=ac.createGain(); bed.gain.value=0.18; bed.connect(master);  // ponytail: engine bed toned down per playtest
     sfxG=ac.createGain(); sfxG.gain.value=0.9; sfxG.connect(master);
     musicG=ac.createGain(); musicG.gain.value=0.0; musicG.connect(master); }
   function noise(){ const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0); for(let i=0;i<n;i++)d[i]=Math.random()*2-1; return b; }
-  function unlock(){ init(); if(ac&&ac.state==='suspended')ac.resume(); engineOn(); padOn(); }
+  function unlock(){ init(); if(ac&&ac.state==='suspended')ac.resume(); engineOn(); musicOn(); }
 
   /* ---- EV powertrain bed: inverter whine (rises with speed) + wind + low hum ---- */
   function engineOn(){ if(!ac||P.eng)return;
@@ -258,25 +265,21 @@ window.AUDIO=(function(){
     P.eng.whineG.gain.setTargetAtTime(0.01+r*0.028,t,0.3); P.eng.wg.gain.setTargetAtTime(r*0.05,t,0.3); }
 
   /* ---- adaptive score: pad + slow arp; setScene() shifts tension; ducks under sfx ---- */
-  const SCENES={ calm:{root:110,cutoff:520,notes:[0,7,12,7],tempo:2.4,gain:0.16},
-                 tense:{root:98,cutoff:900,notes:[0,1,7,8],tempo:1.1,gain:0.20},
-                 dawn:{root:130.8,cutoff:700,notes:[0,4,7,11],tempo:2.8,gain:0.14} };
+  const SCENES={ calm:{root:110,cutoff:520,notes:[0,7,12,16,12,7],tempo:2.4,gain:0.26},
+                 tense:{root:98,cutoff:900,notes:[0,1,7,8],tempo:1.1,gain:0.32},
+                 dawn:{root:130.8,cutoff:700,notes:[0,4,7,11,12,7],tempo:2.8,gain:0.24} };
   let scene='calm';
-  function padOn(){ if(!ac||P.pad)return; const t=ac.currentTime;
-    const o1=ac.createOscillator(),o2=ac.createOscillator(),g=ac.createGain(),lp=ac.createBiquadFilter(),lfo=ac.createOscillator(),lg=ac.createGain();
-    o1.type='triangle';o2.type='sine';o2.detune.value=6; lp.type='lowpass';lp.frequency.value=520;g.gain.value=0.5;
-    lfo.frequency.value=0.06;lg.gain.value=120;lfo.connect(lg);lg.connect(lp.frequency);
-    o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(musicG);o1.start();o2.start();lfo.start();
-    P.pad={o1,o2,lp}; musicG.gain.setTargetAtTime(SCENES[scene].gain,t,2.0); setScene(scene,true);
-    startArp(); }
-  let arpTimer=null,arpStep=0;
-  function startArp(){ stopArp(); const tick=()=>{ const s=SCENES[scene]; const semis=s.notes[arpStep%s.notes.length];
-    ping((s.root*2)*Math.pow(2,semis/12),0.9,'triangle',0.06,musicG); arpStep++; arpTimer=setTimeout(tick,s.tempo*1000); }; tick(); }
-  function stopArp(){ if(arpTimer){clearTimeout(arpTimer);arpTimer=null;} }
+  // background score: the licensed mp3 (bgm.mp3), routed through musicG so mute + SFX-ducking still apply
+  let musicVol=0.6;
+  function musicOn(){ if(!ac||P.bgm)return; const el=document.getElementById('bgm'); if(!el)return;
+    let src; try{ src=ac.createMediaElementSource(el); }catch(e){ return; } // throws if already wired
+    src.connect(musicG); el.loop=true; if(el.play)el.play().catch(()=>{});
+    P.bgm=src; musicG.gain.setTargetAtTime(muted?0:musicVol,ac.currentTime,2.0); }
   function setScene(name,quiet){ if(!SCENES[name])return; scene=name; if(!ac||!P.pad)return; const s=SCENES[name],t=ac.currentTime;
     P.pad.o1.frequency.setTargetAtTime(s.root,t,1.5); P.pad.o2.frequency.setTargetAtTime(s.root*1.5,t,1.5);
+    if(P.pad.sub)P.pad.sub.frequency.setTargetAtTime(s.root/2,t,1.5);
     P.pad.lp.frequency.setTargetAtTime(s.cutoff,t,1.5); if(!quiet)musicG.gain.setTargetAtTime(muted?0:s.gain,t,1.5); }
-  function duck(){ if(!musicG||!ac)return; const t=ac.currentTime,g=SCENES[scene].gain; musicG.gain.cancelScheduledValues(t);
+  function duck(){ if(!musicG||!ac)return; const t=ac.currentTime,g=musicVol; musicG.gain.cancelScheduledValues(t);
     musicG.gain.setTargetAtTime(g*0.3,t,0.08); musicG.gain.setTargetAtTime(muted?0:g,t+1.0,0.5); }
 
   /* ---- one-shots ---- */
@@ -840,7 +843,8 @@ window.AUDIO=(function(){
   }
   function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
     $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div></div>').join('');
+    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
     $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
@@ -851,8 +855,8 @@ window.AUDIO=(function(){
   const BEATS={
     intro:()=>[ {who:'You', tx:(S.car?("Back on the G2, in the "+ (carName[S.car]||'car') +" from last time."):"Back on the G2 at night.")+" Tonight the dashboard shows you something new."},
       {who:'Car', tx:"Perception online. Every object it tracks, it draws for you: a camera box, a LiDAR cloud, a radar bracket, and a number for how sure it is."} ],
-    see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR, amber is radar. When they agree, the number climbs."} ],
-    fuse_intro:[ {who:'', tx:"A figure waits at the roadside ahead. Each sensor has an opinion about it. You decide how much to trust each one."} ],
+    see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs — blending all three into one answer is called sensor fusion."} ],
+    fuse_intro:[ {who:'', tx:"A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one."} ],
     fuse_after:(c)=>[ {who:'You', tx:(c>=70?"Weighted right, the read holds. All three sensors point the same way.":"The read is shaky. The sensors don't fully agree yet.")} ],
     fail_intro:[ {who:'', tx:"Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses."},
       {who:'Car', tx:"CAMERA DEGRADED. What's left is LiDAR and radar. Re-weight them, or let the car decide."} ],
@@ -864,15 +868,18 @@ window.AUDIO=(function(){
       opts:[
         {k:'A',t:'Brake for the LiDAR return', outcome:{big:'Stopped',label:'Believed the sensors that could see',danger:'none',
           ctx:'You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.',
+          plain:'What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off — you trusted the sensors that could still see.',
           stats:[{v:'LiDAR',l:'Trusted',c:'good'},{v:'Safe',l:'Outcome',c:'good'}],
-          ins:'Redundancy is the whole point: when one sensor fails, the others carry the read. Believing them is the hard part.',who:'Sensor-fusion engineer'}},
+          ins:'LiDAR, microwave radar, cameras — we call them all sensors, and the system fuses them into a single judgement.',who:'Technology & product manager'}},
         {k:'B',t:'Trust the fused read', outcome:{big:'Slowed',label:'Let the fusion arbitrate',danger:'mid',
           ctx:'You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.',
+          plain:"What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time — safe this once, but only because the balance between sensors happened to be right.",
           stats:[{v:'Fusion',l:'Trusted',c:'ok'},{v:'Close',l:'Outcome',c:'ok'}],
-          ins:'Fusion usually wins, but "usually" is doing a lot of work. The weighting that saves you here can betray you elsewhere.',who:'Perception lead'}},
+          ins:'Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.',who:'Robotaxi commercialization strategist'}},
         {k:'C',t:'Assume the camera is right (false alarm)', outcome:{big:'Impact',label:'Trusted the blind sensor',danger:'high',crash:true,
           stats:[{v:'Camera',l:'Trusted',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-          ins:'A blinded camera reports nothing. That is not the same as reporting nothing is there. Treating its silence as confidence is how these crashes happen.',who:'Safety-validation engineer'}}
+          plain:"What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing — not safety. You drove into what the other sensors plainly saw.",
+          ins:'For plain detection and recognition, the human eye may still beat the camera.',who:'Deployment & data engineer'}}
       ]}
   };
   function verdict(){ const k=S.decision;
@@ -906,10 +913,32 @@ window.AUDIO=(function(){
   $('db-ch2').addEventListener('click',continueCh3);
   $('db-replay').addEventListener('click',()=>location.reload());
 
+  /* ---- warm-up: prove the drive is interactive before the story ---- */
+  function warmup(){ return new Promise(res=>{
+    const hint=$('hint'), beat=$('beat'), who=$('beat-who'), tx=$('beat-tx'), bh=$('beat-hint');
+    hint.classList.add('warm'); showLetterbox(true);
+    who.style.display='none'; if(bh)bh.style.display='none'; beat.classList.add('show','ready');
+    const prompts=["You're driving again. Ease into the next lane — press D or → to move right.",
+                   "Good. Now pull back — press A or ← to move left."];
+    let stage=0; tx.textContent=prompts[0];
+    function onKey(e){ if(e.repeat)return; const k=e.key;
+      const right=(k==='d'||k==='D'||k==='ArrowRight'), left=(k==='a'||k==='A'||k==='ArrowLeft');
+      if(!right&&!left) return;
+      e.preventDefault(); e.stopPropagation();
+      if(stage===0&&right){ TD.changeLane(+1); stage=1; tx.textContent=prompts[1]; }
+      else if(stage===1&&left){ TD.changeLane(-1); finish(); }
+    }
+    function finish(){ document.removeEventListener('keydown',onKey,true);
+      hint.classList.remove('warm'); beat.classList.remove('show','ready'); if(bh)bh.style.display='';
+      showLetterbox(false); res(); }
+    document.addEventListener('keydown',onKey,true);
+  });}
+
   /* ---- director ---- */
   async function begin(){ if(STORY.running)return; STORY.running=true; const st=$('start'); if(st)st.classList.add('hide');
     if(window.TD){ TD.setAutoPhone(false); TD.state.started=true; }
     try{
+      await warmup();
       $('sensorhud').classList.add('show');
       await beats(BEATS.intro);
       PERC.setActive(true); if(window.AUDIO)AUDIO.sfx('chime');

@@ -338,18 +338,19 @@ window.AUDIO=(function(){
                  tense:{root:98,cutoff:900,notes:[0,1,7,8],tempo:1.1,gain:0.32},
                  dawn:{root:130.8,cutoff:700,notes:[0,4,7,11,12,7],tempo:2.8,gain:0.24} };
   let scene='calm';
-  // background score: the licensed mp3 (bgm.mp3), routed through musicG so mute + SFX-ducking still apply
+  // background score: the licensed mp3 (bgm.mp3). Played via the <audio> element directly, NOT
+  // through createMediaElementSource — a media-element source is treated as cross-origin/tainted
+  // under file:// and outputs silence, so the song was missing when opening the file directly.
   let musicVol=0.6;
-  function musicOn(){ if(!ac||P.bgm)return; const el=document.getElementById('bgm'); if(!el)return;
-    let src; try{ src=ac.createMediaElementSource(el); }catch(e){ return; } // throws if already wired
-    src.connect(musicG); el.loop=true; if(el.play)el.play().catch(()=>{});
-    P.bgm=src; musicG.gain.setTargetAtTime(muted?0:musicVol,ac.currentTime,2.0); }
+  function musicOn(){ const el=document.getElementById('bgm'); if(!el||P.bgm)return;
+    P.bgm=el; el.loop=true; el.volume=musicVol; el.muted=muted; if(el.play)el.play().catch(()=>{}); }
   function setScene(name,quiet){ if(!SCENES[name])return; scene=name; if(!ac||!P.pad)return; const s=SCENES[name],t=ac.currentTime;
     P.pad.o1.frequency.setTargetAtTime(s.root,t,1.5); P.pad.o2.frequency.setTargetAtTime(s.root*1.5,t,1.5);
     if(P.pad.sub)P.pad.sub.frequency.setTargetAtTime(s.root/2,t,1.5);
     P.pad.lp.frequency.setTargetAtTime(s.cutoff,t,1.5); if(!quiet)musicG.gain.setTargetAtTime(muted?0:s.gain,t,1.5); }
-  function duck(){ if(!musicG||!ac)return; const t=ac.currentTime,g=musicVol; musicG.gain.cancelScheduledValues(t);
-    musicG.gain.setTargetAtTime(g*0.3,t,0.08); musicG.gain.setTargetAtTime(muted?0:g,t+1.0,0.5); }
+  let duckT=null;
+  function duck(){ const bg=document.getElementById('bgm'); if(!bg)return; bg.volume=musicVol*0.3;
+    if(duckT)clearTimeout(duckT); duckT=setTimeout(()=>{ bg.volume=musicVol; },1000); }
 
   /* ---- one-shots ---- */
   function ping(freq,dur,type,gain,dest){ if(!ac)return; const o=ac.createOscillator(),g=ac.createGain();
@@ -372,7 +373,7 @@ window.AUDIO=(function(){
   function sfx(n){ if(!ac||muted)return; (ONE[n]||function(){})(); }
 
   /* ---- mute chip + M key ---- */
-  function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); saveMuted(); syncChip(); }
+  function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
     el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();

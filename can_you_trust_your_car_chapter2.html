@@ -154,30 +154,39 @@
   #fz-auto{background:rgba(138,176,224,.14);border:1px solid rgba(138,176,224,.4)!important;color:#bdeefb}
   #fz-go{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a}
   @media (prefers-reduced-motion: reduce){ .sbadge.alert{animation:none} }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:120px; z-index:100;
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
 </style>
 </head>
 <body>
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
 <canvas id="c"></canvas>
 <div id="perc"></div>
 
 <div id="fusion">
-  <div class="fz-title">Sensor fusion <span id="fz-mode">manual</span></div>
-  <div class="fz-row"><label>📷 Camera</label><input type="range" id="w-cam" min="0" max="100" value="60"><span id="w-cam-v">60</span></div>
-  <div class="fz-row"><label>🟦 LiDAR</label><input type="range" id="w-lidar" min="0" max="100" value="50"><span id="w-lidar-v">50</span></div>
-  <div class="fz-row"><label>📡 Radar</label><input type="range" id="w-radar" min="0" max="100" value="40"><span id="w-radar-v">40</span></div>
-  <div class="fz-help">Drag each slider to set how much the car trusts that sensor, then Lock it in.</div>
-  <div class="fz-cert"><span>Certainty</span><b id="fz-cert-v">—</b></div>
+  <div class="fz-title"><span data-i18n>Sensor fusion</span> <span id="fz-mode">manual</span></div>
+  <div class="fz-row"><label data-i18n>📷 Camera</label><input type="range" id="w-cam" min="0" max="100" value="60"><span id="w-cam-v">60</span></div>
+  <div class="fz-row"><label data-i18n>🟦 LiDAR</label><input type="range" id="w-lidar" min="0" max="100" value="50"><span id="w-lidar-v">50</span></div>
+  <div class="fz-row"><label data-i18n>📡 Radar</label><input type="range" id="w-radar" min="0" max="100" value="40"><span id="w-radar-v">40</span></div>
+  <div class="fz-help" data-i18n>Drag each slider to set how much the car trusts that sensor, then Lock it in.</div>
+  <div class="fz-cert"><span data-i18n>Certainty</span><b id="fz-cert-v">—</b></div>
   <div class="fz-bar"><div class="fz-fill" id="fz-fill"></div></div>
-  <div class="fz-actions"><button id="fz-auto">AUTO — let the car weigh them</button><button id="fz-go">Lock it in →</button></div>
+  <div class="fz-actions"><button id="fz-auto" data-i18n>AUTO — let the car weigh them</button><button id="fz-go" data-i18n>Lock it in →</button></div>
 </div>
 
 <div id="ui">
-  <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
-  <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane · you can see what the car sees</div>
+  <div id="hud-speed"><b id="spd">0</b><span data-i18n>KM/H</span></div>
+  <div id="hint" data-i18n><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane · you can see what the car sees</div>
   <div id="sensorhud">
-    <span class="sbadge" id="sb-cam">📷 Camera</span>
-    <span class="sbadge" id="sb-lidar">🟦 LiDAR</span>
-    <span class="sbadge" id="sb-radar">📡 Radar</span>
+    <span class="sbadge" id="sb-cam" data-i18n>📷 Camera</span>
+    <span class="sbadge" id="sb-lidar" data-i18n>🟦 LiDAR</span>
+    <span class="sbadge" id="sb-radar" data-i18n>📡 Radar</span>
   </div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
@@ -186,7 +195,7 @@
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
 <div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
-<div id="edgewarn">⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
+<div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
   <div class="d-eyebrow" id="d-eyebrow"></div>
@@ -198,7 +207,7 @@
   <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont">Continue →</button>
+  <button class="cont" id="o-cont" data-i18n>Continue →</button>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
@@ -211,18 +220,157 @@
   <div class="db-timeline" id="db-timeline"></div>
   <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
-    <button class="db-btn" id="db-ch2">Continue to Chapter 3 ↗</button>
-    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none">Review again</button>
+    <button class="db-btn" id="db-ch2" data-i18n>Continue to Chapter 3 ↗</button>
+    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Review again</button>
   </div>
 </div></div>
 
 <div id="start">
-  <div class="eyebrow">Can You Trust Your Car? · Chapter 2</div>
-  <div class="title">Inside the Machine</div>
-  <div class="sub">Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?</div>
-  <button id="startbtn">See through its eyes →</button>
+  <div class="eyebrow" data-i18n>Can You Trust Your Car? · Chapter 2</div>
+  <div class="title" data-i18n>Inside the Machine</div>
+  <div class="sub" data-i18n>Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?</div>
+  <button id="startbtn" data-i18n>See through its eyes →</button>
 </div>
 
+<script>
+/* i18n core — identical on every page. English is the source of truth; ZH maps normalized
+   English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
+window.ZH = {
+  // — start screen —
+  "Can You Trust Your Car? · Chapter 2":"你能信任你的车吗？· 第 2 章",
+  "Inside the Machine":"机器之内",
+  "Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?":"同一条路，同一个夜晚。这一次，你能看到车所看到的：每一个传感器，每一次猜测。当它们彼此矛盾时，你该相信谁？",
+  "See through its eyes →":"透过它的眼睛去看 →",
+  // — HUD / hint / badges / fusion panel —
+  "KM/H":"公里/时",
+  "<kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane · you can see what the car sees":"<kbd>A</kbd> / <kbd>←</kbd> 与 <kbd>D</kbd> / <kbd>→</kbd> 变道 · 你能看到车所看到的",
+  "📷 Camera":"📷 摄像头",
+  "🟦 LiDAR":"🟦 激光雷达",
+  "📡 Radar":"📡 雷达",
+  "Sensor fusion":"传感器融合",
+  "manual":"手动",
+  "AUTO":"自动",
+  "Drag each slider to set how much the car trusts that sensor, then Lock it in.":"拖动每个滑块，设定车对该传感器的信任程度，然后锁定。",
+  "Certainty":"确定度",
+  "AUTO — let the car weigh them":"自动 —— 让车自行权衡",
+  "Lock it in →":"锁定 →",
+  // — takeover warning —
+  "⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>你的车道上有障碍物。按 A / D 变道避让。</small>",
+  // — mute chip —
+  "Sound":"声音",
+  "Muted":"已静音",
+  // — perception confidence tags —
+  "PED":"行人",
+  "CAR":"车",
+  // — car screen (map + iMessage) —
+  "G2 Expressway · 108 km/h":"G2 高速 · 108 km/h",
+  "‹  Messages":"‹  信息",
+  "iMessage · now":"iMessage · 刚刚",
+  "Did you see the news about the crash on the G2 tonight?":"你看到今晚 G2 上那起事故的新闻了吗？",
+  // — warm-up —
+  "You're driving again. Ease into the next lane — press D or → to move right.":"你又开起来了。缓缓并入下一条车道——按 D 或 → 向右移。",
+  "Good. Now pull back — press A or ← to move left.":"很好。现在退回来——按 A 或 ← 向左移。",
+  // — beats —
+  "You":"你",
+  "Car":"车",
+  "Back on the G2 at night. Tonight the dashboard shows you something new.":"又回到 G2，夜色之中。今晚，仪表盘会给你看一些新东西。",
+  "Back on the G2, in the car you drive yourself from last time. Tonight the dashboard shows you something new.":"又回到 G2，坐进上次那辆你自己驾驶的车里。今晚，仪表盘会给你看一些新东西。",
+  "Back on the G2, in the L2 highway-assist car from last time. Tonight the dashboard shows you something new.":"又回到 G2，坐进上次那辆 L2 高速辅助驾驶车里。今晚，仪表盘会给你看一些新东西。",
+  "Back on the G2, in the robotaxi from last time. Tonight the dashboard shows you something new.":"又回到 G2，坐进上次那辆无人驾驶出租车里。今晚，仪表盘会给你看一些新东西。",
+  "Perception online. Every object it tracks, it draws for you: a camera box, a LiDAR cloud, a radar bracket, and a number for how sure it is.":"感知已上线。它追踪的每一个物体，都会为你画出来：一个摄像头框、一片激光雷达点云、一副雷达括线，以及一个表示它有多确定的数字。",
+  "Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs — blending all three into one answer is called sensor fusion.":"框线锁定你周围的车。青色是摄像头，蓝点是激光雷达（激光测距），琥珀色是雷达（用无线电回波测算距离与速度）。当它们一致时，数字就会上升——把三者融合成同一个答案，就叫传感器融合。",
+  "A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one.":"前方路边有一个身影在等待。每个传感器都对它有各自的判断。拖动滑块，决定车对每一个传感器的信任程度。",
+  "Weighted right, the read holds. All three sensors point the same way.":"权重设得当，这次判断站得住。三个传感器都指向同一个方向。",
+  "The read is shaky. The sensors don't fully agree yet.":"判断并不牢靠。传感器之间还没有完全达成一致。",
+  "Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses.":"对向的远光灯灌满了挡风玻璃。摄像头一片惨白，它的置信度随之崩塌。",
+  "CAMERA DEGRADED. What's left is LiDAR and radar. Re-weight them, or let the car decide.":"摄像头已降级。剩下的是激光雷达和雷达。重新分配权重，或者交给车来决定。",
+  "Lean on the sensors that can still see, and the figure stays tracked through the glare. That is graceful degradation.":"倚靠仍能看见的传感器，那个身影就能在眩光中被持续追踪。这就是优雅降级。",
+  "Camera still blind. An object sits in your lane. LiDAR paints it solid; the camera insists on empty road. You have to call it.":"摄像头仍然致盲。你的车道里有一个物体。激光雷达把它描绘得清清楚楚；摄像头却坚称路面空无一物。你必须做出判断。",
+  // — decision —
+  "01:12 · Camera blind · Object in lane":"01:12 · 摄像头致盲 · 车道内有物体",
+  "The camera sees clear road. LiDAR and radar see something solid ahead. What do you do?":"摄像头看到的是空旷的道路。激光雷达和雷达却看到前方有实实在在的东西。你会怎么做？",
+  "Brake for the LiDAR return":"为激光雷达的回波刹车",
+  "Trust the fused read":"相信融合后的判断",
+  "Assume the camera is right (false alarm)":"认定摄像头没错（虚警）",
+  // — outcomes —
+  "Stopped":"已停车",
+  "Believed the sensors that could see":"相信了仍能看见的传感器",
+  "You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.":"你刹住了车。那是一辆熄着灯抛锚的车：对致盲的摄像头而言它不可见，对激光雷达而言却一目了然。",
+  "What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off — you trusted the sensors that could still see.":"你的做法：尽管致盲的摄像头显示路面空旷，你仍因激光雷达和雷达看到了实在的物体而刹车。那是一辆熄灯抛锚的车——你信任了仍能看见的传感器。",
+  "LiDAR, microwave radar, cameras — we call them all sensors, and the system fuses them into a single judgement.":"激光雷达、微波雷达、摄像头——我们把它们统称为传感器，系统会把它们融合成同一个判断。",
+  "Technology & product manager":"技术与产品经理",
+  "Slowed":"已减速",
+  "Let the fusion arbitrate":"让融合来裁决",
+  "You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.":"你松开油门，把决定交给融合。它给了激光雷达很高的权重，及时减了速。这一次是这样。",
+  "What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time — safe this once, but only because the balance between sensors happened to be right.":"你的做法：把决定交给车的综合判断。它倚重激光雷达，刚好及时减速——这一次安全了，但只是因为传感器之间的权衡恰好正确。",
+  "Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.":"Waymo 把眼睛装得到处都是，所以它的大脑只需要一个五岁孩子的水平。Tesla 用的是更弱的眼睛，所以它需要一个成熟、专业司机的大脑。",
+  "Robotaxi commercialization strategist":"无人驾驶出租车商业化策略师",
+  "Impact":"撞击",
+  "Trusted the blind sensor":"信任了失明的传感器",
+  "What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing — not safety. You drove into what the other sensors plainly saw.":"你的做法：相信了摄像头所谓的“道路空旷”，无视了激光雷达和雷达。致盲的摄像头报告的是“什么都没有”——而不是“安全”。你径直撞上了其他传感器清清楚楚看到的东西。",
+  "For plain detection and recognition, the human eye may still beat the camera.":"在单纯的探测与识别上，人眼或许仍然胜过摄像头。",
+  "Deployment & data engineer":"部署与数据工程师",
+  // — outcome stat values / labels —
+  "LiDAR":"激光雷达",
+  "Camera":"摄像头",
+  "Fusion":"融合",
+  "Safe":"安全",
+  "Close":"险些",
+  "Collision":"碰撞",
+  "Trusted":"已信任",
+  "Outcome":"结果",
+  // — continue / replay —
+  "Continue →":"继续 →",
+  "Continue to Chapter 3 ↗":"前往第 3 章 ↗",
+  "Review again":"重新回顾",
+  // — debrief —
+  "Chapter 2 · Debrief":"第 2 章 · 复盘",
+  "Chapter 2 · Inside the Machine":"第 2 章 · 机器之内",
+  "Certainty · clear":"确定度 · 清晰",
+  "Certainty · glare":"确定度 · 眩光",
+  "Fusion · clear night":"融合 · 清朗夜色",
+  "Fusion · under glare":"融合 · 眩光之下",
+  "Object in the lane":"车道内的物体",
+  "Confident":"有把握",
+  "Shaky":"不牢靠",
+  "Held":"撑住了",
+  "Lost it":"跟丢了",
+  "Braked for LiDAR":"为激光雷达刹车",
+  "Trusted the fusion":"相信了融合",
+  "Believed the camera":"相信了摄像头",
+  "You trusted the sensors that could still see, and stopped for something the camera never showed you. That is what fusion promises, and the discipline it asks for.":"你信任了仍能看见的传感器，为一个摄像头从未向你显示的东西停了下来。这正是融合所承诺的，也是它所要求的自律。",
+  "You let the fusion arbitrate and it held this time. Redundancy bought the margin; next time the weighting has to be right before you need it.":"你让融合来裁决，这一次它撑住了。冗余为你争取了余量；但下一次，权重必须在你需要之前就已经设对。",
+  "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing. It does not report safety. The crash lives in the gap between the two.":"你把失明传感器的沉默当了真，径直撞上了其他传感器清清楚楚看到的东西。一个看不见的摄像头，报告的是“什么都没有”。它并不报告“安全”。事故就住在这两者之间的缝隙里。",
+  // — document title —
+  "Can You Trust Your Car? — Night Drive":"你能信任你的车吗？—— 夜间行驶"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 /* ========================= AUDIO — Web Audio, no assets =========================
@@ -306,13 +454,13 @@ window.AUDIO=(function(){
   /* ---- mute chip + M key ---- */
   function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
-    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
+    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=(window.tr?tr:function(s){return s;})(muted?'Muted':'Sound'); }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();
     const el=document.getElementById('mute'); if(el)el.addEventListener('click',()=>{ unlock(); setMuted(!muted); });
     addEventListener('keydown',e=>{ if(e.key==='m'||e.key==='M'){ unlock(); setMuted(!muted); } }); }
   if(document.readyState!=='loading')wire(); else addEventListener('DOMContentLoaded',wire);
 
-  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted};
+  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted,syncChip};
 })();
 </script>
 <script>
@@ -506,7 +654,7 @@ window.AUDIO=(function(){
     // status strip
     c.fillStyle='rgba(0,0,0,.35)'; c.fillRect(0,0,W,34);
     c.fillStyle='#c7d2e6'; c.font='600 18px system-ui,sans-serif'; c.textBaseline='middle';
-    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText('G2 Expressway · 108 km/h',W-14,18); c.textAlign='left';
+    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText(tr('G2 Expressway · 108 km/h'),W-14,18); c.textAlign='left';
     screenTex.needsUpdate=true;
   }
   function wrapLines(c,text,maxW){ const words=text.split(' '),lines=[]; let line='';
@@ -519,7 +667,7 @@ window.AUDIO=(function(){
     c.fillStyle='#0c0c0e'; c.fillRect(0,0,W,68);
     c.fillStyle='rgba(255,255,255,.08)'; c.fillRect(0,67,W,1);
     c.textBaseline='middle';
-    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText('‹  Messages',PAD-4,35);
+    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText(tr('‹  Messages'),PAD-4,35);
     c.fillStyle='#ffffff'; c.font='700 22px system-ui,sans-serif'; c.textAlign='center'; c.fillText(sender,W/2,35);
     c.textAlign='left';
     // incoming bubble (iMessage gray), sized to the text with even padding
@@ -533,7 +681,7 @@ window.AUDIO=(function(){
     c.fillStyle='#f4f4f6'; c.textBaseline='alphabetic';
     lines.forEach((l,i)=>c.fillText(l,bx+ipadX,by+ipadY+22+i*lh));
     // timestamp
-    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText('iMessage · now',bx+2,by+bh+30);
+    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText(tr('iMessage · now'),bx+2,by+bh+30);
     screenTex.needsUpdate=true;
   }
   drawMap();
@@ -623,7 +771,7 @@ window.AUDIO=(function(){
   function showIMessage(sender,text){ state.phoneShown=true; drawIMessage(sender,text); screenGlow.intensity=0.75; if(window.AUDIO) AUDIO.sfx('imsg'); }
   function maybePhone(){
     if(!state.autoPhone || state.phoneShown || state.driveTime<8) return;
-    showIMessage('Lin Wei',"Did you see the news about the crash on the G2 tonight?");
+    showIMessage('Lin Wei',tr("Did you see the news about the crash on the G2 tonight?"));
   }
 
   /* ---- story hooks: mood, 3D takeover (lane-blocking obstacle), crash FX ---- */
@@ -755,6 +903,7 @@ window.AUDIO=(function(){
 
   /* ---- state + cytc.v1 continuity ---- */
   const S={ car:null, choices:{}, fuseCert:null, failCert:null, decision:null, outcome:null };
+  let fzMode='manual', curBeat=null, curOutcome=null;   // tracked for live language re-render
   function readStore(){ try{return JSON.parse(localStorage.getItem('cytc.v1'))||{};}catch(e){return {};} }
   (function(){ const s=readStore(); if(s.chapter1) S.car=s.chapter1.car; })();
   function save(){ try{ const s=readStore(); s.version=1; s.settings=Object.assign({muted:false},s.settings);
@@ -781,7 +930,7 @@ window.AUDIO=(function(){
         d.style.display=''; d.style.left=sx+'px'; d.style.top=sy+'px'; d.style.width=w+'px'; d.style.height=h+'px';
         const camEl=d.children[2],li=d.children[0],ra=d.children[1],cf=d.children[3];
         const oc=(weights.cam/100)*camConf; camEl.style.opacity=oc; li.style.opacity=(weights.lidar/100)*0.9; ra.style.opacity=weights.radar/100;
-        const c=conf(o); cf.textContent=(ped?'PED ':'CAR ')+Math.round(c*100)+'%';
+        const c=conf(o); cf.textContent=(ped?tr('PED '):tr('CAR '))+Math.round(c*100)+'%';
         cf.style.opacity=Math.max(oc,+li.style.opacity,+ra.style.opacity)>0.12?1:0.3;
         d.classList.toggle('dim', !!ped && camConf<0.5);
       }
@@ -797,11 +946,11 @@ window.AUDIO=(function(){
   function updateCert(){ const c=Math.round(PERC.pedCertainty()*100); $('fz-cert-v').textContent=c+'%'; $('fz-fill').style.width=c+'%'; return c; }
   (function(){ const ks=['cam','lidar','radar'];
     function read(){ PERC.setWeights({cam:+$('w-cam').value,lidar:+$('w-lidar').value,radar:+$('w-radar').value}); updateCert(); }
-    ks.forEach(k=>$('w-'+k).addEventListener('input',()=>{ $('w-'+k+'-v').textContent=$('w-'+k).value; $('fz-mode').textContent='manual'; read(); }));
+    ks.forEach(k=>$('w-'+k).addEventListener('input',()=>{ $('w-'+k+'-v').textContent=$('w-'+k).value; fzMode='manual'; $('fz-mode').textContent=tr('manual'); read(); }));
     $('fz-auto').addEventListener('click',()=>{ const w=glareOn?{cam:15,lidar:72,radar:55}:{cam:64,lidar:58,radar:34};
       $('w-cam').value=w.cam;$('w-lidar').value=w.lidar;$('w-radar').value=w.radar; ks.forEach(k=>$('w-'+k+'-v').textContent=w[k]);
-      $('fz-mode').textContent='AUTO'; read(); if(window.AUDIO)AUDIO.sfx('chime'); });
-    read();
+      fzMode='AUTO'; $('fz-mode').textContent=tr('AUTO'); read(); if(window.AUDIO)AUDIO.sfx('chime'); });
+    $('fz-mode').textContent=tr(fzMode); read();
   })();
   function fusionPuzzle(kind){ return new Promise(res=>{ TD.pause(true); const f=$('fusion'); f.classList.add('show');
     const go=()=>{ f.classList.remove('show'); $('fz-go').removeEventListener('click',go); TD.pause(false);
@@ -811,8 +960,8 @@ window.AUDIO=(function(){
   /* ---- beats (typewriter + letterbox) ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
-    who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    const full=b.tx; let i=0,done=false,raf=null;
+    curBeat=b; who.textContent=tr(b.who||''); who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
+    const full=tr(b.tx); let i=0,done=false,raf=null;
     function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
     function step(){ if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
     function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); res(); }
@@ -821,18 +970,21 @@ window.AUDIO=(function(){
     p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
   }); }
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
-    for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
+    for(const b of list) await playBeat(b); curBeat=null; $('beat').classList.remove('show','ready'); showLetterbox(false); }
 
   /* ---- decision + outcome ---- */
   let curDecision=null,decResolve=null,decKey=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
-  function askDecision(id){ const c=DECISIONS[id]; if(!c)return; TD.pause(true);
-    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
-    $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
+  function paintDecision(c){
+    const eb=$('d-eyebrow'); eb.textContent=tr(c.eyebrow); eb.className='d-eyebrow'+(c.urgent?' urgent':'');
+    $('d-question').textContent=tr(c.q); const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
-      b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
-    curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
+      b.onclick=()=>choose(curDecision,o.k); wrap.appendChild(b); });
+  }
+  function askDecision(id){ const c=DECISIONS[id]; if(!c)return; TD.pause(true); curDecision=id;
+    paintDecision(c);
+    $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
     document.addEventListener('keydown',decKey); }
   function choose(id,k){ if(curDecision!==id)return; curDecision=null; if(decKey){document.removeEventListener('keydown',decKey);decKey=null;}
@@ -842,11 +994,13 @@ window.AUDIO=(function(){
       if(o.outcome.crash && window.TD) TD.crashFx();
       showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; TD.pause(false); if(r)r(k); }); },240);
   }
-  function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+  function paintOutcome(d){ $('o-big').textContent=tr(d.big||''); $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=tr(d.label||''); $('o-ctx').textContent=tr(d.ctx||'');
+    $('o-plain').textContent=tr(d.plain||''); $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=tr(d.ins||''); $('o-quote').querySelector('.who').textContent=tr(d.who||'');
+  }
+  function showOutcome(d,cont){ curOutcome=d; paintOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
@@ -893,19 +1047,19 @@ window.AUDIO=(function(){
   function setLabel(meterEl,txt){ const s=meterEl.querySelector('.ml span'); if(s)s.textContent=txt; }
   function renderDebrief(){ save();
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Certainty · clear'); if(meters[1]) setLabel(meters[1],'Certainty · glare');
+    if(meters[0]) setLabel(meters[0],tr('Certainty · clear')); if(meters[1]) setLabel(meters[1],tr('Certainty · glare'));
     const fc=S.fuseCert!=null?S.fuseCert:0, gc=S.failCert!=null?S.failCert:0;
     $('db-trust-v').textContent=fc+'%'; $('db-att-v').textContent=gc+'%';
     setTimeout(()=>{ $('db-trust-f').style.width=fc+'%'; $('db-att-f').style.width=gc+'%'; },90);
-    const decLabel={A:'Braked for LiDAR',B:'Trusted the fusion',C:'Believed the camera'}[S.decision]||'—';
-    const decCons={A:{t:'Safe',c:'good'},B:{t:'Close',c:''},C:{t:'Collision',c:'bad'}}[S.decision]||{t:''};
-    const rows=[ {scene:'Fusion · clear night',call:'Certainty '+fc+'%',cons:{t:fc>=70?'Confident':'Shaky',c:fc>=70?'good':''}},
-      {scene:'Fusion · under glare',call:'Certainty '+gc+'%',cons:{t:gc>=60?'Held':'Lost it',c:gc>=60?'good':'bad'}},
-      {scene:'Object in the lane',call:decLabel,cons:decCons} ];
-    document.querySelector('#debrief .db-title').textContent='Chapter 2 · Debrief';
-    document.querySelector('#debrief .db-head').textContent='Chapter 2 · Inside the Machine';
+    const decLabel=tr({A:'Braked for LiDAR',B:'Trusted the fusion',C:'Believed the camera'}[S.decision]||'—');
+    const decCons={A:{t:tr('Safe'),c:'good'},B:{t:tr('Close'),c:''},C:{t:tr('Collision'),c:'bad'}}[S.decision]||{t:''};
+    const rows=[ {scene:tr('Fusion · clear night'),call:tr('Certainty ')+fc+'%',cons:{t:fc>=70?tr('Confident'):tr('Shaky'),c:fc>=70?'good':''}},
+      {scene:tr('Fusion · under glare'),call:tr('Certainty ')+gc+'%',cons:{t:gc>=60?tr('Held'):tr('Lost it'),c:gc>=60?'good':'bad'}},
+      {scene:tr('Object in the lane'),call:decLabel,cons:decCons} ];
+    document.querySelector('#debrief .db-title').textContent=tr('Chapter 2 · Debrief');
+    document.querySelector('#debrief .db-head').textContent=tr('Chapter 2 · Inside the Machine');
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
-    $('db-verdict').textContent=verdict();
+    $('db-verdict').textContent=tr(verdict());
     $('debrief').classList.add('show');
   }
 
@@ -919,8 +1073,8 @@ window.AUDIO=(function(){
     const hint=$('hint'), beat=$('beat'), who=$('beat-who'), tx=$('beat-tx'), bh=$('beat-hint');
     hint.classList.add('warm'); showLetterbox(true);
     who.style.display='none'; if(bh)bh.style.display='none'; beat.classList.add('show','ready');
-    const prompts=["You're driving again. Ease into the next lane — press D or → to move right.",
-                   "Good. Now pull back — press A or ← to move left."];
+    const prompts=[tr("You're driving again. Ease into the next lane — press D or → to move right."),
+                   tr("Good. Now pull back — press A or ← to move left.")];
     let stage=0; tx.textContent=prompts[0];
     function onKey(e){ if(e.repeat)return; const k=e.key;
       const right=(k==='d'||k==='D'||k==='ArrowRight'), left=(k==='a'||k==='A'||k==='ArrowLeft');
@@ -959,6 +1113,22 @@ window.AUDIO=(function(){
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  /* ---- live language toggle: re-render whatever is currently on screen ---- */
+  window.onLangChange=function(){
+    document.title = tr("Can You Trust Your Car? — Night Drive");
+    if(window.TD && TD.drawMap) TD.drawMap();                 // car map status strip (baked texture)
+    if(window.AUDIO && AUDIO.syncChip) AUDIO.syncChip();      // mute chip label
+    if($('fz-mode')) $('fz-mode').textContent=tr(fzMode);
+    if(curBeat && $('beat').classList.contains('show')){
+      $('beat-who').textContent=tr(curBeat.who||''); $('beat-who').style.display=curBeat.who?'':'none';
+      $('beat-tx').textContent=tr(curBeat.tx);
+    }
+    if(curDecision && $('decision').classList.contains('show')) paintDecision(DECISIONS[curDecision]);
+    if(curOutcome && $('outcome').classList.contains('show')) paintOutcome(curOutcome);
+    if($('debrief').classList.contains('show')) renderDebrief();
+    // ponytail: iMessage bubble isn't re-drawn on toggle (no stored last message) and CJK text
+    // won't word-wrap in the bubble; the phone is disabled in the ch2 story flow so it never shows.
+  };
   const STORY={running:false,begin,S}; window.STORY=STORY;
 })();
 </script>

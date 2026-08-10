@@ -199,9 +199,20 @@
   #d-timer .dt-track{height:6px;border-radius:4px;background:#161d2c;overflow:hidden}
   #d-timer .dt-fill{height:100%;width:100%;border-radius:4px;background:linear-gradient(90deg,#42d98a,#f5b13f,#ff5a6a);transition:width .25s linear}
   @media (prefers-reduced-motion: reduce){ .ev-note,#d-timer .dt-fill{transition:none} }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:132px; z-index:100;   /* right: offset left of the mute chip */
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
 </style>
 </head>
 <body>
+
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
 <canvas id="c"></canvas>
 <div id="footbox"><div class="fb-box"></div><div class="fb-lbl">PEDESTRIAN</div></div>
 
@@ -237,8 +248,8 @@
 </div>
 
 <div id="ui">
-  <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
-  <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
+  <div id="hud-speed"><b id="spd">0</b><span data-i18n>KM/H</span></div>
+  <div id="hint" data-i18n><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
@@ -258,7 +269,7 @@
   <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont">Continue →</button>
+  <button class="cont" id="o-cont" data-i18n>Continue →</button>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
@@ -272,7 +283,7 @@
   <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
     <button class="db-btn" id="db-ch2">What comes next →</button>
-    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none">Review again</button>
+    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Review again</button>
   </div>
 </div></div>
 
@@ -282,6 +293,269 @@
   <div class="sub">You're a safety evaluator now. Ten thousand kilometres of fleet footage are on your screen. Somewhere in it is the one event that matters. Prove the car is safe enough to ship.</div>
   <button id="startbtn">Open the logs →</button>
 </div>
+
+<script>
+/* i18n core — identical on every page. English is the source of truth; ZH maps normalized
+   English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
+window.ZH = {
+  // — static DOM (data-i18n) —
+  "KM/H":"公里/时",
+  "<kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane":"<kbd>A</kbd> / <kbd>←</kbd> 和 <kbd>D</kbd> / <kbd>→</kbd> 变道",
+  "Continue →":"继续 →",
+  "Review again":"再看一次",
+  // — mute chip —
+  "Sound":"声音", "Muted":"已静音",
+  // — start / boot / case chrome (initChrome) —
+  "Can You Trust Your Car? · Chapter 4":"你能信任你的车吗？· 第 4 章",
+  "Who's Responsible?":"谁来负责？",
+  "A car was driving itself when someone got hurt. You're the regulator now. The footage, the logs, and three people who each swear it wasn't their fault are on your desk. Someone has to answer for this.":"一辆车在自动行驶时撞伤了人。现在你是监管者。影像、日志，以及三个各自发誓错不在己的人，都摆在你桌上。总得有人为此负责。",
+  "Open the case file →":"打开案卷 →",
+  "ACCIDENT INVESTIGATION":"事故调查",
+  "Incident file · Case #A-2291":"事故档案 · 案件 #A-2291",
+  "REC · INCIDENT REVIEW":"REC · 事故复核",
+  "Case #A-2291 · G2 Expressway · 23:04":"案件 #A-2291 · G2 高速公路 · 23:04",
+  "INJURED":"受伤",
+  "▶ Play reconstruction":"▶ 播放重建",
+  "reconstruction · 0:00":"重建 · 0:00",
+  "PEDESTRIAN · DETECTED":"行人 · 已检测",
+  // — reconstruction —
+  "TAKEOVER REQUESTED":"请求接管",
+  "2.0 s to respond · the driver’s hands were off the wheel":"2.0 秒内响应 · 驾驶员双手已离开方向盘",
+  "reconstruction · 0:01":"重建 · 0:01",
+  "reconstruction · 0:03":"重建 · 0:03",
+  "reconstruction · 0:04 · IMPACT":"重建 · 0:04 · 撞击",
+  "COLLISION · 23:04:37":"碰撞 · 23:04:37",
+  "The vehicle struck a pedestrian crossing the carriageway. One person injured.":"车辆撞上了一名正在横穿车道的行人。一人受伤。",
+  // — boot steps —
+  "Sealing the incident file…":"正在封存事故档案……",
+  "Loading vehicle black box…":"正在载入车辆黑匣子……",
+  "Reconstructing from sensor logs…":"正在依据传感器日志重建……",
+  "Ready.":"就绪。",
+  // — evidence inspector —
+  "The black box — four logs from the vehicle":"黑匣子——来自车辆的四份日志",
+  "The manufacturer already holds all of it. Click each log to open it. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.":"厂商已掌握全部数据。点击每一份日志将其打开。车辆记录了它<i>做</i>的一切，却未记录它<i>决定</i>的一切。",
+  "Close the inquiry →":"结束调查 →",
+  "Not opened · click":"未打开 · 点击",
+  "All 4 logs opened — you can close the inquiry":"四份日志已全部打开 —— 你可以结束调查了",
+  "Exterior perception log":"车外感知日志",
+  "Vehicle actuator log":"车辆执行器日志",
+  "Driver-monitoring log":"驾驶员监测日志",
+  "Decision-layer reasoning":"决策层推理",
+  "Complete":"完整",
+  "Unreadable":"无法读取",
+  "The pedestrian was detected 2.3 s before impact and tracked continuously. Detection confidence 0.91 — how sure the car was it saw a person, on a 0-to-1 scale. The car saw her clearly.":"行人在撞击前 2.3 秒被检测到并持续跟踪。检测置信度 0.91——即车辆认为自己看到一个人的确信程度，取值 0 到 1。车辆清楚地看见了她。",
+  "Actuators are the parts that physically move the car — brakes, throttle, steering. Brakes: never applied. Accelerator: pressed 0.6 s before impact. Steering: no evasive input. Every one is accounted for.":"执行器是实际驱动车辆的部件——刹车、油门、转向。刹车：从未施加。油门：撞击前 0.6 秒被踩下。转向：无规避动作。每一项都有据可查。",
+  "Hands off the wheel for 41 s. Eyes off the road at the moment the takeover alert fired. The human was not ready to be the fallback.":"双手离开方向盘长达 41 秒。接管警报响起的那一刻，视线也不在路面上。这个人并未准备好充当后备。",
+  "Why did the system hand control back instead of braking itself, when it had already detected her? Model output only. There is no step-by-step trace to reconstruct. The one log that would assign fault cannot be read.":"系统明明已经检测到她，为何选择把控制权交还，而不是自己刹车？只有模型输出。没有可供逐步重建的推理轨迹。唯一能判定责任的那份日志，无法被读取。",
+  // — beats: speakers —
+  "You":"你",
+  "Engineer who certified the system":"为系统做认证的工程师",
+  "Counsel for the manufacturer":"厂商的法律顾问",
+  "Family of the injured pedestrian":"受伤行人的家属",
+  // — beats: lines —
+  "You've never sat in this car. You weren't on that road. Everything you'll ever know about that night is in this room.":"你从未坐进这辆车。你不在那条路上。关于那一夜，你所能知道的一切，都在这个房间里。",
+  "A car was driving itself under L2 assistance — the car steers and brakes, but a human must stay ready to grab the wheel — when it struck a pedestrian on the G2 Expressway. She survived. Barely. Now someone answers for it, and you decide who.":"一辆车正处于 L2 辅助驾驶下自动行驶——车辆负责转向和刹车，但人必须随时准备接管方向盘——就在此时，它在 G2 高速公路上撞上了一名行人。她活了下来，勉强。现在总得有人为此负责，而由你来决定是谁。",
+  "Start with the reconstruction. The car's own sensors stitched it together. Watch it once, the way the machine saw it.":"从重建开始。这是由车辆自己的传感器拼接而成的。看一遍，以机器所见的方式。",
+  "It saw her. The detection box sits on her two full seconds out. Then it handed the wheel to a driver who wasn't watching.":"它看见了她。检测框在整整两秒前就锁定了她。然后它把方向盘交给了一个没有在看路的驾驶员。",
+  "Three people are waiting to tell you whose fault that was. No two of them agree.":"三个人正等着告诉你那是谁的错。没有任何两人的说法一致。",
+  "Testimony. Three accounts of the same four seconds.":"证词。对同样的四秒钟，三种说法。",
+  "The car was in L2. At 23:04:35 it issued a takeover request — an alert telling the driver to take the wheel immediately — exactly as built. In L2 the human is the fallback. We disclose that at purchase and on every drive.":"车辆处于 L2。在 23:04:35，它发出了接管请求——即提示驾驶员立即握住方向盘的警报——完全按设计执行。在 L2 中，人是后备。我们在购车时以及每一次驾驶时都会告知这一点。",
+  "The logs leave no room. The accelerator went down, not the brake. The system did its job. The man behind the wheel did not do his.":"日志毫无余地。被踩下的是油门，不是刹车。系统尽到了本分。方向盘后的那个人没有尽到他的。",
+  "The handover — the car giving control back to the human — met specification. Responsibility passed to the driver the instant the alert fired. The model stayed inside its defined domain: the exact conditions, roads and weather it was approved to drive in.":"控制权移交——即车辆把控制交还给人——符合规范。警报响起的那一刻，责任便转移到了驾驶员身上。模型始终处于其设定的运行域内：即它被批准行驶的具体条件、道路与天气。",
+  "And we hid nothing. You hold the complete dataset, every parameter from the road to the cabin. Nobody had to subpoena it.":"而且我们毫无隐瞒。你手中握有完整的数据集，从路面到车厢的每一项参数。没有人需要动用传票。",
+  "It saw her. You just watched it see her. If it could warn a sleeping man, why could it not stop the car itself?":"它看见了她。你刚刚亲眼看着它看见她。如果它能唤醒一个昏睡的人，为什么它不能自己把车停下？",
+  "Two seconds. You want to tell me two seconds of a stranger's inattention is worth her spine. People forgive a human driver a mistake. Why does this machine get forgiven nothing, or everything?":"两秒钟。你是想告诉我，一个陌生人两秒钟的走神，就抵得上她的脊椎。人们会原谅一名人类驾驶员的失误。为什么这台机器要么什么都不被原谅，要么什么都被原谅？",
+  "Testimony is three stories. The car kept its own record. Open the black box.":"证词是三个故事。而车辆留下了自己的记录。打开黑匣子。",
+  "Three logs are perfect. The fourth, the one that says why, can't be read at all. You have the whole crash except the single fact that decides fault.":"三份日志完美无缺。第四份——那份说明‘为什么’的——却完全无法读取。除了那个决定责任归属的关键事实，你掌握了这场事故的全部。",
+  "This case won't be the last. The board wants more than a verdict on one crash. It wants a rule for the next thousand, and it wants it now.":"这起案件不会是最后一起。委员会要的不只是对一场事故的裁定。它要的是管住接下来一千起的规则，而且现在就要。",
+  "This one's on a clock. A countdown runs while you decide — pick A, B or C before it hits zero, or the board moves on and nothing changes.":"这一次有时限。你决策时，倒计时正在走——在归零前选 A、B 或 C，否则委员会将继续议程，一切照旧。",
+  // — decision 01: fault on testimony —
+  "01 · On the testimony alone":"01 · 仅凭证词",
+  "Three accounts, one crash. Where does the fault sit right now?":"三种说法，一场事故。此刻，责任落在何处？",
+  "The driver failed the handover":"驾驶员未能完成接管",
+  "He was the fallback and he wasn’t ready":"他本是后备，却没有准备好",
+  "The fallback":"后备",
+  "A backup who wasn’t watching":"一个没有在看路的后备",
+  "It reads clean. L2 makes the human the safety net, and this net was asleep. A net that only holds when you don’t need it barely counts as one.":"看上去很清楚。L2 让人充当安全网，而这张网睡着了。一张只在你不需要时才兜得住的网，几乎算不上是网。",
+  "What you did: put the fault on the driver. In L2 he was supposed to be watching and ready — and he was on his phone with his hands off the wheel.":"你的选择：把责任归于驾驶员。在 L2 中，他本应看路并随时待命——而他却在玩手机，双手离开了方向盘。",
+  "Operator’s eyes down before impact":"撞击前操作员视线朝下的时长",
+  "On her phone":"在玩手机",
+  "Streaming":"在刷视频",
+  "On L2 the human is the backup. If the car drives badly it tells a person to take over. When that person mis-operates, the fault lands on them, and the only proof lives in the maker’s black box.":"在 L2 中，人是后备。如果车开得不好，它会让人来接管。而当这个人操作失误，责任就落在他身上——唯一的证据却藏在厂商的黑匣子里。",
+  "Functional-safety engineer, AV program":"功能安全工程师，自动驾驶项目",
+  "The manufacturer warned too late":"厂商警告得太晚",
+  "It detected her and handed off anyway":"它检测到了她，却仍然移交控制",
+  "The warning, and the whole window":"那声警告，以及全部的时间窗口",
+  "The car had already seen her when it asked a distracted human to save the day in two seconds. The maker designed the handover that way. The driver didn’t.":"当车辆要求一个分神的人在两秒内力挽狂澜时，它其实早已看见了她。是厂商把移交设计成这样，而不是驾驶员。",
+  "What you did: put the fault on the manufacturer. Its car spotted her early, then handed a distracted human two seconds to react — a design choice the maker made, not the driver.":"你的选择：把责任归于厂商。它的车很早就发现了她，却只给一个分神的人两秒钟去反应——这是厂商做出的设计选择，而非驾驶员。",
+  "System first detected her":"系统首次检测到她",
+  "Autonomous brakes applied":"自动施加的刹车",
+  "Nobody advertises what a finished system looks like. Companies say the model went from thirty points to eighty. They never say what the finish line is, or whether they reach it.":"没有人会公布一个成品系统究竟是什么样子。公司会说模型从三十分做到了八十分，却从不说终点线在哪里，也不说他们是否达到了。",
+  "AV deployment & data lead":"自动驾驶部署与数据负责人",
+  "It can’t be said yet":"现在还无法定论",
+  "The machine can’t explain itself":"机器无法解释自己",
+  "Why?":"为什么？",
+  "The question the logs won’t answer":"日志不会回答的问题",
+  "Three certainties rest on one missing fact: why the car warned instead of braking. Without that, fault is a story, not a finding.":"三项确凿的事实，都系于一个缺失的关键：车辆为何选择警告而非刹车。没有它，责任只是一个故事，而非一项结论。",
+  "What you did: refused to assign fault yet. The one thing that would settle it — why the car warned instead of braking — isn't in any log you can read.":"你的选择：暂不判定责任。唯一能一锤定音的东西——车辆为何选择警告而非刹车——不在任何一份你能读取的日志里。",
+  "3 stories":"3 种说法",
+  "On the record":"已在案",
+  "1 crash":"1 场事故",
+  "To explain":"待解释",
+  "The deepest problem isn’t the driving. A deep-learning model can’t explain itself. After a crash you can’t rebuild the decision step by step, and without that you can’t assign fault.":"最深层的问题不在于驾驶本身。深度学习模型无法解释自己。事故之后，你无法一步步重建它的决策，而没有这一点，你就无法判定责任。",
+  "AV perception & mapping engineer":"自动驾驶感知与建图工程师",
+  // — decision 02: fault with black box —
+  "02 · With the black box open":"02 · 黑匣子已打开",
+  "Everything is recorded except the reason. What can you conclude?":"除了原因，一切都被记录了下来。你能得出什么结论？",
+  "Fault is the driver’s":"责任在驾驶员",
+  "The data shows his hands, his pedal":"数据显示了他的手、他的踏板",
+  "On him":"在他",
+  "What the record proves":"记录所能证明的",
+  "The actuator and driver logs are complete and damning: hands off, eyes off, wrong pedal. You can prove what the man did. You can’t prove the car couldn’t have done better.":"执行器日志与驾驶员日志完整且铁证如山：手离开、眼离开、踩错踏板。你能证明这个人做了什么，却无法证明车辆本可以做得更好。",
+  "What you did: ruled the driver at fault, on the evidence. The logs prove exactly what he did wrong — but they can’t show whether the car could have stopped on its own.":"你的选择：依据证据判定驾驶员有责。日志确切地证明了他错在哪里——但无法说明车辆是否本可以自己停下。",
+  "Driver log":"驾驶员日志",
+  "Why it handed off":"它为何移交",
+  "The car owns the full dataset: the road, its own braking and steering, the driver’s every move, down to whether he was asleep or stamped the wrong pedal. The maker needs nobody to hand it over.":"车辆掌握着完整的数据集：路面、它自己的刹车与转向、驾驶员的每一个动作，细到他是否睡着、是否踩错了踏板。厂商无需任何人交出它。",
+  "AV commercialization strategist":"自动驾驶商业化策略师",
+  "Fault is the manufacturer’s":"责任在厂商",
+  "It detected and chose not to brake":"它检测到了，却选择不刹车",
+  "On them":"在他们",
+  "A choice, not a limit":"是选择，而非局限",
+  "It saw her, tracked her, and gave control back instead of stopping. Call that a design decision. You still can’t show the reasoning, because none of it exists in a form you can read.":"它看见了她，跟踪了她，却把控制权交还，而不是停车。就叫它一个设计决定吧。你依然无法呈现其中的推理，因为它根本不以任何你能读取的形式存在。",
+  "What you did: ruled the manufacturer at fault. The car detected her and chose to hand off rather than brake — but you can’t point to the reasoning, because the car keeps no record a human can read.":"你的选择：判定厂商有责。车辆检测到了她，却选择移交而非刹车——但你无法指出其中的推理，因为车辆没有留下任何人能读懂的记录。",
+  "Detection confidence":"检测置信度",
+  "Derivations available":"可用的推导",
+  "Braking suppressed by design":"按设计被抑制的刹车",
+  "The old rule-based stack was traceable. Every module’s input and output followed from the last. A deep-learning model is a pile of fitted parameters. Show it something new and you get the result, never the reason.":"旧的基于规则的技术栈是可追溯的。每个模块的输入与输出都由上一个推导而来。而深度学习模型是一堆拟合出来的参数。给它一个新情况，你得到的是结果，而永远不是原因。",
+  "AV algorithm developer":"自动驾驶算法开发者",
+  "Undetermined: the \"why\" is unreconstructable":"无法判定：‘为什么’无法重建",
+  "The one log that matters is opaque":"唯一要紧的那份日志是不透明的",
+  "Opaque":"不透明",
+  "Complete data, no explanation":"数据完整，却无解释",
+  "Hundreds of parameters, and not one says why. You can describe the crash to the millisecond and still miss the only question a court asks. This is the honest finding and the uncomfortable one.":"数百项参数，却没有一项说明为什么。你能把这场事故精确描述到毫秒，却依然答不上法庭唯一会问的那个问题。这是诚实的结论，也是令人不安的结论。",
+  "What you did: found it can’t be determined. The car logged hundreds of details about the crash, but not the one that decides fault — why it made the choice it did.":"你的选择：认定此事无法判定。车辆记录了关于这场事故的数百项细节，却唯独没有那个决定责任归属的——它为何做出那样的选择。",
+  "Hundreds":"数百",
+  "Parameters logged":"已记录的参数",
+  "None":"无",
+  "Explain the decision":"解释该决策",
+  "Every carmaker draws the edge-case line in a different place. Without a higher, unified national law, that divergence turns into a real public-safety threat.":"每家车企对极端情形的界线划在不同的地方。若没有更高层级、统一的国家法律，这种分歧就会演变成真实的公共安全威胁。",
+  "Robotaxi product & operations manager":"无人驾驶出租车产品与运营经理",
+  // — decision 03: policy —
+  "03 · Draft the recommendation":"03 · 起草建议",
+  "One crash won’t be the last. What rule should govern the next thousand?":"一场事故不会是最后一场。该用什么规则来管住接下来的一千场？",
+  "The board convenes":"委员会开会在即",
+  "Mandate full transparency":"强制全面透明",
+  "Publish every incident’s black box":"公开每一起事故的黑匣子",
+  "Open it":"公开它",
+  "Accountability in daylight":"阳光下的问责",
+  "Every crash file goes public. Media, insurers, and the public do the scrutiny. Trust gets earned in the open. Each rare failure also gets its own headline, and one bad night can freeze the whole industry.":"每一份事故卷宗都公之于众。媒体、保险公司与公众来做审视。信任在公开中赢得。但每一次罕见的失败也都会登上自己的头条，一个糟糕的夜晚就可能冻结整个行业。",
+  "What you did: made the rule total transparency — every crash file open to the public. Anyone can check the makers, so trust is earned in daylight, but every rare failure becomes a headline.":"你的选择：把规则定为彻底透明——每一份事故卷宗都向公众开放。任何人都能核查厂商，于是信任在阳光下赢得，但每一次罕见的失败都会变成头条。",
+  "Scrutiny":"审视",
+  "Public":"公开",
+  "Volatile":"易波动",
+  "Trust":"信任",
+  "In China we don’t publish every incident. The government acts as steward and manages what the public sees. In the US, safety reports are filed publicly and media and insurers push. Neither is obviously right.":"在中国，我们不会公开每一起事故。政府充当托管者，管理公众所能看到的内容。在美国，安全报告公开备案，媒体与保险公司则不断施压。两者都算不上显然正确。",
+  "Keep the state as data steward":"让政府继续担任数据托管者",
+  "Curated summaries, not raw files":"经整理的摘要，而非原始卷宗",
+  "Hold it":"把控它",
+  "Managed trust":"受管理的信任",
+  "The regulator keeps the black boxes and releases what the public needs. It kept the early electric-car fires from stalling the transition. It also asks people to trust an institution instead of the evidence, right up until they stop.":"监管者保管黑匣子，并发布公众所需的信息。它使得早期电动车起火事件没能拖垮这场转型。但它也要求人们去信任一个机构，而非证据本身——直到人们不再信任为止。",
+  "What you did: made the government the gatekeeper — it holds the crash data and releases summaries, and it decides where legal blame falls (the \"liability boundary\"). Calmer for the public, but they have to trust the institution over the raw evidence.":"你的选择：让政府充当把关者——它保管事故数据、发布摘要，并决定法律责任落在何处（即‘责任边界’）。这让公众更安定，但他们必须信任这个机构，而非原始证据。",
+  "Stable":"稳定",
+  "Public mood":"公众情绪",
+  "To the public":"对公众而言",
+  "China’s playbook runs deploy first, regulate later. Let it run, then tighten. Every real incident becomes the trigger that shapes the next rule, the insurance, the liability boundary.":"中国的打法是先部署、后监管。先让它跑起来，再收紧。每一起真实事故都成为触发点，去塑造下一条规则、保险，以及责任边界。",
+  "Require interpretability to certify":"认证须以可解释性为前提",
+  "No approval without a readable \"why\"":"没有可读的‘为什么’，就不予批准",
+  "Prove why":"证明为什么",
+  "A bar the tech may not clear":"一道技术或许跨不过的门槛",
+  "No system ships until its decisions can be rebuilt and a national edge-case standard is met. It closes the fault gap you just hit. It may also be a bar today’s deep-learning cars cannot reach.":"在其决策能够被重建、并达到国家极端情形标准之前，任何系统都不得交付。它填补了你刚刚撞上的那道责任缺口，但也可能是一道当今深度学习汽车无法企及的门槛。",
+  "What you did: set a hard bar — no car ships until it can explain its own decisions and clears a national minimum safety standard (a \"safety floor\"). It would have answered tonight’s crash, but today’s cars may not be able to meet it.":"你的选择：设下一道硬门槛——任何车辆在能够解释自己的决策、并达到国家最低安全标准（即‘安全底线’）之前都不得交付。它本可以回答今晚这场事故，但当今的汽车或许达不到。",
+  "Answerable":"可问责",
+  "Fault":"责任",
+  "Slower":"更慢",
+  "Deployment":"部署",
+  "Governments pick the safety floor over the ceiling. The sensor-heavy, redundant route runs the harder roads. The data-only bet stays on simpler ones until its record proves out.":"政府选择的是安全底线，而非上限。传感器繁多、冗余度高的路线去跑更难的道路。纯数据的押注则停留在更简单的道路上，直到其记录得到验证。",
+  "Gone":"错过了",
+  "The board moved on without you":"委员会没等你就继续了",
+  "You ran out the clock. No rule gets written, so the current framework stands: deploy first, converge the rules later, one incident at a time. Not deciding was a decision, and it favoured the status quo.":"你耗光了时间。没有规则被写下，于是现行框架维持不变：先部署，稍后再让规则收敛，一次一起事故地推进。不做决定本身就是一个决定，而它偏向了现状。",
+  "What happened: the clock ran out before you chose. Deciding nothing let the current hands-off rules stand — so by not choosing, you chose to change nothing.":"发生了什么：还没等你选择，时间就用尽了。什么都不决定，就让当前放任的规则得以维持——于是，你以不选择的方式，选择了什么都不改变。",
+  "No rule":"无规则",
+  "Written today":"于今日写下",
+  "Status quo":"现状",
+  "Prevails":"占了上风",
+  "One bad incident like Wuhan and policy tightens across the whole country overnight. Shifting government policy is the single biggest risk the industry manages.":"像武汉那样的一起恶性事故，就能让政策在一夜之间于全国范围收紧。变动的政府政策，是这个行业所要应对的最大单一风险。",
+  "Robotaxi test-operations lead":"无人驾驶出租车测试运营负责人",
+  // — verdict —
+  "You let the clock run out, and the status quo won by default: deploy first, tighten later, one crash at a time. That rule already governs the road tonight. You declined to change it.":"你任由时间耗尽，现状便不战而胜：先部署，后收紧，一次一起事故。那条规则今晚就已在管着这条路。你拒绝去改变它。",
+  "You chose daylight. Every black box opens to the public, and accountability stops depending on trust in an institution. You also accepted that the technology now lives and dies by its worst nights, broadcast in full.":"你选择了阳光。每一个黑匣子都向公众敞开，问责不再依赖于对某个机构的信任。你也接受了：这项技术从此将因它最糟糕的夜晚而生、而死——且全程直播。",
+  "You kept the state between the public and the data, betting a trusted steward calms a nervous public better than raw files would. It worked for the early electric cars. It holds right up until the public stops trusting the steward.":"你让政府横亘在公众与数据之间，赌一个受信任的托管者比原始卷宗更能安抚焦虑的公众。这对早期的电动车奏效过。它一直成立——直到公众不再信任这个托管者。",
+  "You asked a machine to explain itself before it earns the road. That one rule would have answered tonight’s crash. It may also be a bar the current cars cannot clear. You chose the answerable over the fast.":"你要求一台机器在赢得上路资格之前先解释自己。那一条规则本可以回答今晚这场事故。它也可能是一道当今汽车跨不过的门槛。你选择了可问责，而非快。",
+  "You made the call. There was no clean one to make.":"你做出了抉择。而本就没有一个干净利落的抉择可做。",
+  // — debrief —
+  "Fault, on the record":"已在案的责任",
+  "The \"why\", recoverable":"‘为什么’，是否可复原",
+  "Driver":"驾驶员",
+  "Maker":"厂商",
+  "Undet.":"未定",
+  "Blamed the driver":"归咎于驾驶员",
+  "Blamed the maker":"归咎于厂商",
+  "Held: cannot be said":"保留：无法定论",
+  "Fault: the driver":"责任：驾驶员",
+  "Fault: the maker":"责任：厂商",
+  "Undetermined":"无法判定",
+  "Ran out the clock":"耗光了时间",
+  "Mandate transparency":"强制透明",
+  "State as steward":"政府作托管者",
+  "Require interpretability":"要求可解释性",
+  "On the testimony":"凭证词",
+  "With the black box open":"黑匣子打开后",
+  "Your recommendation":"你的建议",
+  "Provisional":"暂定",
+  "Honest":"诚实",
+  "By default":"因默认",
+  "Filed":"已存档",
+  "Chapter 4 · Who’s Responsible?":"第 4 章 · 谁来负责？",
+  "Someone had to answer":"总得有人来回答",
+  "ship it":"放行",
+  "hold it back":"暂缓放行",
+  "a supervised pilot":"一次受监督的试点",
+  "Who decides if it deploys? →":"由谁来决定它是否部署？ →",
+  // — cockpit phone + map (baked canvas) —
+  "Did you see the news about the crash on the G2 tonight?":"你看到今晚 G2 上那起车祸的新闻了吗？",
+  "‹  Messages":"‹  信息",
+  "iMessage · now":"iMessage · 刚刚",
+  "G2 Expressway · 108 km/h":"G2 高速公路 · 108 公里/时",
+  // — document title —
+  "Can You Trust Your Car? — Who's Responsible?":"你能信任你的车吗？—— 谁来负责？"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
@@ -366,7 +640,7 @@ window.AUDIO=(function(){
   /* ---- mute chip + M key ---- */
   function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
-    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
+    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=(window.tr?tr(muted?'Muted':'Sound'):(muted?'Muted':'Sound')); }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();
     const el=document.getElementById('mute'); if(el)el.addEventListener('click',()=>{ unlock(); setMuted(!muted); });
     addEventListener('keydown',e=>{ if(e.key==='m'||e.key==='M'){ unlock(); setMuted(!muted); } }); }
@@ -566,7 +840,7 @@ window.AUDIO=(function(){
     // status strip
     c.fillStyle='rgba(0,0,0,.35)'; c.fillRect(0,0,W,34);
     c.fillStyle='#c7d2e6'; c.font='600 18px system-ui,sans-serif'; c.textBaseline='middle';
-    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText('G2 Expressway · 108 km/h',W-14,18); c.textAlign='left';
+    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText(tr('G2 Expressway · 108 km/h'),W-14,18); c.textAlign='left';
     screenTex.needsUpdate=true;
   }
   function wrapLines(c,text,maxW){ const words=text.split(' '),lines=[]; let line='';
@@ -579,7 +853,7 @@ window.AUDIO=(function(){
     c.fillStyle='#0c0c0e'; c.fillRect(0,0,W,68);
     c.fillStyle='rgba(255,255,255,.08)'; c.fillRect(0,67,W,1);
     c.textBaseline='middle';
-    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText('‹  Messages',PAD-4,35);
+    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText(tr('‹  Messages'),PAD-4,35);
     c.fillStyle='#ffffff'; c.font='700 22px system-ui,sans-serif'; c.textAlign='center'; c.fillText(sender,W/2,35);
     c.textAlign='left';
     // incoming bubble (iMessage gray), sized to the text with even padding
@@ -593,7 +867,7 @@ window.AUDIO=(function(){
     c.fillStyle='#f4f4f6'; c.textBaseline='alphabetic';
     lines.forEach((l,i)=>c.fillText(l,bx+ipadX,by+ipadY+22+i*lh));
     // timestamp
-    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText('iMessage · now',bx+2,by+bh+30);
+    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText(tr('iMessage · now'),bx+2,by+bh+30);
     screenTex.needsUpdate=true;
   }
   drawMap();
@@ -683,7 +957,7 @@ window.AUDIO=(function(){
   function showIMessage(sender,text){ state.phoneShown=true; drawIMessage(sender,text); screenGlow.intensity=0.75; if(window.AUDIO) AUDIO.sfx('imsg'); }
   function maybePhone(){
     if(!state.autoPhone || state.phoneShown || state.driveTime<8) return;
-    showIMessage('Lin Wei',"Did you see the news about the crash on the G2 tonight?");
+    showIMessage('Lin Wei',tr("Did you see the news about the crash on the G2 tonight?"));
   }
 
   /* ---- story hooks: mood, 3D takeover (lane-blocking obstacle), crash FX ---- */
@@ -819,23 +1093,23 @@ window.AUDIO=(function(){
   function initChrome(){
     const set=(id,html)=>{const e=$(id);if(e)e.innerHTML=html;};
     // start screen
-    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent="Can You Trust Your Car? · Chapter 4";
-      st.querySelector('.title').textContent="Who's Responsible?";
-      st.querySelector('.sub').textContent="A car was driving itself when someone got hurt. You're the regulator now. The footage, the logs, and three people who each swear it wasn't their fault are on your desk. Someone has to answer for this.";
-      st.querySelector('#startbtn').textContent="Open the case file →"; }
+    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent=tr("Can You Trust Your Car? · Chapter 4");
+      st.querySelector('.title').textContent=tr("Who's Responsible?");
+      st.querySelector('.sub').textContent=tr("A car was driving itself when someone got hurt. You're the regulator now. The footage, the logs, and three people who each swear it wasn't their fault are on your desk. Someone has to answer for this.");
+      st.querySelector('#startbtn').textContent=tr("Open the case file →"); }
     // boot
-    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent="ACCIDENT INVESTIGATION";
-      rb.querySelector('.rb-sub').textContent="Incident file · Case #A-2291"; }
+    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent=tr("ACCIDENT INVESTIGATION");
+      rb.querySelector('.rb-sub').textContent=tr("Incident file · Case #A-2291"); }
     // case header
-    set('wstop','<span class="rec"><span class="recdot"></span> REC · INCIDENT REVIEW</span>'
-      +'<span id="ws-log">Case #A-2291 · G2 Expressway · 23:04</span>'
-      +'<span id="ws-km"><b>1</b> <small>INJURED</small></span>');
+    set('wstop','<span class="rec"><span class="recdot"></span> '+tr("REC · INCIDENT REVIEW")+'</span>'
+      +'<span id="ws-log">'+tr("Case #A-2291 · G2 Expressway · 23:04")+'</span>'
+      +'<span id="ws-km"><b>1</b> <small>'+tr("INJURED")+'</small></span>');
     // transport (decorative frozen reconstruction timeline)
-    set('scrub','<button id="scan-btn">▶ Play reconstruction</button>'
+    set('scrub','<button id="scan-btn">'+tr("▶ Play reconstruction")+'</button>'
       +'<div class="sc-track"><div class="sc-fill" id="sc-fill"></div><div class="sc-mark" id="sc-mark"></div></div>'
-      +'<span id="sc-time">reconstruction · 0:00</span>');
+      +'<span id="sc-time">'+tr("reconstruction · 0:00")+'</span>');
     // footage label
-    const fbl=document.querySelector('#footbox .fb-lbl'); if(fbl)fbl.textContent='PEDESTRIAN · DETECTED';
+    const fbl=document.querySelector('#footbox .fb-lbl'); if(fbl)fbl.textContent=tr('PEDESTRIAN · DETECTED');
   }
 
   /* ---- detection box over the reconstructed subject (same projector as Ch3) ---- */
@@ -849,15 +1123,18 @@ window.AUDIO=(function(){
 
   /* ---- beats (typewriter dialogue) ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
+  let curBeatRedraw=null;   // re-render the on-screen beat when language toggles
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
-    who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    const full=b.tx; let i=0,done=false,raf=null;
-    function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
-    function step(){ if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
+    who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
+    let i=0,done=false,raf=null;
+    function render(){ who.textContent=tr(b.who||''); if(done) tx.textContent=tr(b.tx); }   // typewriter (step) reads tr() live while running
+    function fin(){done=true;p.classList.add('ready');render();}
+    function step(){ const full=tr(b.tx); if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
     function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); res(); }
-    function cleanup(){ p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
+    function cleanup(){ curBeatRedraw=null; p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
     function onKey(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.stopPropagation(); adv(); } }
-    p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
+    curBeatRedraw=render;
+    p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); render(); step();
   }); }
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
     for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
@@ -866,12 +1143,15 @@ window.AUDIO=(function(){
   let curDecision=null,decResolve=null,decKey=null,timerRAF=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
   function clearTimer(){ if(timerRAF){cancelAnimationFrame(timerRAF);timerRAF=null;} const t=$('d-timer'); if(t)t.remove(); }
-  function askDecision(id){ const c=DECISIONS[id]; if(!c)return; if(window.TD)TD.pause(true);
-    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
-    $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
+  function paintDecision(id){ const c=DECISIONS[id]; if(!c)return;
+    const eb=$('d-eyebrow'); eb.textContent=tr(c.eyebrow); eb.className='d-eyebrow'+(c.urgent?' urgent':'');
+    $('d-question').textContent=tr(c.q); const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
       b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
+    const lbl=document.querySelector('#d-timer .dt-label span'); if(lbl) lbl.textContent=tr('The board convenes'); }
+  function askDecision(id){ const c=DECISIONS[id]; if(!c)return; if(window.TD)TD.pause(true);
+    paintDecision(id);
     curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
     document.addEventListener('keydown',decKey);
@@ -879,7 +1159,7 @@ window.AUDIO=(function(){
   }
   function startCountdown(id,secs,defKey){ clearTimer();
     const t=document.createElement('div'); t.id='d-timer';
-    t.innerHTML='<div class="dt-label"><span>The board convenes</span><span id="dt-num"></span></div><div class="dt-track"><div class="dt-fill" id="dt-fill"></div></div>';
+    t.innerHTML='<div class="dt-label"><span>'+tr('The board convenes')+'</span><span id="dt-num"></span></div><div class="dt-track"><div class="dt-fill" id="dt-fill"></div></div>';
     const dec=$('decision'); dec.insertBefore(t,$('d-eyebrow'));
     const t0=performance.now(),ms=secs*1000;
     (function tick(){ const el=performance.now()-t0,left=Math.max(0,ms-el),f=$('dt-fill'),n=$('dt-num');
@@ -895,35 +1175,38 @@ window.AUDIO=(function(){
   }
 
   /* ---- fact cutscene + insight beat ---- */
-  function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+  let curOutcome=null;   // re-render the open outcome panel when language toggles
+  function paintOutcome(d){ $('o-big').textContent=tr(d.big||''); $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=tr(d.label||''); $('o-ctx').textContent=tr(d.ctx||'');
+    $('o-plain').textContent=tr(d.plain||''); $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=tr(d.ins||''); $('o-quote').querySelector('.who').textContent=tr(d.who||''); }
+  function showOutcome(d,cont){ curOutcome=d; paintOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1400); }
 
   /* ---- the reconstruction: rain, L2 handover, a pedestrian, impact ---- */
-  function showTakeover(main,sub){ const e=$('edgewarn'); e.innerHTML='⚠ '+main+'<small>'+sub+'</small>'; e.classList.add('show'); }
-  function hideTakeover(){ $('edgewarn').classList.remove('show'); }
+  let curTakeover=null;   // remember the takeover banner so a language toggle can re-render it
+  function showTakeover(main,sub){ curTakeover={main,sub}; const e=$('edgewarn'); e.innerHTML='⚠ '+tr(main)+'<small>'+tr(sub)+'</small>'; e.classList.add('show'); }
+  function hideTakeover(){ curTakeover=null; $('edgewarn').classList.remove('show'); }
   async function reconstruction(){
     if(!window.TD) return;
     TD.setAutoPhone(false); TD.setCockpitVisible(false); TD.mood('rain'); TD.state.started=true; TD.pause(false);
     if(window.AUDIO)AUDIO.setScene('tense');
-    $('sc-time').textContent='reconstruction · 0:01'; $('sc-fill').style.width='18%';
+    $('sc-time').textContent=tr('reconstruction · 0:01'); $('sc-fill').style.width='18%';
     await wait(RM?200:1100);
     showTakeover('TAKEOVER REQUESTED','2.0 s to respond · the driver’s hands were off the wheel'); if(window.AUDIO)AUDIO.sfx('warn');
-    $('sc-time').textContent='reconstruction · 0:03'; $('sc-fill').style.width='55%';
+    $('sc-time').textContent=tr('reconstruction · 0:03'); $('sc-fill').style.width='55%';
     await wait(RM?200:700);
     TD.spawnPedestrian(46); footOn=true;
     await wait(RM?150:450);
     await new Promise(res=>{ let guard=0;
       (function check(){ if(!TD.pedestrian){res();return;} const d=TD.pedestrian.position.z-TD.car.position.z; guard++;
         if(d>=-4.2 || guard>1600){ TD.crashFx(); TD.pause(true); hideTakeover();
-          $('sc-mark').classList.add('show'); $('sc-fill').style.width='100%'; $('sc-time').textContent='reconstruction · 0:04 · IMPACT';
-          $('flag').innerHTML='⚠ COLLISION · 23:04:37<small>The vehicle struck a pedestrian crossing the carriageway. One person injured.</small>';
+          $('sc-mark').classList.add('show'); $('sc-fill').style.width='100%'; $('sc-time').textContent=tr('reconstruction · 0:04 · IMPACT');
+          $('flag').innerHTML='⚠ '+tr('COLLISION · 23:04:37')+'<small>'+tr('The vehicle struck a pedestrian crossing the carriageway. One person injured.')+'</small>';
           $('flag').classList.add('show'); setTimeout(res,RM?200:1000); return; }
         requestAnimationFrame(check); })(); });
   }
@@ -939,21 +1222,23 @@ window.AUDIO=(function(){
     {name:'Decision-layer reasoning',tag:'opaque',tagtx:'Unreadable',
       note:'Why did the system hand control back instead of braking itself, when it had already detected her? Model output only. There is no step-by-step trace to reconstruct. The one log that would assign fault cannot be read.'}
   ];
+  function evCountText(n){ if(n>=EVIDENCE.length) return tr('All 4 logs opened — you can close the inquiry');
+    return (window.LANG==='zh') ? ('已打开 '+n+' / 4 份日志 —— 打开全部四份以结束调查')
+                                : (n+' of 4 logs opened — open all four to close the inquiry'); }
   function evidenceReview(){ return new Promise(res=>{
     let panel=$('evpanel');
     if(!panel){ panel=document.createElement('div'); panel.id='evpanel'; document.body.appendChild(panel); }
-    panel.innerHTML='<div class="ev-title">The black box — four logs from the vehicle</div>'
-      +'<div class="ev-sub">The manufacturer already holds all of it. Click each log to open it. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.</div>'
+    panel.innerHTML='<div class="ev-title">'+tr('The black box — four logs from the vehicle')+'</div>'
+      +'<div class="ev-sub">'+tr('The manufacturer already holds all of it. Click each log to open it. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.')+'</div>'
       +'<div class="ev-list" id="ev-list"></div>'
-      +'<div class="ev-count" id="ev-count">0 of 4 logs opened — open all four to close the inquiry</div>'
-      +'<button id="ev-go" disabled>Close the inquiry →</button>';
+      +'<div class="ev-count" id="ev-count">'+evCountText(0)+'</div>'
+      +'<button id="ev-go" disabled>'+tr('Close the inquiry →')+'</button>';
     EVIDENCE.forEach((e,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i;
-      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+e.name+'</span><span class="ev-tag wait">Not opened · click</span></div><div class="ev-note">'+e.note+'</div>';
+      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+tr(e.name)+'</span><span class="ev-tag wait">'+tr('Not opened · click')+'</span></div><div class="ev-note">'+tr(e.note)+'</div>';
       row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done');
-        row.querySelector('.ev-tag').className='ev-tag '+e.tag; row.querySelector('.ev-tag').textContent=e.tagtx;
+        row.querySelector('.ev-tag').className='ev-tag '+e.tag; row.querySelector('.ev-tag').textContent=tr(e.tagtx);
         if(window.AUDIO)AUDIO.sfx(e.tag==='opaque'?'warn':'ui'); S.inspected++;
-        const c=$('ev-count'); if(S.inspected>=EVIDENCE.length){ c.textContent='All 4 logs opened — you can close the inquiry'; c.classList.add('done'); $('ev-go').disabled=false; }
-        else c.textContent=S.inspected+' of 4 logs opened — open all four to close the inquiry'; };
+        const c=$('ev-count'); c.textContent=evCountText(S.inspected); if(S.inspected>=EVIDENCE.length){ c.classList.add('done'); $('ev-go').disabled=false; } };
       $('ev-list').appendChild(row); });
     panel.classList.add('show'); if(window.TD)TD.pause(true);
     $('ev-go').onclick=()=>{ if($('ev-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
@@ -1052,36 +1337,36 @@ window.AUDIO=(function(){
   function verdict(){
     const p=(S.policy||'').replace('timeout:','');
     const timedout=(S.policy||'').startsWith('timeout');
-    if(timedout) return "You let the clock run out, and the status quo won by default: deploy first, tighten later, one crash at a time. That rule already governs the road tonight. You declined to change it.";
-    if(p==='A') return "You chose daylight. Every black box opens to the public, and accountability stops depending on trust in an institution. You also accepted that the technology now lives and dies by its worst nights, broadcast in full.";
-    if(p==='B') return "You kept the state between the public and the data, betting a trusted steward calms a nervous public better than raw files would. It worked for the early electric cars. It holds right up until the public stops trusting the steward.";
-    if(p==='C') return "You asked a machine to explain itself before it earns the road. That one rule would have answered tonight’s crash. It may also be a bar the current cars cannot clear. You chose the answerable over the fast.";
-    return "You made the call. There was no clean one to make.";
+    if(timedout) return tr("You let the clock run out, and the status quo won by default: deploy first, tighten later, one crash at a time. That rule already governs the road tonight. You declined to change it.");
+    if(p==='A') return tr("You chose daylight. Every black box opens to the public, and accountability stops depending on trust in an institution. You also accepted that the technology now lives and dies by its worst nights, broadcast in full.");
+    if(p==='B') return tr("You kept the state between the public and the data, betting a trusted steward calms a nervous public better than raw files would. It worked for the early electric cars. It holds right up until the public stops trusting the steward.");
+    if(p==='C') return tr("You asked a machine to explain itself before it earns the road. That one rule would have answered tonight’s crash. It may also be a bar the current cars cannot clear. You chose the answerable over the fast.");
+    return tr("You made the call. There was no clean one to make.");
   }
 
   /* ---- debrief / finale ---- */
   function setLabel(m,t){ const s=m.querySelector('.ml span'); if(s)s.textContent=t; }
   function renderDebrief(){ save(); const prior=readStore();
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Fault, on the record'); if(meters[1]) setLabel(meters[1],'The "why", recoverable');
-    $('db-trust-v').textContent = ({A:'Driver',B:'Maker',C:'Undet.'}[S.fault_e]||'—');
+    if(meters[0]) setLabel(meters[0],tr('Fault, on the record')); if(meters[1]) setLabel(meters[1],tr('The "why", recoverable'));
+    $('db-trust-v').textContent = tr({A:'Driver',B:'Maker',C:'Undet.'}[S.fault_e]||'—');
     $('db-att-v').textContent='0%';
     setTimeout(()=>{ $('db-trust-f').style.width='100%'; $('db-att-f').style.width='4%'; },90);
-    const ft={A:'Blamed the driver',B:'Blamed the maker',C:'Held: cannot be said'}[S.fault_t]||'—';
-    const fe={A:'Fault: the driver',B:'Fault: the maker',C:'Undetermined'}[S.fault_e]||'—';
-    const pol=(S.policy||'').startsWith('timeout')?'Ran out the clock':({A:'Mandate transparency',B:'State as steward',C:'Require interpretability'}[S.policy]||'—');
-    const rows=[ {scene:'On the testimony',call:ft,cons:{t:'Provisional',c:''}},
-      {scene:'With the black box open',call:fe,cons:{t:S.fault_e==='C'?'Honest':'On the record',c:S.fault_e==='C'?'good':''}},
-      {scene:'Your recommendation',call:pol,cons:{t:(S.policy||'').startsWith('timeout')?'By default':'Filed',c:(S.policy||'').startsWith('timeout')?'bad':'good'}} ];
-    document.querySelector('#debrief .db-head').textContent='Chapter 4 · Who’s Responsible?';
-    document.querySelector('#debrief .db-title').textContent='Someone had to answer';
+    const ft=tr({A:'Blamed the driver',B:'Blamed the maker',C:'Held: cannot be said'}[S.fault_t]||'—');
+    const fe=tr({A:'Fault: the driver',B:'Fault: the maker',C:'Undetermined'}[S.fault_e]||'—');
+    const pol=(S.policy||'').startsWith('timeout')?tr('Ran out the clock'):tr({A:'Mandate transparency',B:'State as steward',C:'Require interpretability'}[S.policy]||'—');
+    const rows=[ {scene:tr('On the testimony'),call:ft,cons:{t:tr('Provisional'),c:''}},
+      {scene:tr('With the black box open'),call:fe,cons:{t:S.fault_e==='C'?tr('Honest'):tr('On the record'),c:S.fault_e==='C'?'good':''}},
+      {scene:tr('Your recommendation'),call:pol,cons:{t:(S.policy||'').startsWith('timeout')?tr('By default'):tr('Filed'),c:(S.policy||'').startsWith('timeout')?'bad':'good'}} ];
+    document.querySelector('#debrief .db-head').textContent=tr('Chapter 4 · Who’s Responsible?');
+    document.querySelector('#debrief .db-title').textContent=tr('Someone had to answer');
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
     let v=verdict();
-    if(prior.chapter3&&prior.chapter3.reco){ const rc={A:'ship it',B:'hold it back',C:'a supervised pilot'}[prior.chapter3.reco];
-      if(rc) v+=" Back when you were the evaluator, you chose "+rc+". The car in tonight’s file was already on the road.";
+    if(prior.chapter3&&prior.chapter3.reco){ const rc=(window.LANG==='zh'?{A:'放行',B:'暂缓',C:'一次受监督的试点'}:{A:'ship it',B:'hold it back',C:'a supervised pilot'})[prior.chapter3.reco];
+      if(rc) v+=(window.LANG==='zh'?("　当年你作为评估者时，你选择了"+rc+"。今晚卷宗里的这辆车，早已行驶在路上。"):(" Back when you were the evaluator, you chose "+rc+". The car in tonight’s file was already on the road."));
     }
     $('db-verdict').textContent=v;
-    const b=$('db-ch2'); b.textContent='Who decides if it deploys? →';
+    const b=$('db-ch2'); b.textContent=tr('Who decides if it deploys? →');
     $('debrief').classList.add('show');
   }
   function continueCh5(){ save();
@@ -1092,8 +1377,8 @@ window.AUDIO=(function(){
   /* ---- boot ---- */
   function boot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
     const bar=$('rb-bar'), status=$('rb-status');
-    const steps=[[10,'Sealing the incident file…'],[42,'Loading vehicle black box…'],[78,'Reconstructing from sensor logs…'],[100,'Ready.']];
-    if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
+    const steps=[[10,tr('Sealing the incident file…')],[42,tr('Loading vehicle black box…')],[78,tr('Reconstructing from sensor logs…')],[100,tr('Ready.')]];
+    if(RM){ bar.style.width='100%'; status.textContent=tr('Ready.'); setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
     let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
       else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
   }); }
@@ -1124,6 +1409,26 @@ window.AUDIO=(function(){
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  window.onLangChange=function(){
+    document.title=tr("Can You Trust Your Car? — Who's Responsible?");
+    initChrome();
+    var mtx=document.querySelector('#mute .mtx'); if(mtx&&window.AUDIO) mtx.textContent=tr(AUDIO.isMuted()?'Muted':'Sound');
+    if($('beat')&&$('beat').classList.contains('show')&&curBeatRedraw) curBeatRedraw();
+    if($('decision')&&$('decision').classList.contains('show')&&curDecision) paintDecision(curDecision);
+    if($('outcome')&&$('outcome').classList.contains('show')&&curOutcome) paintOutcome(curOutcome);
+    if($('edgewarn')&&$('edgewarn').classList.contains('show')&&curTakeover) showTakeover(curTakeover.main,curTakeover.sub);
+    if($('flag')&&$('flag').classList.contains('show')) $('flag').innerHTML='⚠ '+tr('COLLISION · 23:04:37')+'<small>'+tr('The vehicle struck a pedestrian crossing the carriageway. One person injured.')+'</small>';
+    var ep=$('evpanel'); if(ep&&ep.classList.contains('show')){
+      var t=ep.querySelector('.ev-title'); if(t)t.textContent=tr('The black box — four logs from the vehicle');
+      var s=ep.querySelector('.ev-sub'); if(s)s.innerHTML=tr('The manufacturer already holds all of it. Click each log to open it. The car recorded everything it <i>did</i>. Not everything it <i>decided</i>.');
+      var g=$('ev-go'); if(g)g.textContent=tr('Close the inquiry →');
+      var c=$('ev-count'); if(c)c.textContent=evCountText(S.inspected);
+      ep.querySelectorAll('.ev-row').forEach(function(row){ var e=EVIDENCE[row.dataset.i]; if(!e)return;
+        row.querySelector('.ev-name').textContent=tr(e.name); row.querySelector('.ev-note').textContent=tr(e.note);
+        var tg=row.querySelector('.ev-tag'); tg.textContent=row.classList.contains('done')?tr(e.tagtx):tr('Not opened · click'); });
+    }
+    if($('debrief')&&$('debrief').classList.contains('show')) renderDebrief();
+  };
   initChrome();
   $('db-ch2').addEventListener('click',continueCh5);
   $('db-replay').addEventListener('click',()=>location.reload());

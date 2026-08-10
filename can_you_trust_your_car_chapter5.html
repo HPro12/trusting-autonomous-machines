@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Can You Trust Your Car? — Night Drive</title>
+<title>Can You Trust Your Car? — The Trust Gap</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:#05070f;overflow:hidden}
@@ -208,9 +208,19 @@
   .ev-count{font-size:13px;font-weight:700;color:#ffc659;text-align:center;margin-bottom:.7rem}
   .ev-count.done{color:#42d98a}
   @media (prefers-reduced-motion: reduce){ .bar-fill,.ev-note{transition:none} }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  /* offset left of the mute chip that lives at the top-right corner in-car */
+  #langtoggle{position:fixed; top:14px; right:122px; z-index:100;
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
 </style>
 </head>
 <body>
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
 <canvas id="c"></canvas>
 <div id="footbox"><div class="fb-box"></div><div class="fb-lbl">PEDESTRIAN</div></div>
 
@@ -267,7 +277,7 @@
   <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont">Continue →</button>
+  <button class="cont" id="o-cont" data-i18n>Continue →</button>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
@@ -281,7 +291,7 @@
   <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
     <button class="db-btn" id="db-ch2">What comes next →</button>
-    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none">Review again</button>
+    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Review again</button>
   </div>
 </div></div>
 
@@ -292,6 +302,311 @@
   <button id="startbtn">Open the logs →</button>
 </div>
 
+<script>
+/* i18n core — identical on every page. English is the source of truth; ZH maps normalized
+   English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
+window.ZH = {
+  // — document title —
+  "Can You Trust Your Car? — The Trust Gap":"你能信任你的车吗？— 信任鸿沟",
+  // — mute chip / a11y —
+  "Sound":"声音", "Muted":"已静音", "Toggle sound":"切换声音",
+  // — static buttons —
+  "Continue →":"继续 →", "Review again":"再看一遍",
+  // — start / boot / chrome (initChrome, boot) —
+  "Can You Trust Your Car? · Chapter 5":"你能信任你的车吗？· 第 5 章",
+  "The Trust Gap":"信任鸿沟",
+  "A company wants to put driverless taxis on your district's streets. You're the city official who says yes or no. You have their numbers, the public's mood, and a decision that will be quoted back to you either way.":"一家公司想把无人驾驶出租车开上你辖区的街道。你是那位说“可以”或“不可以”的城市官员。你手上有他们的数据、公众的情绪，以及一个无论怎样都会被引述回你身上的决定。",
+  "Open the deployment file →":"打开部署文件 →",
+  "DEPLOYMENT REVIEW":"部署评审",
+  "District office · Application R-118 · robotaxi service":"辖区办公室 · 申请 R-118 · 无人驾驶出租车服务",
+  "LIVE · DISTRICT FEED":"直播 · 辖区画面",
+  "Application R-118 · robotaxi deployment":"申请 R-118 · 无人驾驶出租车部署",
+  "DECISION DUE":"待决决定",
+  "● Live":"● 直播",
+  "district feed · daytime":"辖区画面 · 白天",
+  "Opening application R-118…":"正在打开申请 R-118…",
+  "Loading district feed…":"正在加载辖区画面…",
+  "Pulling public-trust file…":"正在调取公众信任档案…",
+  "Ready.":"就绪。",
+  // — beats —
+  "You've done this for the district before: bus routes, a night market, a bridge. This one drives itself.":"你为这个辖区做过这样的决定：公交线路、一个夜市、一座桥。而这一次，它会自己开。",
+  "A robotaxi operator wants to run driverless cars on your streets. The cameras outside show their live feed, gliding through the district in the afternoon sun. Whether it stays is your signature.":"一家无人驾驶出租车运营商想让无人车行驶在你的街道上。窗外的摄像头显示着它们的实时画面，在午后的阳光里滑行穿过辖区。它是否留下，取决于你的签名。",
+  "Start with the file they'd rather you skip. The plain numbers under the pitch, before anyone starts talking.":"先看那份他们宁愿你跳过的文件。推销说辞之下那些朴素的数字——在任何人开口之前。",
+  "Operator representative":"运营商代表",
+  "Commissioner, thank you for the time. I'll keep it short, because the case makes itself. Let me show you why this district is ready.":"专员，感谢您抽出时间。我会说得简短，因为事实不言自明。让我向您说明，为什么这个辖区已经准备好了。",
+  "You could sign on the numbers. The numbers can't ride the bus home. So you open the floor, and the district files in.":"你本可以只凭数字就签字。但数字不会坐公交回家。于是你开放发言，辖区的居民鱼贯而入。",
+  "Resident · rides one weekly":"居民 · 每周乘坐一次",
+  "Honestly? I feel safer in the robot than in a cab. It won't move until my belt is on. Open a door while it's rolling and it warns me and pulls over. The rules aren't optional in there. They're enforced.":"老实说？坐无人车比坐出租车更让我安心。不系好安全带它就不走。行驶中打开车门，它会警告我并靠边停下。在那里面，规则不是可选项，而是被强制执行的。",
+  "Resident · has never ridden":"居民 · 从未乘坐过",
+  "You all keep saying it's safer on average. I don't ride an average. If a person makes a mistake, I understand it. That's fate. If a machine makes one, who do I even look at? I expect a machine to be perfect. Unfair, maybe. It's still how I feel.":"你们总说它平均而言更安全。可我坐的不是“平均”。如果是人犯了错，我能理解，那是命。如果是机器犯了错，我又能去看着谁？我期待机器是完美的。也许不公平，但我就是这么觉得。",
+  "Resident · drives a cab for a living":"居民 · 以开出租车为生",
+  "Everyone in here argues about safety. Nobody asks what happens to the forty thousand of us behind a wheel. The safety office worries about crashes. The tech office wants the future. Who sits in the office that worries about me?":"这屋里每个人都在争论安全。没有人问，我们这四万个握着方向盘的人会怎么样。安全部门担心事故，技术部门想要未来。可为我担心的那个部门，坐在哪里？",
+  "Resident · came around slowly":"居民 · 慢慢改变了看法",
+  "I didn't trust it overnight. I tried it once on an easy road, then a harder one, decided each time it was fine, and widened it from there. Trust accumulated. You can't announce it into existence. People ride the curve themselves.":"我不是一夜之间信任它的。我先在一条好走的路上试了一次，再试更难的一条，每次都判断没问题，然后一点点放开。信任是一点点累积的。你没法靠宣布就把它造出来。人们要自己走过那条曲线。",
+  "Resident · crossing guard":"居民 · 交通协管员",
+  "One thing nobody mentions. At the light-less crossing by the school, people used to wait for cars. Now they see it's a robot and walk straight out, because they know it will stop. The car taught them a new habit. I'm not sure it's a safe one.":"有件事没人提。学校旁那个没有红绿灯的路口，以前人们会等车过去。现在他们一看是无人车，就径直走出去，因为他们知道它一定会停。这辆车教会了他们一个新习惯。我不确定那是不是一个安全的习惯。",
+  "That's everyone. The room goes quiet and turns to you. Two questions now, and both get quoted tomorrow: what you allow, and what you tell them about it.":"所有人都说完了。房间安静下来，转向你。现在有两个问题，明天都会被引述：你允许什么，以及你如何向他们交代。",
+  // — dossier: data panel —
+  "The trust gap, in numbers":"用数字看信任鸿沟",
+  "Two charts and one honest caveat. Read them before anyone starts talking.":"两张图表，一条诚实的提醒。在任何人开口之前，先读它们。",
+  "Vehicles serving the district each day":"每天服务辖区的车辆",
+  "Operator figures, Guangzhou-scale pilots · 2024–25 interviews":"运营商数据，广州规模的试点 · 2024–25 访谈",
+  "Human-driven cabs":"人类驾驶的出租车",
+  "Robotaxis":"无人驾驶出租车",
+  "under 1,000":"不足 1,000",
+  "\"Would you take one for a daily trip?\"":"「你会在日常出行中乘坐它吗？」",
+  "District pilot survey · illustrative, small sample · no representative public poll exists":"辖区试点调查 · 仅作示意，样本很小 · 尚无有代表性的公众民调",
+  "Have ridden one":"坐过的人",
+  "Never ridden one":"从没坐过的人",
+  "Riders":"坐过的人",
+  "Non-riders":"没坐过的人",
+  "Almost no one here has ridden one, so there is no real public opinion yet to measure. The gap isn’t distrust of the machine. Trust hasn’t had the chance to form.":"这里几乎没人坐过它，所以还没有真正的公众意见可供衡量。这道鸿沟并非对机器的不信任。而是信任还没有机会形成。",
+  "I’ve read the file →":"我已读完这份文件 →",
+  // — dossier: pitch panel —
+  "The operator’s pitch":"运营商的推销",
+  "Four claims from the slide deck. Click each one to check it against what you actually know.":"演示文稿里的四条主张。逐一点击，用你真正了解的情况去核对它。",
+  "Unchecked · click":"未核对 · 点击",
+  "Against the record":"与事实不符",
+  "Heard enough →":"听够了 →",
+  "All 4 claims checked — you can move on":"4 条主张已全部核对——可以继续了",
+  "of 4 claims checked — check all four to move on":" / 4 条主张已核对——全部核对后才能继续",
+  "“Our cars are safer than human drivers.”":"「我们的车比人类司机更安全。」",
+  "True as a <b>floor</b> (the worst it will do), unproven as a <b>ceiling</b> (the best it can do). A sensor-heavy car <b>always stops safely but can miss a clever move</b>. A data-driven car has a veteran’s judgment and a lower floor. Everyone advertises the model “improved from 30 to 80.” <b>Nobody defines 100</b>, or says whether they reach it.":"作为<b>下限</b>（它最差也就这样）成立，但作为<b>上限</b>（它最好能到什么程度）尚未被证明。一辆重传感器的车<b>永远能安全停下，却可能漏掉一个巧妙的操作</b>。一辆数据驱动的车拥有老手般的判断力，下限却更低。人人都宣传模型“从 30 提升到了 80”。<b>却没有人定义 100</b>，也不说自己是否达到了。",
+  "“Riders love it. Demand is overwhelming.”":"「乘客很喜欢。需求旺盛到不行。」",
+  "You can’t read trust from ridership when the fleet is <b>under 1% of demand</b>. Every car runs full no matter what. The complaints that do exist aren’t about safety: <b>the car only stops at fixed points</b>, and it can’t roll down a window to negotiate the way a human cabbie does.":"当车队<b>还不到需求的 1%</b> 时，你无法从乘坐量里读出信任。无论如何每辆车都是满的。真正存在的抱怨也不是关于安全：<b>车只在固定站点停靠</b>，也没法像人类司机那样摇下车窗来商量。",
+  "“The technology is finished and ready today.”":"「技术已经完成，今天就能用。」",
+  "Technically it sits at a usable level. What’s missing isn’t the tech. It’s the law, the accountability rules, and public acceptance. “Ready” has no agreed finish line, and that undefined ceiling is the biggest hidden risk.":"从技术上讲，它处于可用的水平。缺的不是技术，而是法律、问责规则和公众接受度。“就绪”没有公认的终点线，而那个未定义的上限，才是最大的隐藏风险。",
+  "“It’s completely safe. It will never hurt anyone.”":"「它绝对安全。永远不会伤害任何人。」",
+  "No system runs at zero risk, and the public wants two things at once: never hurt anyone, and also be flawless. Worse, when an <b>edge case</b> — a rare, unusual situation the car has hardly seen before — goes wrong, a deep-learning model <b>can’t fully explain why it chose what it chose</b>.":"没有任何系统能做到零风险，而公众想要两件互相矛盾的事：既永远不伤人，又完美无缺。更糟的是，当一个<b>边缘情况</b>——一种车几乎没见过的罕见、异常状况——出了问题，深度学习模型<b>无法完全解释它为何做出那样的选择</b>。",
+  // — decisions: eyebrows & questions —
+  "01 · Read the trust gap":"01 · 解读信任鸿沟",
+  "The data is mostly an absence. What does it tell you to do?":"这些数据大多是一种缺失。它告诉你该怎么做？",
+  "02 · Weigh the pitch":"02 · 掂量这份推销",
+  "You’ve checked their claims against the record. How much of the pitch do you take?":"你已用事实核对过他们的主张。这份推销，你采信多少？",
+  "03 · After the meeting":"03 · 会议之后",
+  "Five voices, one room. Whose concern do you carry into the decision?":"五种声音，同一个房间。你把谁的关切带进这个决定？",
+  "04 · The decision":"04 · 这个决定",
+  "Application R-118. What do you allow on your streets?":"申请 R-118。你允许什么出现在你的街道上？",
+  "05 · And what you tell them":"05 · 以及你如何交代",
+  "However you ruled, how do you announce it to the district?":"无论你如何裁定，你要如何向辖区宣布？",
+  // — decisions: options —
+  "The tech is ready, exposure will do the rest":"技术已就绪，接触会完成其余的事",
+  "Approve broadly and let riding build trust":"大范围批准，让乘坐去建立信任",
+  "No trust has formed yet, go slow in public":"信任尚未形成，在公众面前慢慢来",
+  "A small, visible pilot first":"先做一个小而可见的试点",
+  "The data can’t answer this, ask the public":"数据无法回答这个，去问公众",
+  "Put it to a community hearing":"交给社区听证会",
+  "Take the safety case at face value":"照单全收安全论证",
+  "Approve on the operator’s numbers":"依运营商的数据批准",
+  "Trust the floor, not the ceiling":"相信下限，而非上限",
+  "Approve only what’s independently proven":"只批准经独立验证的部分",
+  "It’s marketing, demand verification":"这是营销，要求验证",
+  "No approval without independent data":"没有独立数据就不批准",
+  "The riders, trust is built by doing":"乘客们——信任是做出来的",
+  "Weight the people who’ve tried it":"更看重那些试过的人",
+  "The skeptics, earn it before you expand":"怀疑者们——先赢得，再扩张",
+  "Weight the ones who expect perfection":"更看重那些期待完美的人",
+  "The drivers, this isn’t only safety":"司机们——这不只是安全问题",
+  "Weight the livelihoods at stake":"更看重岌岌可危的生计",
+  "Approve district-wide, now":"立刻全辖区批准",
+  "Full service, no geofence":"全面运营，不设地理围栏",
+  "Phased, geofenced rollout":"分阶段、有地理围栏的推广",
+  "Earn each zone with a clean record":"用干净的记录去赢得每一个区域",
+  "Deny until national standards exist":"在国家标准出台前予以否决",
+  "No deployment without one rulebook":"没有统一规则手册就不部署",
+  "Publish everything, in the open":"全部公开，摊在阳光下",
+  "Every incident, on the record":"每一起事件都记录在案",
+  "Announce the benefits; the office holds the data":"宣布好处；数据留在办公室",
+  "You stay the trusted steward":"你继续做那个被信任的托管者",
+  "Keep it small until the first month’s record is in":"在第一个月的记录出来前保持低调",
+  "Let the evidence speak first":"先让证据说话",
+  // — decisions: outcome big / label —
+  "Ready?":"就绪？",
+  "Ready in what sense":"在什么意义上就绪",
+  "The share that drives itself":"自动驾驶的占比",
+  "Who?":"谁？",
+  "Not one public, not one government":"没有单一的公众，也没有单一的政府",
+  "What it can do of a human’s job":"它能完成人类工作的多少",
+  "Floor":"下限",
+  "What governments always choose":"政府总是会选的那一个",
+  "Whose data?":"谁的数据？",
+  "The disclosure question":"信息公开的问题",
+  "The curve":"那条曲线",
+  "Trust accrues, it doesn’t leap":"信任是累积的，不会跳跃",
+  "Not fate":"不是命",
+  "The forgiveness a machine doesn’t get":"机器得不到的那份宽容",
+  "The question no office owns":"没有哪个部门认领的问题",
+  "Open":"开放",
+  "The fast road to scale":"通往规模的快车道",
+  "Rings":"环",
+  "Prove it, then we open that door":"先证明，我们再开那扇门",
+  "Not yet":"还不行",
+  "Waiting has a cost too":"等待同样有代价",
+  "Daylight":"阳光下",
+  "Trust earned in public":"在公众面前赢得的信任",
+  "Steward":"托管者",
+  "Trust built, then verified":"先建立信任，再去验证",
+  "Quiet":"低调",
+  "Neither earned nor built":"既非赢得，也非建立",
+  // — decisions: stats (word values + labels) —
+  "Usable":"可用", "The technology":"技术",
+  "Missing":"缺失", "Law & acceptance":"法律与接受度",
+  "Human cabs":"人类出租车",
+  "Wuhan robotaxis vs cabs, 2024":"武汉无人车 vs 出租车，2024",
+  "No poll":"无民调", "Exists":"是否存在",
+  "3+ offices":"3+ 个部门", "Disagree":"各执一词",
+  "Of a cabbie’s job":"相当于出租车司机工作的",
+  "Self-graded":"自我评分", "Safety case":"安全论证",
+  "82% fewer":"少 82%", "Injury crashes vs humans (Waymo)":"伤人事故 vs 人类（Waymo）",
+  "High":"高", "Safety floor":"安全下限",
+  "Capped":"有上限", "Ambition":"雄心",
+  "Independent":"独立", "Data demanded":"要求提供的数据",
+  "Unsettled":"未定", "Who discloses":"由谁公开",
+  "First-hand":"第一手", "Their view":"他们的看法",
+  "Few":"很少", "So far":"目前为止",
+  "Higher":"更高", "Bar to clear":"要跨过的门槛",
+  "Zero":"零", "Margin for error":"容错余地",
+  "Tens of k":"数万", "Drivers affected":"受影响的司机",
+  "No owner":"无人认领", "Of the problem":"这个问题的",
+  "China road deaths, WHO est.":"中国道路死亡人数，WHO 估计",
+  "Fast":"快", "To scale":"通往规模",
+  "District-wide":"全辖区", "Exposure":"暴露面",
+  "Contained":"受控", "Risk":"风险",
+  "Slow":"慢", "To the centre":"通往中心",
+  "Uniform":"统一", "Standard sought":"寻求的标准",
+  "Stalled":"停滞", "Meanwhile":"与此同时",
+  "The record":"记录", "The mood":"情绪",
+  "Volatile":"波动",
+  "Calm":"平稳", "Rollout":"推广",
+  "On trust":"依赖信任", "In the office":"在办公室手中",
+  "Evidence":"证据", "Leads":"主导",
+  "A vacuum":"一片真空", "You leave":"你留下的",
+  // — decisions: ctx —
+  "The engineering may be there. Their “ready” means something narrower than yours. The car can drive. The law, the accountability, and the public’s comfort are the parts still missing.":"工程或许已经到位。但他们说的“就绪”比你想的要窄。车能开。而法律、问责，以及公众的安心，才是仍然缺失的部分。",
+  "Trust can’t form from a fleet nobody has met. A small, visible pilot is how the first honest opinions get made, one rider at a time, on easy roads first.":"信任无法从一支没人接触过的车队中形成。一个小而可见的试点，才是让最初那些诚实意见产生的方式——一次一位乘客，先从好走的路开始。",
+  "The file can’t tell you what people want, because too few have any basis for wanting. “The government” isn’t one voice either. The tech office, the safety office, and the labour office all want different things.":"这份文件无法告诉你人们想要什么，因为太少的人有任何据以想要的基础。“政府”也不是一个声音。技术部门、安全部门和劳动部门，想要的各不相同。",
+  "Their numbers aren’t lies. The car really does most of the job well. Taking them at face value is fast, and it trusts the seller to mark their own homework.":"他们的数据不是谎言。这辆车确实把大部分工作做得不错。照单全收很快，但那等于相信卖家自己批改自己的作业。",
+  "You bet on the guaranteed minimum, not the impressive maximum. It’s the conservative read, and the read regulators tend to make when a technology is young.":"你押注于有保证的最低值，而非惊艳的最高值。这是保守的解读，也是监管者在一项技术尚年轻时倾向作出的解读。",
+  "You refuse to certify a seller’s self-report. That forces the question nobody has settled: who holds the safety data, and who gets to see it.":"你拒绝为卖家的自我报告背书。这就逼出了那个没人解决的问题：谁掌握安全数据，又由谁来看。",
+  "The people who’ve ridden it speak from experience instead of imagination. Their trust is real. It’s also a curve you can’t rush for everyone else.":"坐过它的人，凭的是经验而非想象。他们的信任是真实的。但那也是一条曲线，你没法替其他所有人赶进度。",
+  "The skeptic isn’t being irrational. She names a real asymmetry. A machine’s mistake has no one to forgive, so it clears a higher bar than the humans it replaces.":"这位怀疑者并非不理性。她指出了一种真实的不对称。机器犯的错没有一个可以去原谅的人，所以它要跨过比它所取代的人类更高的门槛。",
+  "Every safety debate skips the drivers whose work this ends. It isn’t a safety question, which is why it keeps falling through the cracks between the offices that decide.":"每一场安全辩论都跳过了那些将因此失去工作的司机。这不是一个安全问题，所以它总是从那些作决定的部门之间的缝隙里漏掉。",
+  "You open everything at once. It’s how the technology reaches the scale where it finally helps, and how a single bad night reaches every street you govern at the same time.":"你一次性全部放开。这既是技术抵达那个终于能帮上忙的规模的方式，也是某一个糟糕夜晚同时波及你治理的每一条街道的方式。",
+  "You draw the map in rings. An outer zone first, and the next ring opens only after clean mileage and time. It’s the slowest honest path, and the one that lets trust form at the speed trust forms.":"你把地图画成一圈圈。先是外圈，只有在干净的里程与时间之后，下一环才会开放。这是最慢的诚实路径，也是那条让信任以它形成的速度形成的路径。",
+  "You hold the line for a national standard that doesn’t exist yet. It’s defensible, since fragmented rules are a real hazard. The safest street is also the one where nothing new is ever allowed to help.":"你为一项尚不存在的国家标准坚守底线。这说得过去，因为碎片化的规则是真实的隐患。但最安全的街道，也是那条永远不允许任何新事物来帮忙的街道。",
+  "You promise the full record: every stop, every incident, posted. Trust gets earned rather than granted. It also hands each rare failure a headline, and asks the public to hold their nerve through the bad days.":"你承诺公开完整记录：每一次停靠、每一起事件，都张贴出来。信任是被赢得的，而非被授予的。但这也把每一次罕见的失败递上了头条，并要求公众在糟糕的日子里稳住心神。",
+  "You lead with the good and keep the raw data in the office, releasing what the public needs. It kept the electric-car transition calm through its early fires. It holds right up until the public stops trusting the steward.":"你先讲好的一面，把原始数据留在办公室，只发布公众需要的部分。正是这一手让电动车转型在早期的起火中保持了平稳。它一直有效，直到公众不再信任那个托管者的那一刻。",
+  "You keep the announcement small and let a month of real driving make the case before you make claims. It avoids overselling. Silence is its own message, and someone else fills it before you do.":"你把宣布压得很小，让一个月的真实驾驶先把道理讲清楚，你再下结论。这避免了过度推销。但沉默本身也是一种信息，而在你之前，会有别人来填满它。",
+  // — decisions: plain (what you did) —
+  "What you did: judged the tech ready and bet that exposure — the sheer number of people who ride one — will build trust on its own. But the car driving well isn’t the gap; the law and public comfort are.":"你的选择：判断技术已就绪，并押注于“接触”——足够多的人去乘坐它——会自行建立信任。但车开得好并不是鸿沟所在；法律与公众的安心才是。",
+  "What you did: recognised that almost no one here has ridden one, so there’s no real public opinion yet — and chose a small, visible pilot to let honest opinions form one rider at a time.":"你的选择：意识到这里几乎没人坐过它，所以还没有真正的公众意见——于是选择一个小而可见的试点，让诚实的意见一次一位乘客地形成。",
+  "What you did: decided the data can’t answer this and sent it to a public hearing. Fair — but be warned, “the public” and even “the government” aren’t single voices that agree.":"你的选择：判定数据无法回答这个问题，于是把它交给公众听证会。合理——但要提醒你，“公众”乃至“政府”都不是意见一致的单一声音。",
+  "What you did: accepted the operator’s safety numbers as-is. They’re broadly true — the car does most of a driver’s job well — but you’re letting the seller grade its own test.":"你的选择：原封不动地接受了运营商的安全数据。它们大体属实——车把司机的大部分工作做得不错——但你在让卖家给自己的考试打分。",
+  "What you did: trusted the safety floor (the worst the car will do) over the ceiling (the best it might do). Cautious, and the call regulators usually make with a young technology.":"你的选择：相信安全下限（车最差会怎样），而非上限（它最好可能怎样）。谨慎，也是监管者面对年轻技术时通常作出的判断。",
+  "What you did: refused to approve on the operator’s own word and demanded independent proof — which drags out the unsettled question of who owns the safety data and who’s allowed to see it.":"你的选择：拒绝仅凭运营商的一面之词批准，转而要求独立证明——这就牵出了那个悬而未决的问题：安全数据归谁所有，又允许谁查看。",
+  "What you did: gave most weight to the people who’ve actually ridden one. Their trust is real and first-hand — but it built slowly, and you can’t fast-forward everyone else through that curve.":"你的选择：把最大的权重给了真正坐过它的人。他们的信任真实而第一手——但那是慢慢建立起来的，你没法让其他所有人快进走完那条曲线。",
+  "What you did: carried the skeptic’s worry — that people forgive a human’s mistake but not a machine’s, so the car has to clear a higher bar than the drivers it replaces.":"你的选择：把怀疑者的担忧带在身上——人们原谅人类的错误，却不原谅机器的，所以这辆车要跨过比它所取代的司机更高的门槛。",
+  "What you did: put the tens of thousands of cab drivers who’d lose their jobs at the centre. It’s the concern no office owns, because it isn’t about safety — so it keeps getting skipped.":"你的选择：把那成千上万会失去工作的出租车司机放到了中心。这是没有哪个部门认领的关切，因为它无关安全——于是它总被跳过。",
+  "What you did: approved robotaxis across the whole district immediately. Fastest route to the scale that helps — but if one thing goes badly wrong, it goes wrong everywhere at once.":"你的选择：立刻批准无人驾驶出租车覆盖整个辖区。通往有用规模的最快路径——但一旦有一件事严重出错，它会在所有地方同时出错。",
+  "What you did: allowed it one zone at a time — a car earns the next area only after a clean record in the last (a geofenced, whitelist rollout). Slowest honest path, and trust builds at its natural pace.":"你的选择：一次只放开一个区域——只有在上一个区域保持干净记录后，车才能赢得下一个区域（一种有地理围栏的白名单式推广）。最慢的诚实路径，信任按它自然的节奏建立。",
+  "What you did: denied it until there’s one national rulebook. Defensible — patchwork rules between makers are a real hazard — but the perfectly safe street is also the one where nothing new ever helps.":"你的选择：在有一部统一的国家规则手册之前予以否决。说得过去——厂商之间拼凑的规则是真实的隐患——但完美安全的街道，也是那条永远没有新事物来帮忙的街道。",
+  "What you did: chose to publish everything — every incident, in the open. Trust gets earned honestly, but every rare failure becomes a headline and the public has to hold steady through the bad days.":"你的选择：选择全部公开——每一起事件，都摊在阳光下。信任被诚实地赢得，但每一次罕见的失败都会成为头条，公众必须在糟糕的日子里稳住。",
+  "What you did: announced the benefits and kept the raw data inside the office, releasing what the public needs. Calmer rollout — but it rests entirely on the public trusting you as steward.":"你的选择：宣布好处，把原始数据留在办公室内部，只发布公众需要的部分。更平稳的推广——但它完全建立在公众信任你这个托管者之上。",
+  "What you did: said little and let a month of real driving speak first. It avoids overpromising — but staying quiet is its own message, and someone else will fill the silence before you do.":"你的选择：说得很少，让一个月的真实驾驶先开口。这避免了过度承诺——但保持沉默本身也是一种信息，而在你之前，会有别人来填满这段沉默。",
+  // — decisions: insight (ins) —
+  "Technically it already sits at a commercially usable level. What’s missing isn’t the tech. It’s the law, the accountability rules, and people trusting the car the way they trust a taxi today.":"从技术上讲，它已经处于可商用的水平。缺的不是技术，而是法律、问责规则，以及人们像今天信任出租车那样去信任这辆车。",
+  "The real starting point is getting more people to actually ride one. Then they stop imagining it’s either all-powerful or worse than a bad cabbie, and form an honest, first-hand judgment.":"真正的起点，是让更多人真正去坐一次。这样他们就不再幻想它要么无所不能、要么比糟糕的出租车司机还差，而是形成一个诚实的、第一手的判断。",
+  "No developed government blocks this. It’s national competitiveness. But “the government” isn’t one voice: tech development pushes, traffic-safety resists, and the labour side worries about drivers’ jobs.":"没有哪个发达国家的政府会阻止这件事，这关乎国家竞争力。但“政府”不是一个声音：技术发展方在推动，交通安全方在抵制，而劳动方担心司机的饭碗。",
+  "Everyone advertises that the model got better, thirty points, now eighty. Nobody ever says what 100 looks like, or whether we sit at the level we actually need.":"人人都宣传模型进步了，三十分，如今八十分。却从没有人说 100 是什么样，也不说我们是否处在真正需要的那个水平。",
+  "Governments pick the safety floor over the ceiling. The sensor-heavy, redundant route gets the harder roads. The data-only bet stays on simpler ones until its record proves out.":"政府会选安全下限，而不是上限。重传感器、有冗余的路线获准上更难的道路。纯数据的路线则留在更简单的道路上，直到它的记录得到验证。",
+  "In the US, disclosure is the law: safety reports get filed publicly, even if few read them. In China the government reasons that it sees more than the crowd and the public trusts it, so it needn’t publish it all. Neither is obviously right.":"在美国，信息公开是法律：安全报告要公开备案，哪怕很少有人读。在中国，政府的逻辑是它看到的比大众多、且公众信任它，所以不必全部公开。两者都不是显然正确的。",
+  "I didn’t trust it all at once. I tried an easy road, decided it was fine, then widened it slowly. Trust accumulated. You go through it as an ordinary rider.":"我不是一下子就信任它的。我先试一条好走的路，判断没问题，再慢慢放开。信任是累积起来的。你要作为一名普通乘客亲自走过它。",
+  "People accept that a human driver makes mistakes and chalk it up to fate. They cannot accept a machine making mistakes. They expect the machine to be perfect.":"人们接受人类司机会犯错，并把它归为命运。他们无法接受机器犯错。他们期待机器是完美的。",
+  "The real fight isn’t the public against the machine. It’s between departments: tech development pushes, traffic-safety resists, and the labour side worries about drivers losing their jobs.":"真正的角力不是公众对抗机器，而是部门之间：技术发展方在推动，交通安全方在抵制，而劳动方担心司机失业。",
+  "One bad incident like Wuhan and policy tightens across the whole country overnight. It can overturn the rollout, the costs, the whole business model. Policy uncertainty is the hardest thing to manage.":"一起像武汉那样的糟糕事件，政策会在一夜之间在全国收紧。它能推翻推广、成本，乃至整个商业模式。政策的不确定性是最难管理的东西。",
+  "China runs a whitelist. By default nothing is allowed. You prove one capability in one zone and they open precisely that. Guangzhou drew outer, middle, and inner rings. Earn the mileage, apply to move inward.":"中国采用白名单。默认什么都不允许。你在一个区域里证明一项能力，他们就恰好开放那一项。广州划出了外环、中环和内环。挣够里程，再申请向内推进。",
+  "Every company defines the edge-case behaviour differently. If a higher, nationwide law doesn’t set the boundary, the race to commercialize turns those differences into a genuine public-safety threat.":"每家公司对边缘情况的行为定义都不一样。如果没有一部更高层级的全国性法律来划定边界，商业化的竞赛就会把这些差异变成真正的公共安全威胁。",
+  "In the US, disclosure is the law: Waymo and Tesla file public safety reports, and media and insurers do the pushing, even though most citizens never read them.":"在美国，信息公开是法律：Waymo 和特斯拉都要提交公开的安全报告，由媒体和保险公司来施压，尽管大多数公民从不阅读它们。",
+  "When EVs arrived, plenty caught fire and people died. The government never published every incident, yet the transition stayed smooth and China now leads the world in EVs. This is the same story.":"电动车刚出现时，不少起火，也有人丧生。政府从未公开每一起事件，转型却一直平稳，如今中国在电动车领域领先世界。这是同一个故事。",
+  "Nobody advertises what 100 looks like. Say too much too early and you own a promise the technology hasn’t defined. Say nothing and the story gets told without you.":"没有人会去宣传 100 是什么样。太早说得太多，你就背上了一个技术尚未定义的承诺。什么都不说，故事就会在没有你的情况下被讲出去。",
+  // — decisions: attribution (who) —
+  "AV technology & product manager":"自动驾驶技术与产品经理",
+  "AV perception & algorithms engineer":"自动驾驶感知与算法工程师",
+  "AV commercialization strategist":"自动驾驶商业化策略师",
+  "AV deployment & data lead":"自动驾驶部署与数据负责人",
+  "AV systems strategist":"自动驾驶系统策略师",
+  "Robotaxi product operations lead":"无人驾驶出租车产品运营负责人",
+  "Robotaxi operations & AV specialist":"无人驾驶出租车运营与自动驾驶专家",
+  "Robotaxi test-operations lead":"无人驾驶出租车测试运营负责人",
+  "Robotaxi business & operations lead":"无人驾驶出租车商业与运营负责人",
+  // — finale debrief —
+  "Room you left for trust to form":"你为信任的形成留下的空间",
+  "Road you opened to the machine":"你为机器开放的道路",
+  "You drove it all yourself":"你全程自己驾驶",
+  "You let it assist":"你让它辅助",
+  "You let it drive":"你让它驾驶",
+  "Ch1 · the night drive":"第 1 章 · 夜间行驶",
+  "Human limits":"人的极限",
+  "You judged which sensor to trust":"你判断该信任哪个传感器",
+  "Ch2 · inside the machine":"第 2 章 · 机器之内",
+  "Perception":"感知",
+  "Ship it":"放行",
+  "Keep testing":"继续测试",
+  "Supervised pilot":"有监督的试点",
+  "Ch3 · the long tail":"第 3 章 · 长尾",
+  "\"Safe enough\"":"「足够安全」",
+  "Judged it":"作出了判断",
+  "Ran out the clock":"拖到超时",
+  "Mandate transparency":"强制透明",
+  "State as steward":"政府作为托管者",
+  "Require interpretability":"要求可解释性",
+  "Ch4 · who’s responsible":"第 4 章 · 谁来负责",
+  "Liability":"责任归属",
+  "Ruled on it":"作出了裁定",
+  "Approved district-wide":"全辖区批准",
+  "Phased, ring by ring":"分阶段，一环接一环",
+  "Denied for now":"暂时否决",
+  "Ch5 · the trust gap":"第 5 章 · 信任鸿沟",
+  "Deployment":"部署",
+  "Chapter 5 · The Trust Gap · End of the arc":"第 5 章 · 信任鸿沟 · 旅程终点",
+  "When does trust get earned — and when is it built?":"信任何时是赢得的——又何时是被建立起来的？",
+  "You’ve reached the end":"你已抵达终点",
+  // — finale verdict —
+  "You opened the whole district at once. If it works, your streets are the proof the technology needed. If one night goes wrong, it goes wrong everywhere you govern, at once.":"你一次性开放了整个辖区。如果成功，你的街道就是这项技术所需要的证明。如果某一夜出了差错，它会在你治理的每一条街道上同时出错。",
+  "You drew the map in rings and made the machine earn each one. It is the slowest honest path, and the only one that lets trust form at the speed trust actually forms.":"你把地图画成一圈圈，让机器逐环去赢得。这是最慢的诚实路径，也是唯一一条让信任以它真正的速度形成的路径。",
+  "You held the line for a rulebook that doesn't exist yet. The hazard you named is real. So is the cost of the help your streets won't get while you wait.":"你为一部尚不存在的规则手册坚守了底线。你所指出的隐患是真实的。而在你等待期间，你的街道得不到的那份帮助，其代价同样真实。",
+  "You promised to do it in daylight.":"你承诺要在阳光下去做这件事。",
+  "You kept yourself between the public and the data.":"你把自己挡在公众与数据之间。",
+  "You let a month of driving talk before you did.":"你让一个月的真实驾驶先开口，然后才轮到你。",
+  "Across five chapters you were the driver, the machine’s eyes, the evaluator, the regulator, and finally the official who says yes or no. The question was never whether the car can be trusted. It was who has to decide that it can, and you just did, five times over.":"五个章节里，你先后是驾驶员、机器的眼睛、评估者、监管者，最后是那位说“可以”或“不可以”的官员。问题从来不是这辆车能不能被信任，而是由谁来决定它可以——而你刚刚决定了，一连五次。"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 /* ========================= AUDIO — Web Audio, no assets =========================
@@ -375,13 +690,14 @@ window.AUDIO=(function(){
   /* ---- mute chip + M key ---- */
   function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
-    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
+    el.setAttribute('aria-label',window.tr('Toggle sound'));
+    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=window.tr(muted?'Muted':'Sound'); }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();
     const el=document.getElementById('mute'); if(el)el.addEventListener('click',()=>{ unlock(); setMuted(!muted); });
     addEventListener('keydown',e=>{ if(e.key==='m'||e.key==='M'){ unlock(); setMuted(!muted); } }); }
   if(document.readyState!=='loading')wire(); else addEventListener('DOMContentLoaded',wire);
 
-  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted};
+  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted,syncChip};
 })();
 </script>
 <script>
@@ -825,31 +1141,35 @@ window.AUDIO=(function(){
     localStorage.setItem('cytc.v1',JSON.stringify(s)); }catch(e){} }
 
   function initChrome(){
+    const T=window.tr;
     const set=(id,html)=>{const e=$(id);if(e)e.innerHTML=html;};
-    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent="Can You Trust Your Car? · Chapter 5";
-      st.querySelector('.title').textContent="The Trust Gap";
-      st.querySelector('.sub').textContent="A company wants to put driverless taxis on your district's streets. You're the city official who says yes or no. You have their numbers, the public's mood, and a decision that will be quoted back to you either way.";
-      st.querySelector('#startbtn').textContent="Open the deployment file →"; }
-    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent="DEPLOYMENT REVIEW";
-      rb.querySelector('.rb-sub').textContent="District office · Application R-118 · robotaxi service"; }
-    set('wstop','<span class="rec"><span class="recdot"></span> LIVE · DISTRICT FEED</span>'
-      +'<span id="ws-log">Application R-118 · robotaxi deployment</span>'
-      +'<span id="ws-km"><b>1</b> <small>DECISION DUE</small></span>');
-    set('scrub','<button id="scan-btn" disabled>● Live</button>'
+    const st=$('start'); if(st){ st.querySelector('.eyebrow').textContent=T("Can You Trust Your Car? · Chapter 5");
+      st.querySelector('.title').textContent=T("The Trust Gap");
+      st.querySelector('.sub').textContent=T("A company wants to put driverless taxis on your district's streets. You're the city official who says yes or no. You have their numbers, the public's mood, and a decision that will be quoted back to you either way.");
+      st.querySelector('#startbtn').textContent=T("Open the deployment file →"); }
+    const rb=$('review-boot'); if(rb){ rb.querySelector('.rb-title').textContent=T("DEPLOYMENT REVIEW");
+      rb.querySelector('.rb-sub').textContent=T("District office · Application R-118 · robotaxi service"); }
+    set('wstop','<span class="rec"><span class="recdot"></span> '+T("LIVE · DISTRICT FEED")+'</span>'
+      +'<span id="ws-log">'+T("Application R-118 · robotaxi deployment")+'</span>'
+      +'<span id="ws-km"><b>1</b> <small>'+T("DECISION DUE")+'</small></span>');
+    set('scrub','<button id="scan-btn" disabled>'+T("● Live")+'</button>'
       +'<div class="sc-track"><div class="sc-fill" id="sc-fill" style="width:100%"></div></div>'
-      +'<span id="sc-time">district feed · daytime</span>');
+      +'<span id="sc-time">'+T("district feed · daytime")+'</span>');
   }
 
   /* ---- beats ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
-    who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    const full=b.tx; let i=0,done=false,raf=null;
-    function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
-    function step(){ if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
-    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); res(); }
+    who.textContent=b.who?tr(b.who):''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
+    let i=0,done=false,raf=null;
+    function full(){ return tr(b.tx); }
+    function fin(){done=true;tx.textContent=full();p.classList.add('ready');}
+    function step(){ if(RM){fin();return;} const f=full(); if(i<=f.length){tx.textContent=f.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
+    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); S.repaint=null; res(); }
     function cleanup(){ p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
     function onKey(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.stopPropagation(); adv(); } }
+    // live language toggle: retype current text, or snap to full if it had finished
+    S.repaint=()=>{ who.textContent=b.who?tr(b.who):''; if(done)tx.textContent=full(); };
     p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
   }); }
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
@@ -858,12 +1178,14 @@ window.AUDIO=(function(){
   /* ---- decisions ---- */
   let curDecision=null,decResolve=null,decKey=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
-  function askDecision(id){ const c=DECISIONS[id]; if(!c)return;
-    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
-    $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
+  function fillDecision(id){ const c=DECISIONS[id]; if(!c)return;
+    const eb=$('d-eyebrow'); eb.textContent=tr(c.eyebrow); eb.className='d-eyebrow'+(c.urgent?' urgent':'');
+    $('d-question').textContent=tr(c.q); const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
-      b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
+      b.onclick=()=>choose(id,o.k); wrap.appendChild(b); }); }
+  function askDecision(id){ const c=DECISIONS[id]; if(!c)return;
+    fillDecision(id); S.repaint=()=>fillDecision(id);
     curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
     document.addEventListener('keydown',decKey); }
@@ -872,13 +1194,14 @@ window.AUDIO=(function(){
     if(window.AUDIO)AUDIO.sfx('ui'); S[c.store]=k;
     setTimeout(()=>{ $('decision').classList.remove('show'); showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; if(r)r(k); }); },240);
   }
-  function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+  function fillOutcome(d){ $('o-big').textContent=d.big?tr(d.big):''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=d.label?tr(d.label):''; $('o-ctx').textContent=d.ctx?tr(d.ctx):'';
+    $('o-plain').textContent=d.plain?tr(d.plain):''; $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins?tr(d.ins):''; $('o-quote').querySelector('.who').textContent=d.who?tr(d.who):''; }
+  function showOutcome(d,cont){ fillOutcome(d); S.repaint=()=>fillOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
-    $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
+    $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); S.repaint=null; if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1400); }
 
@@ -892,24 +1215,28 @@ window.AUDIO=(function(){
   function bar(label,val,pct,color){ return '<div class="barrow"><span class="bl">'+label+'</span>'
     +'<div class="bar-track"><div class="bar-fill" data-pct="'+pct+'" style="background:'+color+'"></div></div>'
     +'<span class="bv">'+val+'</span></div>'; }
-  function dataPanel(){ return new Promise(res=>{ const p=ensureDossier();
-    p.innerHTML='<div class="ds-title">The trust gap, in numbers</div>'
-      +'<div class="ds-sub">Two charts and one honest caveat. Read them before anyone starts talking.</div>'
-      +'<div class="ch"><div class="ch-h">Vehicles serving the district each day</div>'
-        +'<div class="ch-src">Operator figures, Guangzhou-scale pilots · 2024–25 interviews</div>'
-        +bar('Human-driven cabs','100,000+',100,'#6ea8ff')
-        +bar('Robotaxis','under 1,000',1.2,'#8AB0E0')
-        +'<div class="ch-legend"><span><i style="background:#8AB0E0"></i>Robotaxis</span><span><i style="background:#6ea8ff"></i>Human-driven cabs</span></div></div>'
-      +'<div class="ch"><div class="ch-h">"Would you take one for a daily trip?"</div>'
-        +'<div class="ch-src">District pilot survey · illustrative, small sample · no representative public poll exists</div>'
-        +bar('Have ridden one','78%',78,'#42d98a')
-        +bar('Never ridden one','31%',31,'#f5b13f')
-        +'<div class="ch-legend"><span><i style="background:#42d98a"></i>Riders</span><span><i style="background:#f5b13f"></i>Non-riders</span></div></div>'
-      +'<div class="ds-note">Almost no one here has ridden one, so there is no real public opinion yet to measure. The gap isn’t distrust of the machine. Trust hasn’t had the chance to form.</div>'
-      +'<button id="ds-go">I’ve read the file →</button>';
+  function paintData(res){ const p=ensureDossier(); const T=window.tr;
+    p.innerHTML='<div class="ds-title">'+T('The trust gap, in numbers')+'</div>'
+      +'<div class="ds-sub">'+T('Two charts and one honest caveat. Read them before anyone starts talking.')+'</div>'
+      +'<div class="ch"><div class="ch-h">'+T('Vehicles serving the district each day')+'</div>'
+        +'<div class="ch-src">'+T('Operator figures, Guangzhou-scale pilots · 2024–25 interviews')+'</div>'
+        +bar(T('Human-driven cabs'),T('100,000+'),100,'#6ea8ff')
+        +bar(T('Robotaxis'),T('under 1,000'),1.2,'#8AB0E0')
+        +'<div class="ch-legend"><span><i style="background:#8AB0E0"></i>'+T('Robotaxis')+'</span><span><i style="background:#6ea8ff"></i>'+T('Human-driven cabs')+'</span></div></div>'
+      +'<div class="ch"><div class="ch-h">'+T('"Would you take one for a daily trip?"')+'</div>'
+        +'<div class="ch-src">'+T('District pilot survey · illustrative, small sample · no representative public poll exists')+'</div>'
+        +bar(T('Have ridden one'),'78%',78,'#42d98a')
+        +bar(T('Never ridden one'),'31%',31,'#f5b13f')
+        +'<div class="ch-legend"><span><i style="background:#42d98a"></i>'+T('Riders')+'</span><span><i style="background:#f5b13f"></i>'+T('Non-riders')+'</span></div></div>'
+      +'<div class="ds-note">'+T('Almost no one here has ridden one, so there is no real public opinion yet to measure. The gap isn’t distrust of the machine. Trust hasn’t had the chance to form.')+'</div>'
+      +'<button id="ds-go">'+T('I’ve read the file →')+'</button>';
+    $('ds-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); S.repaint=null; res(); };
+    return p; }
+  function dataPanel(){ return new Promise(res=>{ const p=paintData(res);
     p.classList.add('show');
-    setTimeout(()=>{ p.querySelectorAll('.bar-fill').forEach(f=>{ f.style.width=f.dataset.pct+'%'; }); },120);
-    $('ds-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); res(); };
+    const showBars=()=>p.querySelectorAll('.bar-fill').forEach(f=>{ f.style.width=f.dataset.pct+'%'; });
+    setTimeout(showBars,120);
+    S.repaint=()=>{ paintData(res); showBars(); };
   }); }
   const CLAIMS=[
     {name:'“Our cars are safer than human drivers.”',
@@ -921,22 +1248,27 @@ window.AUDIO=(function(){
     {name:'“It’s completely safe. It will never hurt anyone.”',
       note:'No system runs at zero risk, and the public wants two things at once: never hurt anyone, and also be flawless. Worse, when an <b>edge case</b> — a rare, unusual situation the car has hardly seen before — goes wrong, a deep-learning model <b>can’t fully explain why it chose what it chose</b>.'}
   ];
-  function pitchPanel(){ return new Promise(res=>{ const p=ensureDossier(); S.checked=0;
-    p.innerHTML='<div class="ds-title">The operator’s pitch</div>'
-      +'<div class="ds-sub">Four claims from the slide deck. Click each one to check it against what you actually know.</div>'
+  function paintPitch(res){ const p=ensureDossier(); const T=window.tr; const done=S.checkedSet;
+    p.innerHTML='<div class="ds-title">'+T('The operator’s pitch')+'</div>'
+      +'<div class="ds-sub">'+T('Four claims from the slide deck. Click each one to check it against what you actually know.')+'</div>'
       +'<div class="ev-list" id="cl-list"></div>'
-      +'<div class="ev-count" id="cl-count">0 of 4 claims checked — check all four to move on</div>'
-      +'<button id="ds-go" disabled>Heard enough →</button>';
-    CLAIMS.forEach((c,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i;
-      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+c.name+'</span><span class="ev-tag wait">Unchecked · click</span></div><div class="ev-note">'+c.note+'</div>';
-      row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done');
-        const t=row.querySelector('.ev-tag'); t.className='ev-tag warn'; t.textContent='Against the record';
-        if(window.AUDIO)AUDIO.sfx('ui'); S.checked++;
-        const cc=$('cl-count'); if(S.checked>=CLAIMS.length){ cc.textContent='All 4 claims checked — you can move on'; cc.classList.add('done'); $('ds-go').disabled=false; }
-        else cc.textContent=S.checked+' of 4 claims checked — check all four to move on'; };
+      +'<div class="ev-count" id="cl-count"></div>'
+      +'<button id="ds-go">'+T('Heard enough →')+'</button>';
+    function updateCount(){ const cc=$('cl-count'),n=done.size;
+      if(n>=CLAIMS.length){ cc.textContent=T('All 4 claims checked — you can move on'); cc.classList.add('done'); $('ds-go').disabled=false; }
+      else { cc.textContent=n+T(' of 4 claims checked — check all four to move on'); cc.classList.remove('done'); $('ds-go').disabled=true; } }
+    CLAIMS.forEach((c,i)=>{ const row=document.createElement('div'); row.className='ev-row'; row.dataset.i=i; const isDone=done.has(i);
+      row.innerHTML='<div class="ev-r-top"><span class="ev-name">'+T(c.name)+'</span><span class="ev-tag '+(isDone?'warn':'wait')+'">'+(isDone?T('Against the record'):T('Unchecked · click'))+'</span></div><div class="ev-note">'+T(c.note)+'</div>';
+      if(isDone) row.classList.add('done');
+      row.onclick=()=>{ if(row.classList.contains('done'))return; row.classList.add('done'); done.add(i);
+        const t=row.querySelector('.ev-tag'); t.className='ev-tag warn'; t.textContent=T('Against the record');
+        if(window.AUDIO)AUDIO.sfx('ui'); updateCount(); };
       $('cl-list').appendChild(row); });
-    p.classList.add('show');
-    $('ds-go').onclick=()=>{ if($('ds-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); res(); };
+    updateCount();
+    $('ds-go').onclick=()=>{ if($('ds-go').disabled)return; if(window.AUDIO)AUDIO.sfx('ui'); p.classList.remove('show'); S.repaint=null; res(); };
+    return p; }
+  function pitchPanel(){ return new Promise(res=>{ S.checkedSet=new Set(); const p=paintPitch(res); p.classList.add('show');
+    S.repaint=()=>paintPitch(res);
   }); }
 
   /* ---- content ---- */
@@ -1066,18 +1398,18 @@ window.AUDIO=(function(){
   function finaleVerdict(prior){
     const dep=S.deploy, fr=S.frame;
     let v;
-    if(dep==='A') v="You opened the whole district at once. If it works, your streets are the proof the technology needed. If one night goes wrong, it goes wrong everywhere you govern, at once.";
-    else if(dep==='B') v="You drew the map in rings and made the machine earn each one. It is the slowest honest path, and the only one that lets trust form at the speed trust actually forms.";
-    else v="You held the line for a rulebook that doesn't exist yet. The hazard you named is real. So is the cost of the help your streets won't get while you wait.";
-    if(fr==='A') v+=" You promised to do it in daylight.";
-    else if(fr==='B') v+=" You kept yourself between the public and the data.";
-    else v+=" You let a month of driving talk before you did.";
+    if(dep==='A') v=tr("You opened the whole district at once. If it works, your streets are the proof the technology needed. If one night goes wrong, it goes wrong everywhere you govern, at once.");
+    else if(dep==='B') v=tr("You drew the map in rings and made the machine earn each one. It is the slowest honest path, and the only one that lets trust form at the speed trust actually forms.");
+    else v=tr("You held the line for a rulebook that doesn't exist yet. The hazard you named is real. So is the cost of the help your streets won't get while you wait.");
+    if(fr==='A') v+=" "+tr("You promised to do it in daylight.");
+    else if(fr==='B') v+=" "+tr("You kept yourself between the public and the data.");
+    else v+=" "+tr("You let a month of driving talk before you did.");
     return v;
   }
-  function renderDebrief(){ save(); const prior=readStore();
+  function renderDebrief(){ save(); const prior=readStore(); const T=window.tr;
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Room you left for trust to form');
-    if(meters[1]) setLabel(meters[1],'Road you opened to the machine');
+    if(meters[0]) setLabel(meters[0],T('Room you left for trust to form'));
+    if(meters[1]) setLabel(meters[1],T('Road you opened to the machine'));
     const trustPct = S.deploy==='B'?86 : S.deploy==='C'?54 : 40;
     const roadPct  = S.deploy==='A'?100 : S.deploy==='B'?55 : 8;
     $('db-trust-v').textContent=trustPct+'%'; $('db-att-v').textContent=roadPct+'%';
@@ -1095,14 +1427,14 @@ window.AUDIO=(function(){
     const dep={A:'Approved district-wide',B:'Phased, ring by ring',C:'Denied for now'}[S.deploy]||'—';
     rows.push({scene:'Ch5 · the trust gap',call:dep,cons:{t:'Deployment',c:S.deploy==='B'?'good':''}});
 
-    document.querySelector('#debrief .db-head').textContent='Chapter 5 · The Trust Gap · End of the arc';
-    document.querySelector('#debrief .db-title').textContent='When does trust get earned — and when is it built?';
-    $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
+    document.querySelector('#debrief .db-head').textContent=T('Chapter 5 · The Trust Gap · End of the arc');
+    document.querySelector('#debrief .db-title').textContent=T('When does trust get earned — and when is it built?');
+    $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+T(r.scene)+'</div><div class="rw-call">'+T(r.call)+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+T(r.cons.t||'')+'</div></div>').join('');
     let v=finaleVerdict(prior);
-    v+=" Across five chapters you were the driver, the machine’s eyes, the evaluator, the regulator, and finally the official who says yes or no. The question was never whether the car can be trusted. It was who has to decide that it can, and you just did, five times over.";
+    v+=" "+T("Across five chapters you were the driver, the machine’s eyes, the evaluator, the regulator, and finally the official who says yes or no. The question was never whether the car can be trusted. It was who has to decide that it can, and you just did, five times over.");
     $('db-verdict').textContent=v;
-    const b=$('db-ch2'); b.textContent='You’ve reached the end';
-    $('debrief').classList.add('show');
+    const b=$('db-ch2'); b.textContent=T('You’ve reached the end');
+    $('debrief').classList.add('show'); S.repaint=renderDebrief;
   }
   function finish(){ save();
     try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished all five chapters of Can You Trust Your Car. What did I just build, and what are natural next steps?'); return; } }catch(e){}
@@ -1112,8 +1444,8 @@ window.AUDIO=(function(){
   function boot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
     const bar=$('rb-bar'), status=$('rb-status');
     const steps=[[10,'Opening application R-118…'],[44,'Loading district feed…'],[80,'Pulling public-trust file…'],[100,'Ready.']];
-    if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
-    let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
+    if(RM){ bar.style.width='100%'; status.textContent=tr('Ready.'); setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
+    let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=tr(steps[i][1]); if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
       else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
   }); }
 
@@ -1143,6 +1475,12 @@ window.AUDIO=(function(){
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  window.onLangChange=function(){
+    try{ document.title=tr("Can You Trust Your Car? — The Trust Gap"); }catch(e){}
+    initChrome();
+    if(window.AUDIO&&AUDIO.syncChip) AUDIO.syncChip();
+    if(typeof S.repaint==='function') S.repaint();
+  };
   initChrome();
   $('db-ch2').addEventListener('click',finish);
   $('db-replay').addEventListener('click',()=>location.reload());

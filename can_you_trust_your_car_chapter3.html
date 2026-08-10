@@ -173,46 +173,205 @@
   #review-boot .rb-bar{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,#8AB0E0,#6ea8ff);transition:width .25s linear}
   #review-boot .rb-status{color:#9aa6c2;letter-spacing:.1em;font-size:clamp(11px,1.3vw,13px);min-height:1.2em}
   @media (prefers-reduced-motion: reduce){ #review-boot .rb-scan,#review-boot .rb-dot{animation:none} #review-boot.gone{transition:none} }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:14px; z-index:100;
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
+  #langtoggle{right:clamp(96px,4vw+80px,132px)} /* offset left of the top-right mute chip so they don't overlap */
 </style>
 </head>
 <body>
+
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
+<script>
+/* i18n core — identical on every page. English is the source of truth; ZH maps normalized
+   English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
+window.ZH = {
+  // — start screen —
+  "Can You Trust Your Car? · Chapter 3":"你能信任你的车吗？· 第 3 章",
+  "The Long Tail":"长尾",
+  "You're a safety evaluator now. Ten thousand kilometres of fleet footage are on your screen. Somewhere in it is the one event that matters. Prove the car is safe enough to ship.":"你现在是一名安全评估者。一万公里的车队影像正显示在你的屏幕上。其中某处，藏着唯一真正重要的那一刻。证明这辆车足够安全，可以交付上路。",
+  "Open the logs →":"打开日志 →",
+  // — review-boot —
+  "<span class=\"rb-dot\"></span> REC":"<span class=\"rb-dot\"></span> 录制",
+  "SAFETY REVIEW STATION":"安全审查工作站",
+  "Fleet validation · Log #4471":"车队验证 · 日志 #4471",
+  "Loading fleet footage…":"正在加载车队影像……",
+  "Indexing 10,000 km of logs…":"正在索引 10,000 公里日志……",
+  "Calibrating detection overlay…":"正在校准检测叠层……",
+  "Ready.":"就绪。",
+  // — workstation chrome —
+  "<span class=\"recdot\"></span> REC · SAFETY REVIEW":"<span class=\"recdot\"></span> 录制 · 安全审查",
+  "Log #4471 · fleet validation":"日志 #4471 · 车队验证",
+  "KM REVIEWED":"已审查公里",
+  "▶▶ Scan logs":"▶▶ 扫描日志",
+  "⚠ NEAR-MISS DETECTED · km 6,213<small>Pedestrian entered the roadway. The car braked with 0.4 s to spare.</small>":"⚠ 检测到险情 · 公里 6,213<small>行人进入车道。车辆在仅剩 0.4 秒时完成制动。</small>",
+  // — HUD / hints / warnings —
+  "KM/H":"公里/时",
+  "<kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane":"<kbd>A</kbd> / <kbd>←</kbd> 和 <kbd>D</kbd> / <kbd>→</kbd> 变道",
+  "⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>你的车道上有障碍物。按 A / D 变到旁边车道。</small>",
+  "Sound":"声音", "Muted":"已静音",
+  // — stats panel —
+  "How many test miles prove the car is as safe as a human?":"需要多少测试里程，才能证明这辆车和人类一样安全？",
+  "Miles driven incident-free":"无事故行驶里程",
+  "Run 10× more test miles":"再运行 10× 测试里程",
+  "I've seen enough →":"我看够了 →",
+  "Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.":"还差得远。RAND 估计，大约需要 <b>2.75 亿英里</b>的无事故行驶，才能以统计上的置信度证明这辆车和人类一样安全。",
+  "You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.":"你已经达到了人类安全门槛（约 2.75 亿英里，RAND）。而要证明这辆车明显更<i>安全</i>，<b>真正的证明</b>需要 <b>110 亿英里</b>量级的里程。从未有任何车队无事故地跑完那么多。",
+  "Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.":"即便到了这里，罕见事件的<b>长尾</b>也永不收拢。你无法靠测试抵达确定。永远还有一种你没见过的情形。",
+  // — beats —
+  "System":"系统", "You":"你",
+  "You've left the driver's seat. Now you're at a review station, watching ten thousand kilometres of footage from the company's fleet — every self-driving car it has put on the road.":"你已经离开了驾驶座。现在你坐在审查工作站前，观看来自公司车队的一万公里影像——它投放到路上的每一辆自动驾驶车。",
+  "Your job isn't to drive. It's to decide whether this car is safe enough to put on the road for everyone.":"你的工作不是驾驶，而是判定这辆车是否足够安全，可以为所有人投放到路上。",
+  "You're at the review desk. Most of it is nothing — clean, uneventful kilometres.":"你坐在审查台前。绝大部分都平淡无奇——干净、无事发生的公里。",
+  "Press the glowing ▶▶ Scan logs button to run through them. It stops itself when something flags.":"按下发光的 ▶▶ 扫描日志 按钮快进浏览。一旦有异常被标记，它会自动停下。",
+  "NEAR-MISS · km 6,213. A pedestrian stepped off the kerb. The car braked with four tenths of a second to spare.":"险情 · 公里 6,213。一名行人踏下路缘石。车辆在仅剩十分之四秒时完成制动。",
+  "Four tenths of a second. Was that the system working, or getting lucky once?":"十分之四秒。这是系统在起作用，还是只是侥幸了一次？",
+  "One near-miss in ten thousand kilometres. So how many kilometres would it take to prove this car is actually safe?":"一万公里里的一次险情。那么，要证明这辆车真正安全，需要多少公里？",
+  "You can't test your way to certainty. But the car ships or it doesn't, and that call is yours.":"你无法靠测试抵达确定。但这辆车要么交付，要么不交付，而这个决定在你手里。",
+  // — decision 01: classify —
+  "01 · Classify the near-miss":"01 · 归类这次险情",
+  "What was the near-miss at km 6,213?":"公里 6,213 处的险情，究竟是什么？",
+  "A software bug":"一个软件缺陷",
+  "Bug?":"缺陷？",
+  "Something to fix":"一个待修复的问题",
+  "Maybe. You can't reproduce it, and the logs read nominal. A bug you can't reproduce is the hardest kind to fix, and the hardest to rule out.":"也许吧。你无法复现它，日志读数一切正常。无法复现的缺陷，是最难修复、也最难排除的一类。",
+  "What you did: called it a fixable software bug. But the logs look normal and it won't happen again on command — so nobody can actually find and fix it.":"你的做法：把它称作一个可修复的软件缺陷。但日志看起来正常，它又无法按需重现——所以没人真能找到并修复它。",
+  "Unrepro- ducible":"无法复现",
+  "Status":"状态",
+  "For those extreme cases there is still no universal, mature, deployable fix — none that I know of, anyway.":"对于那些极端情况，至今仍没有通用、成熟、可部署的解决方案——至少据我所知没有。",
+  "Perception & mapping engineer":"感知与建图工程师",
+  "A rare edge case":"一个罕见的边缘情况",
+  "Long tail":"长尾",
+  "Too rare to train, too common to ignore":"罕见到无法训练，又常见到无法忽视",
+  "The long tail: a situation too rare to have appeared in training, yet certain to recur somewhere across a whole fleet, every day.":"长尾：一种罕见到不曾出现在训练里的情形，却又必然会在整个车队的某处、每天重演。",
+  "What you did: called it a rare edge case — so rare the car was never trained on it, but common enough that across thousands of cars it happens somewhere every day.":"你的做法：把它称作一个罕见的边缘情况——罕见到车辆从未在它上面训练过，却又常见到在成千上万辆车里，每天总会在某处发生。",
+  "Rare":"罕见", "Frequency":"频率", "Fleet-wide":"覆盖全车队", "Exposure":"暴露",
+  "The models handle ninety-eight cases in a hundred. It’s the last two they cannot solve.":"模型能处理一百种情况里的九十八种。剩下的两种，它们解决不了。",
+  "Deployment & data engineer":"部署与数据工程师",
+  "Acceptable statistical risk":"可接受的统计风险",
+  "Risk":"风险",
+  "A number wearing a value":"一个披着数字外衣的价值判断",
+  "Defensible. Every system has a failure rate, humans included. But 'acceptable' is a judgment about who bears the risk, dressed up as a statistic.":"站得住脚。每个系统都有失败率，人类也不例外。但「可接受」是关于谁来承担风险的判断，只是被打扮成了一个统计数字。",
+  "What you did: called it an acceptable risk. That's a real position — no system is perfect — but 'acceptable' is really a choice about who gets hurt, written to look like a neutral number.":"你的做法：把它称作可接受的风险。这是一个站得住脚的立场——没有系统是完美的——但「可接受」其实是关于谁会受伤害的选择，只是被写成了一个看似中立的数字。",
+  "Non-zero":"非零", "Failure rate":"失败率",
+  "You can quantify safety to a point, but risk is probabilistic — it can never be made a hundred percent.":"你可以在一定程度上量化安全，但风险是概率性的——它永远无法做到百分之百。",
+  "Technology & product manager":"技术与产品经理",
+  // — decision 02: recommendation —
+  "02 · Your recommendation":"02 · 你的建议",
+  "Under that uncertainty, what do you recommend?":"在这样的不确定之下，你的建议是什么？",
+  "Deploy: it beats humans already":"部署：它已经胜过人类",
+  "Ship":"交付",
+  "Bet on better-than-average":"押注于「优于平均」",
+  "You ship it, betting that better-than-human on average is good enough while the rare cases get counted in the field.":"你交付它，押注「平均而言优于人类」已经足够好，而那些罕见情况会在实际道路上被逐一记录。",
+  "What you did: cleared the car to ship. You bet that “safer than the average human, on average” is enough, and that the rare cases get caught once it's on real roads. (L4 = the car drives itself, no human needed.)":"你的做法：批准这辆车交付。你押注「平均而言比普通人类更安全」已经足够，而那些罕见情况会在它上路后被捕捉到。（L4 = 车辆自主驾驶，无需人类。）",
+  "Scale":"规模", "Upside":"好处", "Field risk":"现场风险", "Downside":"代价",
+  "The regulator let the firms with the higher safety floor run L4 first.":"监管者让安全下限更高的公司先跑 L4。",
+  "Robotaxi commercialization strategist":"无人驾驶出租车商业化策略师",
+  "Keep testing: the tail is open":"继续测试：尾部仍未收拢",
+  "Hold":"暂缓",
+  "Wait for a proof that never arrives":"等待一个永不到来的证明",
+  "You hold it back until the long tail is closed. It never fully closes.":"你把它按住，直到长尾收拢。而它永远不会完全收拢。",
+  "What you did: kept it off the road until it's proven safe. Sound instinct — but that proof never fully arrives, so the car sits in the lot helping no one while today's human drivers keep crashing.":"你的做法：在证明安全之前不让它上路。直觉没错——但那份证明永远不会完全到来，于是车辆停在场地里、帮不了任何人，而今天的人类驾驶员仍在不断出事。",
+  "Safer lot":"更安全的场地", "Helps no one":"帮不了任何人",
+  "Honestly, I think a robotaxi is already safer than an ordinary cab on the road today.":"说实话，我认为如今路上的无人驾驶出租车，已经比一辆普通出租车更安全。",
+  "Robotaxi operations lead":"无人驾驶出租车运营负责人",
+  "Limited, supervised rollout":"有限的、受监督的投放",
+  "Pilot":"试点",
+  "Real roads, real limits":"真实的道路，真实的限制",
+  "Mapped zones, a safety driver, tight operating limits. Real roads, real data, contained risk.":"已建图的区域、一名安全员、严格的运营限制。真实的道路，真实的数据，受控的风险。",
+  "What you did: allowed a small, watched rollout — only in mapped areas, with a human safety driver, under tight limits. You get real-road data without betting the whole city on it.":"你的做法：允许一次小规模、受监控的投放——只在已建图的区域，配一名人类安全员，处于严格限制之下。你获得真实道路的数据，却不必把整座城市押上去。",
+  "Contained":"受控", "Slow":"缓慢",
+  "China lets you run first and try first — then, once the trial is in, it reins things back and the rules converge.":"中国让你先跑、先试——然后，一旦试验结果到手，它再把缰绳收回来，规则随之收敛。",
+  // — outcome continue —
+  "Continue →":"继续 →",
+  // — verdict —
+  "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.":"你交付了它，押注「优于平均」已经足够，而那些罕见情况会在实际道路上被逐一记录。正是这一押注，让这项技术抵达了拯救生命的规模，也让它招来了最糟糕的头条。",
+  "You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.":"你把它按住，直到长尾收拢。而它从不收拢。最安全的车，是那辆停在测试场里、帮不了任何人的车，而这份等待本身也有代价。",
+  "You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.":"你选择了真实的道路、真实的限制，以及一个仍在注视的人。这里没有干净的答案；这是最接近答案的东西，也是通往那个它终于能帮上忙的规模的、最慢的路。",
+  // — debrief —
+  "Km reviewed":"已审查公里", "Proof reached":"已达成的证明",
+  "Chapter 3 · The Long Tail":"第 3 章 · 长尾",
+  "The call is yours":"决定在你手里",
+  "Called it a bug":"判为缺陷", "Called it an edge case":"判为边缘情况", "Called it acceptable risk":"判为可接受风险",
+  "Deploy":"部署", "Keep testing":"继续测试", "Limited rollout":"有限投放",
+  "The near-miss · km 6,213":"那次险情 · 公里 6,213", "Proving it safe":"证明它安全", "Your recommendation":"你的建议",
+  "Classified":"已归类", "~human bar":"≈人类门槛", "far short":"远远不足", "On the record":"已记录在案",
+  "What comes next →":"接下来会发生什么 →",
+  "Review again":"再次审查",
+  // — document title —
+  "Can You Trust Your Car? — Night Drive":"你能信任你的车吗？—— 夜间行驶"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
+
 <canvas id="c"></canvas>
 <div id="footbox"><div class="fb-box"></div><div class="fb-lbl">PEDESTRIAN</div></div>
 
 <div id="review-boot">
   <div class="rb-scan"></div>
   <div class="rb-inner">
-    <div class="rb-rec"><span class="rb-dot"></span> REC</div>
-    <div class="rb-title">SAFETY REVIEW STATION</div>
-    <div class="rb-sub">Fleet validation · Log #4471</div>
+    <div class="rb-rec" data-i18n><span class="rb-dot"></span> REC</div>
+    <div class="rb-title" data-i18n>SAFETY REVIEW STATION</div>
+    <div class="rb-sub" data-i18n>Fleet validation · Log #4471</div>
     <div class="rb-load"><div class="rb-bar" id="rb-bar"></div></div>
     <div class="rb-status" id="rb-status">Loading fleet footage…</div>
   </div>
 </div>
 
 <div id="wstop">
-  <span class="rec"><span class="recdot"></span> REC · SAFETY REVIEW</span>
-  <span id="ws-log">Log #4471 · fleet validation</span>
-  <span id="ws-km"><b id="km-n">0</b> <small>KM REVIEWED</small></span>
+  <span class="rec" data-i18n><span class="recdot"></span> REC · SAFETY REVIEW</span>
+  <span id="ws-log" data-i18n>Log #4471 · fleet validation</span>
+  <span id="ws-km"><b id="km-n">0</b> <small data-i18n>KM REVIEWED</small></span>
 </div>
 <div id="scrub">
-  <button id="scan-btn">▶▶ Scan logs</button>
+  <button id="scan-btn" data-i18n>▶▶ Scan logs</button>
   <div class="sc-track"><div class="sc-fill" id="sc-fill"></div><div class="sc-mark" id="sc-mark"></div></div>
   <span id="sc-time">km 0 / 10,000</span>
 </div>
-<div id="flag">⚠ NEAR-MISS DETECTED · km 6,213<small>Pedestrian entered the roadway. The car braked with 0.4 s to spare.</small></div>
+<div id="flag" data-i18n>⚠ NEAR-MISS DETECTED · km 6,213<small>Pedestrian entered the roadway. The car braked with 0.4 s to spare.</small></div>
 
 <div id="stats">
-  <div class="st-head">How many test miles prove the car is as safe as a human?</div>
-  <div class="st-row"><span>Miles driven incident-free</span><b id="st-miles">0</b></div>
+  <div class="st-head" data-i18n>How many test miles prove the car is as safe as a human?</div>
+  <div class="st-row"><span data-i18n>Miles driven incident-free</span><b id="st-miles">0</b></div>
   <div class="st-bar"><div class="st-fill" id="st-fill"></div></div>
   <div class="st-note" id="st-note">You have driven a few million. Keep running miles and watch the bar toward statistical confidence.</div>
-  <div class="st-actions"><button id="st-run">Run 10× more test miles</button><button id="st-go">I've seen enough →</button></div>
+  <div class="st-actions"><button id="st-run" data-i18n>Run 10× more test miles</button><button id="st-go" data-i18n>I've seen enough →</button></div>
 </div>
 
 <div id="ui">
-  <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
-  <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
+  <div id="hud-speed"><b id="spd">0</b><span data-i18n>KM/H</span></div>
+  <div id="hint" data-i18n><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
@@ -220,7 +379,7 @@
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
 <div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
-<div id="edgewarn">⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
+<div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
   <div class="d-eyebrow" id="d-eyebrow"></div>
@@ -232,7 +391,7 @@
   <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont">Continue →</button>
+  <button class="cont" id="o-cont" data-i18n>Continue →</button>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
@@ -245,16 +404,16 @@
   <div class="db-timeline" id="db-timeline"></div>
   <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
-    <button class="db-btn" id="db-ch2">What comes next →</button>
-    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none">Review again</button>
+    <button class="db-btn" id="db-ch2" data-i18n>What comes next →</button>
+    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Review again</button>
   </div>
 </div></div>
 
 <div id="start">
-  <div class="eyebrow">Can You Trust Your Car? · Chapter 3</div>
-  <div class="title">The Long Tail</div>
-  <div class="sub">You're a safety evaluator now. Ten thousand kilometres of fleet footage are on your screen. Somewhere in it is the one event that matters. Prove the car is safe enough to ship.</div>
-  <button id="startbtn">Open the logs →</button>
+  <div class="eyebrow" data-i18n>Can You Trust Your Car? · Chapter 3</div>
+  <div class="title" data-i18n>The Long Tail</div>
+  <div class="sub" data-i18n>You're a safety evaluator now. Ten thousand kilometres of fleet footage are on your screen. Somewhere in it is the one event that matters. Prove the car is safe enough to ship.</div>
+  <button id="startbtn" data-i18n>Open the logs →</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -340,7 +499,7 @@ window.AUDIO=(function(){
   /* ---- mute chip + M key ---- */
   function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
-    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
+    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=(window.tr?window.tr(muted?'Muted':'Sound'):(muted?'Muted':'Sound')); }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();
     const el=document.getElementById('mute'); if(el)el.addEventListener('click',()=>{ unlock(); setMuted(!muted); });
     addEventListener('keydown',e=>{ if(e.key==='m'||e.key==='M'){ unlock(); setMuted(!muted); } }); }
@@ -788,6 +947,9 @@ window.AUDIO=(function(){
     s.chapter3={completed:true,completedAt:new Date().toISOString(),classify:S.classify,reco:S.reco,milesReviewed:S.maxMiles};
     localStorage.setItem('cytc.v1',JSON.stringify(s)); }catch(e){} }
 
+  /* ---- live-toggle tracking ---- */
+  let lastScanKm=null, statsRender=null;
+
   /* ---- footage detection box (projects onto the reviewed subject) ---- */
   let footOn=false;
   (function footLoop(){ const fb=$('footbox');
@@ -799,29 +961,35 @@ window.AUDIO=(function(){
 
   /* ---- beats ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
+  let curBeat=null, beatDone=false;   // for live language toggle mid-beat
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
-    who.textContent=b.who||''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    const full=b.tx; let i=0,done=false,raf=null;
-    function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
-    function step(){ if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
+    curBeat=b; beatDone=false;
+    who.textContent=b.who?tr(b.who):''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
+    let i=0,done=false,raf=null;
+    function fin(){done=true;beatDone=true;tx.textContent=tr(b.tx);p.classList.add('ready');}
+    function step(){ if(RM){fin();return;} const full=tr(b.tx); if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
     function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); res(); }
     function cleanup(){ p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
     function onKey(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.stopPropagation(); adv(); } }
     p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
   }); }
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
-    for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
+    for(const b of list) await playBeat(b); curBeat=null; $('beat').classList.remove('show','ready'); showLetterbox(false); }
 
   /* ---- decisions ---- */
   let curDecision=null,decResolve=null,decKey=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
+  function paintDecision(id){ const c=DECISIONS[id]; if(!c)return;   // (re)fill visible text; safe on language toggle
+    const eb=$('d-eyebrow'); eb.textContent=tr(c.eyebrow); eb.className='d-eyebrow'+(c.urgent?' urgent':'');
+    $('d-question').textContent=tr(c.q);
+    c.opts.forEach(o=>{ const b=$('d-options').querySelector('.opt[data-key="'+o.k+'"]'); if(!b)return;
+      const t=b.querySelector('.t'); if(t)t.textContent=tr(o.t); const s=b.querySelector('.s'); if(s&&o.s)s.textContent=tr(o.s); }); }
   function askDecision(id){ const c=DECISIONS[id]; if(!c)return; if(window.TD)TD.pause(true);
-    const eb=$('d-eyebrow'); eb.textContent=c.eyebrow; eb.className='d-eyebrow'+(c.urgent?' urgent':'');
-    $('d-question').textContent=c.q; const wrap=$('d-options'); wrap.innerHTML='';
+    const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t"></span>'+(o.s?'<span class="s"></span>':'');
       b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
-    curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
+    curDecision=id; paintDecision(id); $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
     document.addEventListener('keydown',decKey); }
   function choose(id,k){ if(curDecision!==id)return; curDecision=null; if(decKey){document.removeEventListener('keydown',decKey);decKey=null;}
@@ -829,13 +997,15 @@ window.AUDIO=(function(){
     if(window.AUDIO)AUDIO.sfx('ui'); if(id==='classify')S.classify=k; else if(id==='reco')S.reco=k;
     setTimeout(()=>{ $('decision').classList.remove('show'); showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; if(r)r(k); }); },240);
   }
-  function showOutcome(d,cont){ $('o-big').textContent=d.big||''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=d.label||''; $('o-ctx').textContent=d.ctx||'';
-    $('o-plain').textContent=d.plain||''; $('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins||''; $('o-quote').querySelector('.who').textContent=d.who||'';
+  let curOutcome=null;   // for live language toggle
+  function paintOutcome(d){ $('o-big').textContent=d.big?tr(d.big):''; $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=d.label?tr(d.label):''; $('o-ctx').textContent=d.ctx?tr(d.ctx):'';
+    $('o-plain').textContent=d.plain?tr(d.plain):''; $('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins?tr(d.ins):''; $('o-quote').querySelector('.who').textContent=d.who?tr(d.who):''; }
+  function showOutcome(d,cont){ curOutcome=d; paintOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
-    $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
+    $('o-cont').onclick=()=>{ curOutcome=null; o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
     const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1400); }
 
@@ -843,7 +1013,7 @@ window.AUDIO=(function(){
   function scanLogs(){ return new Promise(res=>{ const btn=$('scan-btn'); let km=0; const target=6213;
     btn.disabled=false; btn.classList.add('warm');
     btn.onclick=()=>{ btn.disabled=true; btn.classList.remove('warm'); if(window.AUDIO)AUDIO.sfx('ui');
-      const iv=setInterval(()=>{ km=Math.min(target,km+170); $('km-n').textContent=fmt(km); $('sc-fill').style.width=(km/10000*100)+'%'; $('sc-time').textContent='km '+fmt(km)+' / 10,000';
+      const iv=setInterval(()=>{ km=Math.min(target,km+170); lastScanKm=km; $('km-n').textContent=fmt(km); $('sc-fill').style.width=(km/10000*100)+'%'; $('sc-time').textContent=(window.LANG==='zh'?'公里 ':'km ')+fmt(km)+' / 10,000';
         if(km>=target){ clearInterval(iv); $('flag').classList.add('show'); $('sc-mark').classList.add('show');
           if(window.TD){ TD.spawnPedestrian(30); TD.pause(true); } footOn=true;
           if(window.AUDIO){ AUDIO.setScene('tense'); AUDIO.sfx('warn'); }
@@ -857,14 +1027,14 @@ window.AUDIO=(function(){
     function render(){ S.maxMiles=Math.max(S.maxMiles,miles); $('st-miles').textContent=fmt(miles);
       const pct=Math.max(0,Math.min(100,(Math.log10(miles)-6)/(Math.log10(11e9)-6)*100)); $('st-fill').style.width=pct+'%';
       let note;
-      if(miles<275e6) note="Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.";
-      else if(miles<11e9) note="You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.";
-      else note="Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.";
+      if(miles<275e6) note=tr("Not close. RAND estimates roughly <b>275 million miles</b> driven without incident just to show, with statistical confidence, that the car is as safe as a human.");
+      else if(miles<11e9) note=tr("You've reached the human-safety bar (~275M miles, RAND). To show the car is meaningfully <i>safer</i>, <b>real proof</b> needs on the order of <b>11 billion miles</b>. No fleet has ever driven that incident-free.");
+      else note=tr("Even here, the <b>long tail</b> of rare events never closes. You cannot test your way to certainty. There is always one more situation you haven't seen.");
       $('st-note').innerHTML=note;
     }
-    render();
+    statsRender=render; render();
     $('st-run').onclick=()=>{ miles=Math.min(miles*10,5e10); if(window.AUDIO)AUDIO.sfx('ui'); render(); };
-    $('st-go').onclick=()=>{ if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
+    $('st-go').onclick=()=>{ statsRender=null; if(window.AUDIO)AUDIO.sfx('ui'); panel.classList.remove('show'); res(); };
   }); }
 
   /* ---- content ---- */
@@ -911,26 +1081,26 @@ window.AUDIO=(function(){
       ]}
   };
   function verdict(){ const k=S.reco;
-    if(k==='A') return "You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.";
-    if(k==='B') return "You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.";
-    return "You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.";
+    if(k==='A') return tr("You shipped it, betting better-than-average is enough while the rare cases get counted in the field. That bet is how the technology reaches the scale that saves lives, and how it earns its worst headlines.");
+    if(k==='B') return tr("You held it back until the long tail closes. It never does. The safest car is the one parked in a test lot, helping no one, and that waiting has a cost of its own.");
+    return tr("You chose real roads with real limits and a human still watching. No clean answer exists here; this is the closest thing to one, and the slowest path to the scale where it finally helps.");
   }
 
   /* ---- debrief / finale ---- */
   function setLabel(m,t){ const s=m.querySelector('.ml span'); if(s)s.textContent=t; }
   function renderDebrief(){ save();
     const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],'Km reviewed'); if(meters[1]) setLabel(meters[1],'Proof reached');
+    if(meters[0]) setLabel(meters[0],tr('Km reviewed')); if(meters[1]) setLabel(meters[1],tr('Proof reached'));
     const proofPct=Math.round(Math.max(0,Math.min(100,(Math.log10(S.maxMiles)-6)/(Math.log10(11e9)-6)*100)));
     $('db-trust-v').textContent='10,000'; $('db-att-v').textContent=proofPct+'%';
     setTimeout(()=>{ $('db-trust-f').style.width='100%'; $('db-att-f').style.width=proofPct+'%'; },90);
-    const cl={A:'Called it a bug',B:'Called it an edge case',C:'Called it acceptable risk'}[S.classify]||'—';
-    const rc={A:'Deploy',B:'Keep testing',C:'Limited rollout'}[S.reco]||'—';
-    const rows=[ {scene:'The near-miss · km 6,213',call:cl,cons:{t:'Classified',c:''}},
-      {scene:'Proving it safe',call:fmt(S.maxMiles)+' mi run',cons:{t:proofPct>=60?'~human bar':'far short',c:proofPct>=60?'':'bad'}},
-      {scene:'Your recommendation',call:rc,cons:{t:'On the record',c:S.reco==='C'?'good':''}} ];
-    document.querySelector('#debrief .db-head').textContent='Chapter 3 · The Long Tail';
-    document.querySelector('#debrief .db-title').textContent='The call is yours';
+    const cl={A:tr('Called it a bug'),B:tr('Called it an edge case'),C:tr('Called it acceptable risk')}[S.classify]||'—';
+    const rc={A:tr('Deploy'),B:tr('Keep testing'),C:tr('Limited rollout')}[S.reco]||'—';
+    const rows=[ {scene:tr('The near-miss · km 6,213'),call:cl,cons:{t:tr('Classified'),c:''}},
+      {scene:tr('Proving it safe'),call:fmt(S.maxMiles)+(window.LANG==='zh'?' 英里运行':' mi run'),cons:{t:proofPct>=60?tr('~human bar'):tr('far short'),c:proofPct>=60?'':'bad'}},
+      {scene:tr('Your recommendation'),call:rc,cons:{t:tr('On the record'),c:S.reco==='C'?'good':''}} ];
+    document.querySelector('#debrief .db-head').textContent=tr('Chapter 3 · The Long Tail');
+    document.querySelector('#debrief .db-title').textContent=tr('The call is yours');
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
     $('db-verdict').textContent=verdict();
     $('debrief').classList.add('show');
@@ -946,8 +1116,8 @@ window.AUDIO=(function(){
   function reviewBoot(){ return new Promise(res=>{ const rb=$('review-boot'); if(!rb){res();return;} rb.classList.add('show');
     const bar=$('rb-bar'), status=$('rb-status');
     const steps=[[8,'Loading fleet footage…'],[38,'Indexing 10,000 km of logs…'],[74,'Calibrating detection overlay…'],[100,'Ready.']];
-    if(RM){ bar.style.width='100%'; status.textContent='Ready.'; setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
-    let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=steps[i][1]; if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
+    if(RM){ bar.style.width='100%'; status.textContent=tr('Ready.'); setTimeout(()=>{ rb.classList.remove('show'); res(); },250); return; }
+    let i=0; (function tick(){ if(i<steps.length){ bar.style.width=steps[i][0]+'%'; status.textContent=tr(steps[i][1]); if(window.AUDIO&&i>0)AUDIO.sfx('ui'); i++; setTimeout(tick,600); }
       else setTimeout(()=>{ rb.classList.add('gone'); setTimeout(()=>{ rb.classList.remove('show','gone'); res(); },650); },350); })();
   }); }
   async function begin(){ if(STORY.running)return; STORY.running=true; const st=$('start'); if(st)st.classList.add('hide');
@@ -970,6 +1140,19 @@ window.AUDIO=(function(){
       renderDebrief();
     }catch(e){ console.error('story',e); }
   }
+  /* ---- live language toggle: re-render whatever is currently on screen ---- */
+  window.onLangChange=function(){
+    document.title=tr("Can You Trust Your Car? — Night Drive");
+    const mt=document.querySelector('#mute .mtx');
+    if(mt){ const pressed=$('mute').getAttribute('aria-pressed')==='true'; mt.textContent=tr(pressed?'Muted':'Sound'); }
+    if(curBeat){ const w=$('beat-who'); w.textContent=curBeat.who?tr(curBeat.who):''; w.style.display=curBeat.who?'':'none'; if(beatDone)$('beat-tx').textContent=tr(curBeat.tx); }
+    if(curDecision) paintDecision(curDecision);
+    if(curOutcome && $('outcome').classList.contains('show')) paintOutcome(curOutcome);
+    if(statsRender) statsRender();
+    if(lastScanKm!=null && $('scrub').classList.contains('show')) $('sc-time').textContent=(window.LANG==='zh'?'公里 ':'km ')+fmt(lastScanKm)+' / 10,000';
+    if($('debrief').classList.contains('show')) renderDebrief();
+  };
+
   const STORY={running:false,begin,S}; window.STORY=STORY;
 })();
 </script>

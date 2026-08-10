@@ -169,17 +169,27 @@
     .reveal{opacity:1; transform:none; transition:none}
     .cta,.stop,.nav,.nav-links a,.road::after{transition:none}
   }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:14px; z-index:100;
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
 </style>
 </head>
 <body>
 
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
 <nav class="nav" id="nav" aria-label="Primary">
   <div class="nav-inner">
-    <span class="nav-mark">Trust&nbsp;the&nbsp;Machine</span>
+    <span class="nav-mark" data-i18n>Trust&nbsp;the&nbsp;Machine</span>
     <div class="nav-links">
-      <a href="#about">The experience</a>
-      <a href="#arc">The road</a>
-      <a href="#research">The research</a>
+      <a href="#about" data-i18n>The experience</a>
+      <a href="#arc" data-i18n>The road</a>
+      <a href="#research" data-i18n>The research</a>
     </div>
     <a class="cta" id="nav-cta" href="can_you_trust_your_car_chapter1.html" style="padding:8px 10px 8px 18px; font-size:13.5px; box-shadow:none">
       <span id="nav-cta-label">Begin</span>
@@ -193,15 +203,15 @@
   <canvas id="bg" aria-hidden="true"></canvas>
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="eyebrow">An interactive experience · autonomous driving</div>
-    <h1 class="gradtext">Trust&nbsp;the Machine</h1>
-    <p class="lede">Experience autonomous driving from the inside, as driver, engineer, regulator, and citizen, before you decide what you think of it.</p>
+    <div class="eyebrow" data-i18n>An interactive experience · autonomous driving</div>
+    <h1 class="gradtext" data-i18n>Trust&nbsp;the Machine</h1>
+    <p class="lede" data-i18n>Experience autonomous driving from the inside, as driver, engineer, regulator, and citizen, before you decide what you think of it.</p>
     <div class="cta-row">
       <a class="cta" id="begin" href="can_you_trust_your_car_chapter1.html">
         <span id="begin-label">Begin the experience</span>
         <span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0C0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </a>
-      <button class="restart" id="restart-hero" hidden type="button">Start over from the beginning</button>
+      <button class="restart" id="restart-hero" hidden type="button" data-i18n>Start over from the beginning</button>
     </div>
   </div>
 </header>
@@ -210,24 +220,24 @@
 <section class="about" id="about">
   <div class="wrap">
     <div class="sec-head reveal">
-      <h2 class="gradtext">You don't read about it.<br>You drive it.</h2>
-      <p>Ten to fifteen minutes, five chapters, one road. It won't try to convince you that self-driving cars are good or bad. It lets you feel why the question is hard, so you leave with better questions instead of a borrowed opinion.</p>
+      <h2 class="gradtext" data-i18n>You don't read about it.<br>You drive it.</h2>
+      <p data-i18n>Ten to fifteen minutes, five chapters, one road. It won't try to convince you that self-driving cars are good or bad. It lets you feel why the question is hard, so you leave with better questions instead of a borrowed opinion.</p>
     </div>
     <div class="tenets">
       <div class="tenet reveal">
-        <div class="n">Experience first</div>
-        <h3>Feel it before you're told</h3>
-        <p>Every idea arrives through something you do: a lane change, a sensor you have to trust, a verdict you have to sign. Never a paragraph you have to believe.</p>
+        <div class="n" data-i18n>Experience first</div>
+        <h3 data-i18n>Feel it before you're told</h3>
+        <p data-i18n>Every idea arrives through something you do: a lane change, a sensor you have to trust, a verdict you have to sign. Never a paragraph you have to believe.</p>
       </div>
       <div class="tenet reveal">
-        <div class="n">Your choices stay</div>
-        <h3>The road remembers</h3>
-        <p>What you decide follows you. The final chapter reads your whole path back to you: the trust you gave, and where it took you.</p>
+        <div class="n" data-i18n>Your choices stay</div>
+        <h3 data-i18n>The road remembers</h3>
+        <p data-i18n>What you decide follows you. The final chapter reads your whole path back to you: the trust you gave, and where it took you.</p>
       </div>
       <div class="tenet reveal">
-        <div class="n">No verdict handed down</div>
-        <h3>Better questions, not answers</h3>
-        <p>The perspective changes each chapter; the world stays the same. By the end the goal isn't agreement. It's understanding why experts disagree.</p>
+        <div class="n" data-i18n>No verdict handed down</div>
+        <h3 data-i18n>Better questions, not answers</h3>
+        <p data-i18n>The perspective changes each chapter; the world stays the same. By the end the goal isn't agreement. It's understanding why experts disagree.</p>
       </div>
     </div>
   </div>
@@ -237,9 +247,9 @@
 <section class="arc" id="arc">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">The road · five chapters</div>
-      <h2 class="gradtext">One road. Five ways of seeing it.</h2>
-      <p>You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.</p>
+      <div class="eyebrow" data-i18n>The road · five chapters</div>
+      <h2 class="gradtext" data-i18n>One road. Five ways of seeing it.</h2>
+      <p data-i18n>You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.</p>
     </div>
     <div class="road" id="road"><!-- chapters injected --></div>
   </div>
@@ -251,20 +261,20 @@
     <div class="grid">
       <div class="reveal">
         <div class="sec-head">
-          <h2 class="gradtext">Grounded, not guessed.</h2>
-          <p>A public-interest education project, built on primary research rather than headlines.</p>
+          <h2 class="gradtext" data-i18n>Grounded, not guessed.</h2>
+          <p data-i18n>A public-interest education project, built on primary research rather than headlines.</p>
         </div>
         <ul>
-          <li>Based on interviews with autonomous-driving professionals working in China: engineers, safety, and operations.</li>
-          <li>Reflects the legal and technical landscape as of 2026: what's deployed, what's assisted, and what the law actually says about fault.</li>
-          <li>Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.</li>
-          <li>The crashes and testimonies are dramatized; the numbers and the insights behind them are not.</li>
+          <li data-i18n>Based on interviews with autonomous-driving professionals working in China: engineers, safety, and operations.</li>
+          <li data-i18n>Reflects the legal and technical landscape as of 2026: what's deployed, what's assisted, and what the law actually says about fault.</li>
+          <li data-i18n>Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.</li>
+          <li data-i18n>The crashes and testimonies are dramatized; the numbers and the insights behind them are not.</li>
         </ul>
       </div>
       <div class="stance reveal">
-        <div class="n">Where we stand</div>
-        <p><strong>Nowhere on purpose.</strong> This project takes no position on whether autonomous driving should be trusted. That's the one thing it deliberately refuses to do.</p>
-        <p>Instead it hands you the same uncertainty the people building and regulating these systems live with every day, and lets you sit in it. What you conclude is yours.</p>
+        <div class="n" data-i18n>Where we stand</div>
+        <p data-i18n><strong>Nowhere on purpose.</strong> This project takes no position on whether autonomous driving should be trusted. That's the one thing it deliberately refuses to do.</p>
+        <p data-i18n>Instead it hands you the same uncertainty the people building and regulating these systems live with every day, and lets you sit in it. What you conclude is yours.</p>
       </div>
     </div>
   </div>
@@ -274,12 +284,103 @@
 <footer>
   <div class="wrap foot">
     <div class="col">
-      <h4>Trust the Machine</h4>
-      <p>An interactive experience about when we should trust machines, and how much. Best on a laptop or desktop, with sound on. <span class="keys">Controls live in the car: A/D or arrow keys to steer, M to mute, Space or Enter to advance.</span></p>
+      <h4 data-i18n>Trust the Machine</h4>
+      <p data-i18n>An interactive experience about when we should trust machines, and how much. Best on a laptop or desktop, with sound on. <span class="keys">Controls live in the car: A/D or arrow keys to steer, M to mute, Space or Enter to advance.</span></p>
     </div>
-    <button class="restart" id="restart-foot" hidden type="button">Start over and clear my progress</button>
+    <button class="restart" id="restart-foot" hidden type="button" data-i18n>Start over and clear my progress</button>
   </div>
 </footer>
+
+<script>
+/* ============================ i18n (shared across all pages) ============================
+   English is the source of truth in the markup. ZH maps normalized-English -> Simplified
+   Chinese. Static elements marked [data-i18n] swap innerHTML; JS/canvas strings go through
+   tr(). Language persists in localStorage['ttm.lang'] so the choice carries across pages. */
+window.ZH = {
+  // — nav / hero —
+  "Trust the Machine":"信任机器",
+  "The experience":"体验",
+  "The road":"旅程",
+  "The research":"研究",
+  "An interactive experience · autonomous driving":"一次互动体验 · 自动驾驶",
+  "Experience autonomous driving from the inside, as driver, engineer, regulator, and citizen, before you decide what you think of it.":"从内部体验自动驾驶——作为驾驶员、工程师、监管者与市民——然后再决定你如何看待它。",
+  "Start over from the beginning":"从头重新开始",
+  // — what this is —
+  "You don't read about it.<br>You drive it.":"你不是读到它，<br>而是亲自驾驶它。",
+  "Ten to fifteen minutes, five chapters, one road. It won't try to convince you that self-driving cars are good or bad. It lets you feel why the question is hard, so you leave with better questions instead of a borrowed opinion.":"十到十五分钟，五个章节，一条路。它不会试图说服你自动驾驶是好是坏，而是让你亲身感受这个问题为何艰难——让你带着更好的问题离开，而不是一个借来的观点。",
+  "Experience first":"体验优先",
+  "Feel it before you're told":"先感受，再被告知",
+  "Every idea arrives through something you do: a lane change, a sensor you have to trust, a verdict you have to sign. Never a paragraph you have to believe.":"每一个观点都通过你的行动到来：一次变道、一个你必须信任的传感器、一份你必须签署的裁决。绝不是一段要你相信的文字。",
+  "Your choices stay":"你的选择会留下",
+  "The road remembers":"这条路会记得",
+  "What you decide follows you. The final chapter reads your whole path back to you: the trust you gave, and where it took you.":"你的决定会一路跟随你。最后一章会把你的整段旅程回放给你：你给出的信任，以及它把你带向了何处。",
+  "No verdict handed down":"不给出定论",
+  "Better questions, not answers":"更好的问题，而非答案",
+  "The perspective changes each chapter; the world stays the same. By the end the goal isn't agreement. It's understanding why experts disagree.":"每一章的视角都会改变，而世界始终如一。到最后，目标不是达成一致，而是理解专家为何各执一词。",
+  // — the road —
+  "The road · five chapters":"旅程 · 五个章节",
+  "One road. Five ways of seeing it.":"同一条路。五种观看它的方式。",
+  "You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.":"你从方向盘后出发，最终决定一座城市是否该信任这些车。每一次都是同一条路，改变的只有你的座位。",
+  // — research —
+  "Grounded, not guessed.":"基于事实，而非臆测。",
+  "A public-interest education project, built on primary research rather than headlines.":"一个公益教育项目，建立在一手研究之上，而非新闻头条。",
+  "Based on interviews with autonomous-driving professionals working in China: engineers, safety, and operations.":"基于对在中国从事自动驾驶工作的专业人士的访谈：工程、安全与运营。",
+  "Reflects the legal and technical landscape as of 2026: what's deployed, what's assisted, and what the law actually says about fault.":"反映截至 2026 年的法律与技术格局：哪些已经落地、哪些属于辅助驾驶，以及法律对责任究竟如何规定。",
+  "Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.":"体验中的每一项数据都可追溯到真实来源：反应时间、证明安全所需的里程、暴露差距。",
+  "The crashes and testimonies are dramatized; the numbers and the insights behind them are not.":"其中的事故与证词经过戏剧化处理；但背后的数字与洞见并非虚构。",
+  "Where we stand":"我们的立场",
+  "<strong>Nowhere on purpose.</strong> This project takes no position on whether autonomous driving should be trusted. That's the one thing it deliberately refuses to do.":"<strong>刻意不站队。</strong>本项目对自动驾驶是否值得信任不持任何立场。这正是它刻意拒绝去做的一件事。",
+  "Instead it hands you the same uncertainty the people building and regulating these systems live with every day, and lets you sit in it. What you conclude is yours.":"取而代之，它把建造与监管这些系统的人每天都在面对的那份不确定交到你手中，让你身处其中。你得出的结论，属于你自己。",
+  // — footer —
+  "An interactive experience about when we should trust machines, and how much. Best on a laptop or desktop, with sound on. <span class=\"keys\">Controls live in the car: A/D or arrow keys to steer, M to mute, Space or Enter to advance.</span>":"一次互动体验，探讨我们应当在何时、以及在多大程度上信任机器。最好在笔记本或台式电脑上、打开声音体验。<span class=\"keys\">操作都在车里：A/D 或方向键转向，M 键静音，空格或回车继续。</span>",
+  "Start over and clear my progress":"重新开始并清除我的进度",
+  // — dynamic labels / cards —
+  "Begin":"开始", "Resume":"继续", "Replay":"重玩",
+  "Begin the experience":"开始体验",
+  "Replay from the start":"从头重玩",
+  "Completed":"已完成", "You are here":"你在这里", "Start here":"从这里开始",
+  "You are the driver":"你是驾驶员", "You are the passenger":"你是乘客",
+  "You are the evaluator":"你是评估者", "You are the regulator":"你是监管者", "You are the city":"你是这座城市",
+  "The Night Drive":"夜间行驶", "Inside the Machine":"机器之内", "The Long Tail":"长尾",
+  "Who's Responsible?":"谁来负责？", "The Trust Gap":"信任鸿沟",
+  "Nearly midnight on the expressway. Can you trust your car? Can it trust you?":"高速公路上，将近午夜。你能信任你的车吗？它又能信任你吗？",
+  "You can finally see what the car sees. How does it perceive the world, and what does it miss?":"你终于能看到车所看到的。它如何感知世界，又会遗漏什么？",
+  "A near-miss flags in ten thousand kilometres of logs. How do you prove a machine is safe enough?":"在一万公里的日志中，一次险情被标记出来。你如何证明一台机器足够安全？",
+  "A car under assistance struck a pedestrian. It saw her. When a machine causes harm, who answers for it?":"一辆处于辅助驾驶状态的车撞上了一名行人。它看见了她。当机器造成伤害，谁来为此负责？",
+  "Robotaxis want your district. Almost no one has ridden one. When is trust earned, and when is it built?":"无人出租车想进入你的城区。几乎没人坐过。信任何时是赢得的，又何时是被建立起来的？",
+  "Confidence":"信心", "Curiosity":"好奇", "Responsibility":"责任", "Humility":"谦卑", "Reflection":"反思",
+  // — document title —
+  "Trust the Machine: an interactive experience in autonomous driving":"信任机器：一次自动驾驶的互动体验"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); } // decode &nbsp; then collapse whitespace
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var t=window.ZH["Trust the Machine: an interactive experience in autonomous driving"];
+    if(t) document.title = window.LANG==='zh' ? t : "Trust the Machine: an interactive experience in autonomous driving";
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
 
 <script>
 /* ---------- save (shares cytc.v1 with the chapters; merge-on-write) ---------- */
@@ -310,17 +411,18 @@ function render(){
     var done=!!(store['chapter'+c.n]&&store['chapter'+c.n].completed);
     if(done) doneCount++;
     var state = done ? 'done' : (c.n===next ? 'current' : (c.n<next ? 'done' : 'upcoming'));
-    var badge = done ? 'Completed' : (c.n===next ? (next===1?'Start here':'You are here') : 'Chapter '+c.n);
+    var zh = window.LANG==='zh';
+    var badge = done ? tr('Completed') : (c.n===next ? (next===1?tr('Start here'):tr('You are here')) : (zh?('第 '+c.n+' 章'):('Chapter '+c.n)));
     var a=document.createElement('a');
     a.className='stop reveal '+state;
     a.href=c.file;
     a.innerHTML=
       '<span class="node" aria-hidden="true">'+(done?'✓':c.n)+'</span>'+
       '<span class="badge">'+badge+'</span>'+
-      '<div class="top"><span class="role">'+c.role+'</span></div>'+
-      '<h3>'+c.title+'</h3>'+
-      '<p class="q">'+c.q+'</p>'+
-      '<span class="emo">'+c.emo+'</span>';
+      '<div class="top"><span class="role">'+tr(c.role)+'</span></div>'+
+      '<h3>'+tr(c.title)+'</h3>'+
+      '<p class="q">'+tr(c.q)+'</p>'+
+      '<span class="emo">'+tr(c.emo)+'</span>';
     road.appendChild(a);
   });
   var prog = Math.max(0, Math.min(doneCount,CHAPTERS.length)) / CHAPTERS.length;
@@ -328,11 +430,12 @@ function render(){
 
   var began = doneCount>0 && next<=5;
   var allDone = next===6;
+  var zh = window.LANG==='zh';
   var target = allDone ? CHAPTERS[0].file : CHAPTERS[Math.max(0,next-1)].file;
-  var label = doneCount===0 ? 'Begin the experience' : (allDone ? 'Replay from the start' : 'Resume Chapter '+next);
+  var label = doneCount===0 ? tr('Begin the experience') : (allDone ? tr('Replay from the start') : (zh?('继续第 '+next+' 章'):('Resume Chapter '+next)));
   var begin=document.getElementById('begin'); begin.href=target; document.getElementById('begin-label').textContent=label;
   var navcta=document.getElementById('nav-cta'); navcta.href=target;
-  document.getElementById('nav-cta-label').textContent = doneCount===0 ? 'Begin' : (allDone ? 'Replay' : 'Resume');
+  document.getElementById('nav-cta-label').textContent = doneCount===0 ? tr('Begin') : (allDone ? tr('Replay') : tr('Resume'));
   document.getElementById('restart-hero').hidden=!began;
   document.getElementById('restart-foot').hidden=!(doneCount>0);
 
@@ -433,6 +536,7 @@ function observeReveals(){
   if(reduce){ frame(); } else { start(); }
 })();
 
+window.onLangChange = render;   // re-render dynamic road + CTA labels when language toggles
 render();
 </script>
 </body>

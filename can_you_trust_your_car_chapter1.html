@@ -114,14 +114,227 @@
   .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
   @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm{animation:none} }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:120px; z-index:100;   /* offset left of the mute chip */
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:#ECEEF2; background:rgba(20,22,28,.72); border:1px solid rgba(255,255,255,.14); border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,.30); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#fff; border-color:rgba(255,255,255,.28); background:rgba(28,31,39,.82)}
 </style>
 </head>
 <body>
+
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
+<script>
+/* i18n core — identical on every page. English is the source of truth; ZH maps normalized
+   English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
+window.ZH = {
+  // — document title —
+  "Can You Trust Your Car? — Night Drive":"你能信任你的车吗？——夜间行驶",
+  // — static HUD / start / overlays —
+  "<kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane":"<kbd>A</kbd> / <kbd>←</kbd> 和 <kbd>D</kbd> / <kbd>→</kbd> 变道",
+  "KM/H":"公里/时",
+  "⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>障碍物就在你的车道上。按 A / D 变道避让。</small>",
+  "Continue →":"继续 →",
+  "Chapter 1 · Debrief":"第 1 章 · 复盘",
+  "Your last human decision":"你最后一次由人做出的决定",
+  "Trust in system":"系统信任",
+  "Attention left":"剩余注意力",
+  "Continue to Chapter 2 ↗":"前往第 2 章 ↗",
+  "Drive again":"再驾驶一次",
+  "Can You Trust Your Car?":"你能信任你的车吗？",
+  "The Night Drive":"夜间行驶",
+  "Nearly midnight on the expressway. Keep it between the lines. Change lanes with A/D or the arrow keys.":"高速公路上，将近午夜。让车保持在车道线之间。用 A/D 或方向键变道。",
+  "Start driving →":"开始驾驶 →",
+  // — mute chip —
+  "Sound":"声音",
+  "Muted":"已静音",
+  // — dashboard canvas —
+  "G2 Expressway · 108 km/h":"G2 高速 · 108 km/h",
+  "‹ Messages":"‹ 信息",
+  "iMessage · now":"iMessage · 刚刚",
+  "Did you see the news about the crash on the G2 tonight?":"今晚 G2 上那起事故的新闻，你看到了吗？",
+  // — beats: speaker —
+  "You":"你",
+  "Car":"车",
+  // — beats —
+  "Almost midnight. Two hundred kilometres behind you, sixty still ahead.":"将近午夜。两百公里已在身后，还有六十公里在前方。",
+  "Your eyes have that hot, sandy feeling. You blink hard and the lane lines swim back into focus.":"你的眼睛又干又涩，发烫。你用力眨了眨眼，车道线才重新聚拢清晰。",
+  "The tyres kiss the lane line and the car twitches. Your head snaps up.":"轮胎蹭上车道线，车身一颤。你猛地抬起头。",
+  "The message can wait. You breathe out on the shoulder, then pull back on.":"消息可以等等。你在路肩上舒了口气，然后重新汇入车流。",
+  "You keep your eyes where they belong, on the white line unspooling into the dark.":"你把目光留在该在的地方——那条向黑暗中延展而去的白线上。",
+  "Rested, a little sharper. Rain starts to freckle the windscreen.":"歇过之后，稍微清醒了些。雨点开始点上挡风玻璃。",
+  "Hands tight now, the near-miss still humming. Then the rain begins.":"此刻双手紧握，那次险情仍在心头发颤。接着，雨下了起来。",
+  "Rain starts to fall, smearing the tail-lights ahead into long red streaks.":"雨开始落下，把前方的尾灯晕成一道道长长的红痕。",
+  "Assist available. You thumb it on, and the wheel begins to steer itself.":"辅助驾驶可用。你按下开关，方向盘开始自行转动。",
+  "Roadworks. A stalled car looms in your lane, hazards ticking.":"前方施工。一辆抛锚的车赫然停在你的车道上，双闪滴答闪烁。",
+  "TAKE OVER. The wheel goes light — this one is yours. Change lanes to get around it: press A or D.":"请接管。方向盘变轻了——这一下得靠你。变道绕过它：按 A 或 D。",
+  "You slide into the next lane, heart slamming, and the car is yours again.":"你切进旁边的车道，心脏狂跳，车又重新回到你手中。",
+  "You wrench it over a beat too late; a mirror clips the wreck as you pass.":"你猛打方向，却慢了半拍；擦身而过时，后视镜蹭上了那辆残骸。",
+  "No time. The stalled car fills the windscreen.":"来不及了。那辆抛锚的车填满了整块挡风玻璃。",
+  "Later. An amber tow-truck light sweeps the wreck. You are unhurt, and cannot stop replaying it.":"稍后。琥珀色的拖车灯扫过车祸现场。你毫发无伤，却止不住地反复回想。",
+  "Dawn finds you at a rest area, hands not quite steady, the sky going grey to gold.":"黎明时分，你停在服务区，双手仍有些发抖，天色由灰转金。",
+  // — warmup —
+  "You're driving this. Ease into the next lane — press D or → to move right.":"这辆车由你来开。缓缓并入旁边的车道——按 D 或 → 向右移。",
+  "Good. Now pull back — press A or ← to move left.":"很好。现在再切回来——按 A 或 ← 向左移。",
+  // — decisions —
+  "23:47 · G2 Expressway":"23:47 · G2 高速",
+  "Your phone lights up on the screen. What do you do?":"你的手机在屏幕上亮了起来。你会怎么做？",
+  "Glance at it":"瞥一眼",
+  "Eyes on the road":"目视前方",
+  "Pull over first":"先靠边停车",
+  "00:14 · Rain · Assist engaged":"00:14 · 雨 · 辅助驾驶已开启",
+  "The car is steering and holding your speed. If it crashes now, who answers for it?":"车正在自己转向并保持车速。如果此刻它撞了，谁来负责？",
+  "The car":"这辆车",
+  "Me":"我",
+  "The company":"厂商",
+  "Dawn · Your next car":"黎明 · 你的下一辆车",
+  "After tonight, which car would you actually trust?":"经过今晚，你真正愿意信任哪一辆车？",
+  "Standard":"标准版",
+  "L0 · you drive":"L0 · 你来开",
+  "Highway assist":"高速辅助",
+  "L2 · like tonight":"L2 · 一如今晚",
+  "Robotaxi":"无人驾驶出租车",
+  "L4 · no driver":"L4 · 无驾驶员",
+  // — outcomes —
+  "Travelled blind":"盲行的距离",
+  "Two seconds with your eyes down at 108 km/h. The car covered sixty-eight metres you never saw.":"以 108 km/h 的速度，你低头两秒。车驶过了六十八米，而你从未看见。",
+  "What you did: looked at your phone for about 2 seconds. At this speed the car travelled 68 m — most of a football pitch — with no one watching the road.":"你所做的：看了约 2 秒手机。以这个速度，车已驶过 68 m——几乎一整个足球场那么长——而没有人在看路。",
+  "Eyes off road":"视线离开路面",
+  "Blind distance":"盲行距离",
+  "Avg text = eyes shut":"平均一条短信 = 闭眼时长",
+  "If the owner is scrolling a phone, or even dozing off — that’s personal behaviour, and that’s exactly where the risk creeps in.":"如果车主在刷手机，甚至打起了盹——那是个人行为，而风险恰恰就从这里悄悄潜入。",
+  "Robotaxi product lead, L2 driver":"无人出租车产品负责人，L2 驾驶员",
+  "Reaction, fatigued":"疲劳时的反应",
+  "You leave it glowing. Alert you would react in half a second; tired, almost twice that.":"你任由它亮着。清醒时你半秒就能反应；疲惫时，几乎要慢上一倍。",
+  "What you did: left the phone alone and kept watching the road. Tired, your reactions are about twice as slow as normal — still far safer than looking away.":"你所做的：没碰手机，继续看着路。疲惫时，你的反应大约比平常慢一倍——但仍远比移开视线安全。",
+  "Reaction":"反应",
+  "Extra braking":"额外刹车距离",
+  "A machine, just like a person, has an upper limit.":"机器和人一样，也有它的上限。",
+  "Deployment & data engineer":"部署与数据工程师",
+  "Risk added":"增加的风险",
+  "You take the shoulder, read it, and breathe. Slower, and the only choice that costs nothing.":"你驶上路肩，读完消息，喘口气。慢是慢了，却是唯一不付出任何代价的选择。",
+  "What you did: pulled over to read it. It cost you time and nothing else — the only choice that added zero risk on the road.":"你所做的：靠边停车去读它。除了时间，别无损耗——这是唯一在路上零增加风险的选择。",
+  "Sometimes I do step in — a car is clearly speeding up behind us and it still wants to change lanes, so I override it.":"有时我确实会介入——后面明明有车在加速，它却还想变道，于是我强行接管。",
+  "Wrong. You are liable":"错。责任在你",
+  "This is a Level 2 system. It assists; you drive. Every legal consequence still lands on you.":"这是 L2 级系统。它只是辅助；开车的是你。每一项法律后果，最终都落在你身上。",
+  "What you did: said the car is to blame. On a Level 2 system (it steers and brakes, but you are still the driver) it is not — the responsibility, in law, was yours.":"你所做的：把过错归于车。在 L2 级系统上（它负责转向和刹车，但你仍是驾驶员）并非如此——在法律上，责任是你的。",
+  "Incorrect":"错误",
+  "Your answer":"你的回答",
+  "L2 and L4 are not one smooth scale — the decision logic differs. On L2 a person drives; on L4 the machine does.":"L2 和 L4 并不是同一条平滑刻度上的两点——它们的决策逻辑不同。L2 由人来开；L4 由机器来开。",
+  "Robotaxi commercialization strategist":"无人出租车商业化策略师",
+  "Right, and it is hard":"对，而这很难",
+  "Correct. The car owns routine inputs; you own monitoring and every edge case.":"正确。车负责日常操作；你负责监控，以及每一个边缘情况。",
+  "What you did: took responsibility yourself. That is right for Level 2: the car handles the easy, steady driving, but every consequence — and every surprise — is still yours.":"你所做的：自己承担了责任。对 L2 级而言这是对的：车负责轻松、平稳的驾驶，但每一个后果——以及每一个意外——仍是你的。",
+  "Correct":"正确",
+  "Time eyes off, partial autonomy":"部分自动驾驶下视线离开路面的时间占比",
+  "Right now most of the industry is really L2-plus-plus. Very few will even claim L3 or L4.":"眼下整个行业其实大多是 L2 加加。极少有人敢宣称 L3 或 L4。",
+  "Perception-model engineer":"感知模型工程师",
+  "Rarely":"很少",
+  "The courts, usually not":"法院，通常不会",
+  "For L2, product-liability claims almost never win. The driver failed to monitor.":"对 L2 而言，产品责任索赔几乎从不胜诉。是驾驶员没有尽到监控之责。",
+  "What you did: blamed the maker. For a Level 2 car that almost never holds up in court — the driver was the one meant to be watching.":"你所做的：把责任推给厂商。对一辆 L2 级的车来说，这在法庭上几乎站不住脚——本该盯着路的，是驾驶员。",
+  "Rare":"罕见",
+  "Company liable":"厂商担责",
+  "When it can no longer cope, it just tells the person to take over.":"当它再也应付不了时，只会让人来接管。",
+  "Full control, full weight":"完全掌控，全部重担",
+  "No help, no illusions. Everything that happens is yours.":"没有辅助，也没有幻觉。发生的一切都由你负责。",
+  "Chapter 2: what a bare pair of eyes misses that sensors catch.":"第 2 章：一双肉眼会漏掉、而传感器能捕捉到的东西。",
+  "Help, and its trap":"辅助，及其陷阱",
+  "The same hand on the wheel you felt tonight, useful until it hands back.":"就是你今晚感受到的那只握着方向盘的手，一直有用，直到它把控制权交还给你。",
+  "Chapter 2: inside the perception that makes L2 work, and where it fails.":"第 2 章：深入让 L2 得以运作的感知，以及它失效之处。",
+  "No wheel at all":"根本没有方向盘",
+  "It drives; you ride. Only inside mapped zones it has learned by heart.":"它来开，你来坐。只在它烂熟于心、已建好图的区域之内。",
+  "Chapter 2: what it takes to earn that much trust.":"第 2 章：赢得这样一份信任，需要付出什么。",
+  "Handover, safe":"接管，安全",
+  "It can never be made completely free of risk.":"它永远不可能做到完全没有风险。",
+  "Technology & product manager":"技术与产品经理",
+  "Handover, barely":"接管，勉强",
+  "That kind of consumer assist — its only real purpose is to sell cars.":"那种面向消费者的辅助——它唯一真正的目的就是卖车。",
+  "Impact":"撞击",
+  "No takeover":"未接管",
+  "Your input":"你的操作",
+  "Collision":"碰撞",
+  "US distracted-driving deaths, 2022":"2022 年美国分心驾驶死亡人数",
+  "What happened: you didn't change lanes in time, so the car hit the stalled one. You trusted it to handle the very thing it had just handed back to you — that gap is called automation complacency, and it is the whole point of this chapter.":"发生了什么：你没能及时变道，于是车撞上了那辆抛锚的车。你信任它去处理的，恰恰是它刚刚交还给你的那件事——这道落差叫做“自动化自满”，也正是本章的全部要义。",
+  "The dangerous moment is when the assist quits and the scene lands back on a person to take over.":"最危险的时刻，是辅助驾驶退出、局面重新落回到人手中去接管的那一刻。",
+  // — edge takeover (dynamic; {s} = reaction time) —
+  "What you did: spotted the stalled car and changed lanes in {s}. That split-second reflex is exactly what the car had just handed back to you — and could not do itself.":"你所做的：发现了那辆抛锚的车，并在 {s} 内完成变道。那一瞬间的反射，正是车刚刚交还给你、而它自己做不到的事。",
+  "What you did: reacted in {s}, a beat too late, and clipped the wreck as you passed. In a real car that is the difference between a scare and a crash.":"你所做的：在 {s} 内做出反应，慢了半拍，擦过时蹭上了那辆残骸。在真实的车里，这就是一场虚惊和一场事故之间的差别。",
+  "Your reaction":"你的反应",
+  "Outcome":"结果",
+  "Clear":"避开",
+  "Grazed":"擦碰",
+  // — chips —
+  "Attention":"注意力",
+  "Trust":"信任",
+  // — debrief timeline —
+  "23:47 · The phone":"23:47 · 手机",
+  "00:14 · Who is liable":"00:14 · 谁来负责",
+  "00:31 · The takeover":"00:31 · 接管",
+  "Glanced at the phone":"瞥了一眼手机",
+  "Kept eyes on the road":"目视前方",
+  "Pulled over first":"先靠边停了车",
+  "68 m blind":"盲行 68 m",
+  "Slowed but alert":"减速但保持警觉",
+  "No risk added":"未增加风险",
+  "Blamed the car":"归咎于车",
+  "Took responsibility":"自己担责",
+  "Blamed the company":"归咎于厂商",
+  "Misread L2":"误读了 L2",
+  "Calibrated":"校准得当",
+  "Half right":"对了一半",
+  "Changed lanes":"完成变道",
+  "Froze":"僵住了",
+  "clear":"避开",
+  "grazed":"擦碰",
+  "Standard (L0)":"标准版 (L0)",
+  "Highway assist (L2)":"高速辅助 (L2)",
+  "Robotaxi (L4)":"无人驾驶出租车 (L4)",
+  // — verdicts —
+  "You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.":"车放手的那一刻你接住了它，而你依然愿意把钥匙交给一辆无人驾驶出租车。你信任机器，是因为你亲眼看着自己差点失手，而不是因为某个标签向你保证你不会。",
+  "Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.":"关键时刻你的手在。你还会再次接受同样的辅助，只是看清了其中的隐患：它一直帮着你，直到它帮不了的那一秒，而唯有你的注意力能守住那一秒。",
+  "You made the move, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.":"你做出了那个动作，而你更愿意自己来开。今晚让你懂得了注意力的代价，你宁愿自己付，也不愿把它交给一个会在最糟时刻把账单甩回给你的系统。",
+  "The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked.":"车在你唯一接不住的那一刻交还了方向盘，而你依然会选那辆根本没有方向盘的车。也许你是对的——它本就不该开口相询。",
+  "It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That gap between what L2 promises and what it delivers is the whole subject of this project.":"它交还了控制权，而你没能接住，可你明天还会再买同一级别的辅助。L2 所承诺的与它所兑现的之间的那道落差，正是这个项目要谈的全部。",
+  "It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology stands.":"它在边缘情况上失手了，而你宁愿自己握着方向盘，也不愿去信任一次靠不住的接管。这份直觉，是对这项技术当前处境的一个诚实判断。"
+};
+(function(){
+  var LKEY='ttm.lang';
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); if(typeof window.onLangChange==='function') window.onLangChange(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+</script>
+
 <canvas id="c"></canvas>
 
 <div id="ui">
-  <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
-  <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
+  <div id="hud-speed"><b id="spd">0</b><span data-i18n>KM/H</span></div>
+  <div id="hint" data-i18n><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
@@ -129,7 +342,7 @@
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
 <div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
-<div id="edgewarn">⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
+<div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
   <div class="d-eyebrow" id="d-eyebrow"></div>
@@ -141,29 +354,29 @@
   <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
   <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
   <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont">Continue →</button>
+  <button class="cont" id="o-cont" data-i18n>Continue →</button>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
-  <div class="db-head">Chapter 1 · Debrief</div>
-  <div class="db-title">Your last human decision</div>
+  <div class="db-head" data-i18n>Chapter 1 · Debrief</div>
+  <div class="db-title" data-i18n>Your last human decision</div>
   <div class="db-meters">
-    <div class="db-meter"><div class="ml"><span>Trust in system</span><span id="db-trust-v">—</span></div><div class="mbar"><div class="mfill" id="db-trust-f"></div></div></div>
-    <div class="db-meter"><div class="ml"><span>Attention left</span><span id="db-att-v">—</span></div><div class="mbar"><div class="mfill" id="db-att-f"></div></div></div>
+    <div class="db-meter"><div class="ml"><span data-i18n>Trust in system</span><span id="db-trust-v">—</span></div><div class="mbar"><div class="mfill" id="db-trust-f"></div></div></div>
+    <div class="db-meter"><div class="ml"><span data-i18n>Attention left</span><span id="db-att-v">—</span></div><div class="mbar"><div class="mfill" id="db-att-f"></div></div></div>
   </div>
   <div class="db-timeline" id="db-timeline"></div>
   <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
-    <button class="db-btn" id="db-ch2">Continue to Chapter 2 ↗</button>
-    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none">Drive again</button>
+    <button class="db-btn" id="db-ch2" data-i18n>Continue to Chapter 2 ↗</button>
+    <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Drive again</button>
   </div>
 </div></div>
 
 <div id="start">
-  <div class="eyebrow">Can You Trust Your Car?</div>
-  <div class="title">The Night Drive</div>
-  <div class="sub">Nearly midnight on the expressway. Keep it between the lines. Change lanes with A/D or the arrow keys.</div>
-  <button id="startbtn">Start driving →</button>
+  <div class="eyebrow" data-i18n>Can You Trust Your Car?</div>
+  <div class="title" data-i18n>The Night Drive</div>
+  <div class="sub" data-i18n>Nearly midnight on the expressway. Keep it between the lines. Change lanes with A/D or the arrow keys.</div>
+  <button id="startbtn" data-i18n>Start driving →</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -249,13 +462,14 @@ window.AUDIO=(function(){
   /* ---- mute chip + M key ---- */
   function setMuted(m){ muted=m; if(master&&ac)master.gain.setTargetAtTime(m?0:0.9,ac.currentTime,0.1); const bg=document.getElementById('bgm'); if(bg)bg.muted=m; saveMuted(); syncChip(); }
   function syncChip(){ const el=document.getElementById('mute'); if(!el)return; el.setAttribute('aria-pressed',muted?'true':'false');
-    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=muted?'Muted':'Sound'; }
+    const T=window.tr||(s=>s);
+    el.querySelector('.mic').textContent=muted?'🔇':'🔊'; el.querySelector('.mtx').textContent=T(muted?'Muted':'Sound'); }
   function wire(){ const s=readStore(); muted=!!(s.settings&&s.settings.muted); syncChip();
     const el=document.getElementById('mute'); if(el)el.addEventListener('click',()=>{ unlock(); setMuted(!muted); });
     addEventListener('keydown',e=>{ if(e.key==='m'||e.key==='M'){ unlock(); setMuted(!muted); } }); }
   if(document.readyState!=='loading')wire(); else addEventListener('DOMContentLoaded',wire);
 
-  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted};
+  return {unlock,engineSpeed,sfx,setScene,duck,isMuted:()=>muted,syncChip};
 })();
 </script>
 <script>
@@ -449,7 +663,7 @@ window.AUDIO=(function(){
     // status strip
     c.fillStyle='rgba(0,0,0,.35)'; c.fillRect(0,0,W,34);
     c.fillStyle='#c7d2e6'; c.font='600 18px system-ui,sans-serif'; c.textBaseline='middle';
-    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText('G2 Expressway · 108 km/h',W-14,18); c.textAlign='left';
+    c.fillText('23:47',14,18); c.textAlign='right'; c.fillText(tr('G2 Expressway · 108 km/h'),W-14,18); c.textAlign='left';
     screenTex.needsUpdate=true;
   }
   function wrapLines(c,text,maxW){ const words=text.split(' '),lines=[]; let line='';
@@ -462,7 +676,7 @@ window.AUDIO=(function(){
     c.fillStyle='#0c0c0e'; c.fillRect(0,0,W,68);
     c.fillStyle='rgba(255,255,255,.08)'; c.fillRect(0,67,W,1);
     c.textBaseline='middle';
-    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText('‹  Messages',PAD-4,35);
+    c.fillStyle='#2f7bff'; c.font='500 21px system-ui,sans-serif'; c.textAlign='left'; c.fillText(tr('‹  Messages'),PAD-4,35);
     c.fillStyle='#ffffff'; c.font='700 22px system-ui,sans-serif'; c.textAlign='center'; c.fillText(sender,W/2,35);
     c.textAlign='left';
     // incoming bubble (iMessage gray), sized to the text with even padding
@@ -476,7 +690,7 @@ window.AUDIO=(function(){
     c.fillStyle='#f4f4f6'; c.textBaseline='alphabetic';
     lines.forEach((l,i)=>c.fillText(l,bx+ipadX,by+ipadY+22+i*lh));
     // timestamp
-    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText('iMessage · now',bx+2,by+bh+30);
+    c.fillStyle='#8a8a90'; c.font='400 15px system-ui,sans-serif'; c.textBaseline='alphabetic'; c.fillText(tr('iMessage · now'),bx+2,by+bh+30);
     screenTex.needsUpdate=true;
   }
   drawMap();
@@ -566,7 +780,7 @@ window.AUDIO=(function(){
   function showIMessage(sender,text){ state.phoneShown=true; drawIMessage(sender,text); screenGlow.intensity=0.75; if(window.AUDIO) AUDIO.sfx('imsg'); }
   function maybePhone(){
     if(!state.autoPhone || state.phoneShown || state.driveTime<8) return;
-    showIMessage('Lin Wei',"Did you see the news about the crash on the G2 tonight?");
+    showIMessage('Lin Wei',tr("Did you see the news about the crash on the G2 tonight?"));
   }
 
   /* ---- story hooks: mood, 3D takeover (lane-blocking obstacle), crash FX ---- */
@@ -679,13 +893,15 @@ window.AUDIO=(function(){
   function showLetterbox(on){$('letterbox').classList.toggle('on',on);}
   function playBeat(b){return new Promise(res=>{
     const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
-    who.textContent=b.who||'';who.style.display=b.who?'':'none';tx.textContent='';
+    curBeat=b;
+    who.textContent=b.who?tr(b.who):'';who.style.display=b.who?'':'none';tx.textContent='';
     p.classList.remove('ready');p.classList.add('show');
-    const full=b.tx;let i=0,done=false,raf=null;
-    function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
-    function step(){if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin();}
+    let i=0,done=false,raf=null;
+    function cur(){return tr(b.tx);}                          // read live so a mid-beat toggle switches language
+    function fin(){done=true;tx.textContent=cur();p.classList.add('ready');}
+    function step(){if(RM){fin();return;} const full=cur(); if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin();}
     function adv(){if(!done){if(raf)clearTimeout(raf);fin();return;} cleanup();res();}
-    function cleanup(){p.removeEventListener('click',adv);document.removeEventListener('keydown',onKey,true);}
+    function cleanup(){curBeat=null;p.removeEventListener('click',adv);document.removeEventListener('keydown',onKey,true);}
     function onKey(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ev.stopPropagation();adv();}}
     p.addEventListener('click',adv);document.addEventListener('keydown',onKey,true);step();
   });}
@@ -693,14 +909,16 @@ window.AUDIO=(function(){
     showLetterbox(true); for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
 
   /* decisions */
-  let curDecision=null,decResolve=null,decKey=null;
+  let curDecision=null,decResolve=null,decKey=null,curOut=null,curBeat=null;
   function ask(id){return new Promise(res=>{decResolve=res;askDecision(id);});}
-  function askDecision(id){const c=DECISIONS[id];if(!c)return; TD.pause(true);
-    const eb=$('d-eyebrow');eb.textContent=c.eyebrow;eb.className='d-eyebrow'+(c.urgent?' urgent':'');
-    $('d-question').textContent=c.q;const wrap=$('d-options');wrap.innerHTML='';
+  function paintDecision(id){const c=DECISIONS[id];if(!c)return;
+    const eb=$('d-eyebrow');eb.textContent=tr(c.eyebrow);eb.className='d-eyebrow'+(c.urgent?' urgent':'');
+    $('d-question').textContent=tr(c.q);const wrap=$('d-options');wrap.innerHTML='';
     c.opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'');
-      b.onclick=()=>choose(id,o.k);wrap.appendChild(b);});
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
+      b.onclick=()=>choose(id,o.k);wrap.appendChild(b);}); }
+  function askDecision(id){const c=DECISIONS[id];if(!c)return; TD.pause(true);
+    paintDecision(id);
     curDecision=id;$('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
     decKey=ev=>{const k=(ev.key||'').toUpperCase(); if('ABC'.includes(k)){const b=$('decision').querySelector('.opt[data-key="'+k+'"]'); if(b){ev.preventDefault();b.click();}}};
     document.addEventListener('keydown',decKey); }
@@ -712,15 +930,18 @@ window.AUDIO=(function(){
     setTimeout(()=>{ $('decision').classList.remove('show');
       showOutcome(o.outcome,chips,()=>{ const r=decResolve;decResolve=null;TD.pause(false); if(r)r(k); }); },220);
   }
+  function paintOutcome(d,chips){
+    $('o-big').textContent=tr(d.big||'');$('o-big').style.display=d.big?'':'none';$('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=tr(d.label||'');$('o-ctx').textContent=tr(d.ctx||'');
+    $('o-plain').textContent=tr(d.plain||'');$('o-plain').style.display=d.plain?'':'none';
+    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
+    $('o-delta').innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{const up=c.delta>=0;return '<span class="chip '+(up?'up':'down')+'">'+tr(c.label)+' '+(up?'+':'')+c.delta+'</span>';}).join('');
+    $('o-quote').querySelector('.tx').textContent=tr(d.ins||'');$('o-quote').querySelector('.who').textContent=tr(d.who||''); }
   function showOutcome(d,chips,cont){
-    $('o-big').textContent=d.big||'';$('o-big').style.display=d.big?'':'none';$('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=d.label||'';$('o-ctx').textContent=d.ctx||'';
-    $('o-plain').textContent=d.plain||'';$('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+s.v+'</div><div class="l">'+s.l+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{const up=c.delta>=0;return '<span class="chip '+(up?'up':'down')+'">'+c.label+' '+(up?'+':'')+c.delta+'</span>';}).join('');
-    $('o-quote').querySelector('.tx').textContent=d.ins||'';$('o-quote').querySelector('.who').textContent=d.who||'';
+    curOut={d,chips};
+    paintOutcome(d,chips);
     const o=$('outcome');o.classList.remove('ready');o.classList.add('show');
-    $('o-cont').onclick=()=>{o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont();};
+    $('o-cont').onclick=()=>{o.classList.remove('show','ready'); curOut=null; if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont();};
     const kc=ev=>{if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){document.removeEventListener('keydown',kc);$('o-cont').click();}};
     document.addEventListener('keydown',kc);
     setTimeout(()=>o.classList.add('ready'),1500);
@@ -736,8 +957,8 @@ window.AUDIO=(function(){
       if(rt!=null){const secs=(rt/1000).toFixed(1)+' s'; out.big=secs;
         out.stats=[{v:secs,l:'Your reaction',c:outcome==='save'?'good':'ok'},{v:outcome==='save'?'Clear':'Grazed',l:'Outcome',c:outcome==='save'?'good':'ok'}];
         out.plain=outcome==='save'
-          ? 'What you did: spotted the stalled car and changed lanes in '+secs+'. That split-second reflex is exactly what the car had just handed back to you — and could not do itself.'
-          : 'What you did: reacted in '+secs+', a beat too late, and clipped the wreck as you passed. In a real car that is the difference between a scare and a crash.';}
+          ? tr('What you did: spotted the stalled car and changed lanes in {s}. That split-second reflex is exactly what the car had just handed back to you — and could not do itself.').replace('{s}',secs)
+          : tr('What you did: reacted in {s}, a beat too late, and clipped the wreck as you passed. In a real car that is the difference between a scare and a crash.').replace('{s}',secs);}
       showOutcome(out,chips,()=>res());
     });
   });}
@@ -813,27 +1034,27 @@ window.AUDIO=(function(){
   };
 
   /* debrief */
-  function driveCall(){return {A:'Glanced at the phone',B:'Kept eyes on the road',C:'Pulled over first'}[S.choices.drive1]||'—';}
-  function driveCons(){return {A:{t:'68 m blind',c:'bad'},B:{t:'Slowed but alert',c:''},C:{t:'No risk added',c:'good'}}[S.choices.drive1]||{t:''};}
-  function l2Call(){return {A:'Blamed the car',B:'Took responsibility',C:'Blamed the company'}[S.choices.l2]||'—';}
-  function l2Cons(){return {A:{t:'Misread L2',c:'bad'},B:{t:'Calibrated',c:'good'},C:{t:'Half right',c:''}}[S.choices.l2]||{t:''};}
+  function driveCall(){return tr({A:'Glanced at the phone',B:'Kept eyes on the road',C:'Pulled over first'}[S.choices.drive1]||'—');}
+  function driveCons(){return {A:{t:tr('68 m blind'),c:'bad'},B:{t:tr('Slowed but alert'),c:''},C:{t:tr('No risk added'),c:'good'}}[S.choices.drive1]||{t:''};}
+  function l2Call(){return tr({A:'Blamed the car',B:'Took responsibility',C:'Blamed the company'}[S.choices.l2]||'—');}
+  function l2Cons(){return {A:{t:tr('Misread L2'),c:'bad'},B:{t:tr('Calibrated'),c:'good'},C:{t:tr('Half right'),c:''}}[S.choices.l2]||{t:''};}
   function edgeCons(){const s=S.reactionMs!=null?(S.reactionMs/1000).toFixed(1)+' s, ':'';
-    return {save:{t:s+'clear',c:'good'},clip:{t:s+'grazed',c:''},crash:{t:'Collision',c:'bad'}}[S.edgeOutcome]||{t:'—'};}
-  function carCall(){return {L0:'Standard (L0)',L2:'Highway assist (L2)',L4:'Robotaxi (L4)'}[S.car]||'—';}
+    return {save:{t:s+tr('clear'),c:'good'},clip:{t:s+tr('grazed'),c:''},crash:{t:tr('Collision'),c:'bad'}}[S.edgeOutcome]||{t:'—'};}
+  function carCall(){return tr({L0:'Standard (L0)',L2:'Highway assist (L2)',L4:'Robotaxi (L4)'}[S.car]||'—');}
   function verdict(){const eo=S.edgeOutcome,car=S.car,ok=(eo==='save'||eo==='clip');
-    if(ok&&car==='L4')return "You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.";
-    if(ok&&car==='L2')return "Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.";
-    if(ok&&car==='L0')return "You made the move, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.";
-    if(car==='L4')return "The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked.";
-    if(car==='L2')return "It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That gap between what L2 promises and what it delivers is the whole subject of this project.";
-    return "It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology stands.";}
+    if(ok&&car==='L4')return tr("You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.");
+    if(ok&&car==='L2')return tr("Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.");
+    if(ok&&car==='L0')return tr("You made the move, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.");
+    if(car==='L4')return tr("The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked.");
+    if(car==='L2')return tr("It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That gap between what L2 promises and what it delivers is the whole subject of this project.");
+    return tr("It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology stands.");}
   function renderDebrief(){ save();
     $('db-trust-v').textContent=Math.round(S.trust);$('db-att-v').textContent=Math.round(S.attention);
     setTimeout(()=>{$('db-trust-f').style.width=S.trust+'%';$('db-att-f').style.width=S.attention+'%';},90);
-    const rows=[{scene:'23:47 · The phone',call:driveCall(),cons:driveCons()},
-      {scene:'00:14 · Who is liable',call:l2Call(),cons:l2Cons()},
-      {scene:'00:31 · The takeover',call:(S.choices.edge==='dodged'?'Changed lanes':S.choices.edge==='froze'?'Froze':'—'),cons:edgeCons()},
-      {scene:'Dawn · Your next car',call:carCall(),cons:{t:'',c:''}}];
+    const rows=[{scene:tr('23:47 · The phone'),call:driveCall(),cons:driveCons()},
+      {scene:tr('00:14 · Who is liable'),call:l2Call(),cons:l2Cons()},
+      {scene:tr('00:31 · The takeover'),call:(S.choices.edge==='dodged'?tr('Changed lanes'):S.choices.edge==='froze'?tr('Froze'):'—'),cons:edgeCons()},
+      {scene:tr('Dawn · Your next car'),call:carCall(),cons:{t:'',c:''}}];
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
     $('db-verdict').textContent=verdict();
     $('debrief').classList.add('show');
@@ -850,8 +1071,8 @@ window.AUDIO=(function(){
     hint.classList.add('warm'); showLetterbox(true);
     who.style.display='none'; if(bh)bh.style.display='none';
     beat.classList.add('show','ready');
-    const prompts=["You're driving this. Ease into the next lane — press D or → to move right.",
-                   "Good. Now pull back — press A or ← to move left."];
+    const prompts=[tr("You're driving this. Ease into the next lane — press D or → to move right."),
+                   tr("Good. Now pull back — press A or ← to move left.")];
     let stage=0; tx.textContent=prompts[0];
     function onKey(e){ if(e.repeat)return; const k=e.key;
       const right=(k==='d'||k==='D'||k==='ArrowRight'), left=(k==='a'||k==='A'||k==='ArrowLeft');
@@ -873,7 +1094,7 @@ window.AUDIO=(function(){
     try{
       await warmup();
       await beats(BEATS.intro);
-      TD.showIMessage('Lin Wei',"Did you see the news about the crash on the G2 tonight?");
+      TD.showIMessage('Lin Wei',tr("Did you see the news about the crash on the G2 tonight?"));
       await wait(2400);
       await ask('drive1'); await beats(BEATS.drive1_after);
       TD.mood('rain'); await beats(BEATS.l2_intro); await ask('l2');
@@ -884,6 +1105,23 @@ window.AUDIO=(function(){
   }
   const STORY={running:false,begin,S};
   window.STORY=STORY;
+
+  /* live language toggle: re-render whatever is currently on screen + set title */
+  window.onLangChange=function(){
+    try{
+      document.title = tr('Can You Trust Your Car? — Night Drive');
+      if(window.AUDIO && AUDIO.syncChip) AUDIO.syncChip();
+      if(window.TD && TD.drawMap) TD.drawMap();   // ponytail: a live iMessage on the dash reverts to the map on toggle
+      const bp=$('beat');
+      if(bp && bp.classList.contains('show') && curBeat){
+        $('beat-who').textContent = curBeat.who?tr(curBeat.who):'';
+        if(bp.classList.contains('ready')) $('beat-tx').textContent = tr(curBeat.tx);   // mid-type switches on the next tick via cur()
+      }
+      if(curDecision) paintDecision(curDecision);
+      if($('outcome').classList.contains('show') && curOut) paintOutcome(curOut.d,curOut.chips);
+      if($('debrief').classList.contains('show')) renderDebrief();
+    }catch(e){ console.error('onLangChange',e); }
+  };
 })();
 </script>
 </body>

@@ -48,13 +48,14 @@
   #letterbox .bar.top{top:0}#letterbox .bar.bot{bottom:0}
   #letterbox.on .bar{height:clamp(46px,10vh,104px)}
   #beat{position:fixed;left:50%;bottom:clamp(60px,15vh,140px);transform:translateX(-50%);z-index:7;
+    display:flex;flex-direction:column;
     width:min(760px,90vw);padding:clamp(14px,2vw,22px) clamp(18px,2.4vw,28px);border-radius:16px;cursor:pointer;text-align:left;
     background:linear-gradient(180deg,rgba(16,22,44,.86),rgba(9,13,28,.92));border:1px solid rgba(150,180,255,.14);
     box-shadow:0 22px 55px rgba(0,0,0,.5);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
   #beat.show{opacity:1;pointer-events:auto}
   #beat-who{display:block;font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;text-transform:uppercase;color:#8AB0E0;margin-bottom:.5rem}
   #beat-tx{font-size:clamp(15px,2vw,21px);line-height:1.5;color:#eef2ff;min-height:1.5em}
-  #beat-hint{position:absolute;right:14px;bottom:10px;font-size:12px;letter-spacing:.04em;color:#aeb9d4;opacity:0;
+  #beat-hint{align-self:flex-end;margin-top:10px;font-size:12px;letter-spacing:.04em;color:#aeb9d4;opacity:0;
     display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;
     background:rgba(138,176,224,.12);border:1px solid rgba(138,176,224,.28);transition:opacity .35s;pointer-events:none}
   #beat.ready #beat-hint{opacity:1;animation:beatpulse 1.7s ease-in-out infinite}

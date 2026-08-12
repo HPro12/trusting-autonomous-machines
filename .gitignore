@@ -3,3 +3,12 @@
 
 # Primary-research interview material — kept local only (real names + large media)
 Interviews/
+
+# Playwright MCP verification artifacts
+.playwright-mcp/
+ch1-beat.png
+ch1-beat2.png
+ch1-phone.png
+ch1-start.png
+i18n-zh-hero.png
+idx-welcome.png

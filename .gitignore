@@ -12,3 +12,7 @@ ch1-phone.png
 ch1-start.png
 i18n-zh-hero.png
 idx-welcome.png
+
+# Derived/scratch report files (unpacked .docx, backups)
+report/unpacked/
+report/*.backup.docx

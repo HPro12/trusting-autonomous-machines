@@ -56,8 +56,13 @@
   #beat.show{opacity:1;pointer-events:auto}
   #beat-who{display:block;font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;text-transform:uppercase;color:#8AB0E0;margin-bottom:.5rem}
   #beat-tx{font-size:clamp(15px,2vw,21px);line-height:1.5;color:#eef2ff;min-height:1.5em}
-  #beat-hint{position:absolute;right:16px;bottom:11px;font-size:15px;color:#9aa6c2;opacity:0}
-  #beat.ready #beat-hint{opacity:.75}
+  #beat-hint{position:absolute;right:14px;bottom:10px;font-size:12px;letter-spacing:.04em;color:#aeb9d4;opacity:0;
+    display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;
+    background:rgba(138,176,224,.12);border:1px solid rgba(138,176,224,.28);transition:opacity .35s;pointer-events:none}
+  #beat.ready #beat-hint{opacity:1;animation:beatpulse 1.7s ease-in-out infinite}
+  #beat-hint .chev{font-size:15px;line-height:1;animation:beatbob 1.1s ease-in-out infinite}
+  @keyframes beatpulse{0%,100%{box-shadow:0 0 0 0 rgba(138,176,224,.34)}50%{box-shadow:0 0 0 5px rgba(138,176,224,0)}}
+  @keyframes beatbob{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
   #edgewarn{position:fixed;top:clamp(40px,12vh,120px);left:50%;transform:translateX(-50%);z-index:7;display:none;
     padding:12px 22px;border-radius:12px;background:rgba(255,60,80,.16);border:1px solid rgba(255,90,106,.6);
     color:#ff7684;font-weight:800;letter-spacing:.08em;font-size:clamp(15px,2.2vw,22px);text-align:center;animation:blink .7s infinite}
@@ -114,7 +119,7 @@
   .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
   .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
-  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm{animation:none} }
+  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm,#beat.ready #beat-hint,#beat-hint .chev{animation:none} }
 
   /* ---- Chapter 2: sensor HUD, perception overlays, fusion panel ---- */
   #sensorhud{position:absolute;top:clamp(10px,2.2vh,18px);left:50%;transform:translateX(-50%);display:flex;gap:8px;opacity:0;transition:opacity .5s}
@@ -194,7 +199,7 @@
 
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
-<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
+<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint"></span></div>
 <div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
@@ -236,6 +241,8 @@
 /* i18n core — identical on every page. English is the source of truth; ZH maps normalized
    English -> Simplified Chinese. Language persists in localStorage['ttm.lang']. */
 window.ZH = {
+  "click to continue":"点击继续",
+  "Click anywhere, or press Space, to continue":"点击任意处，或按空格，继续",
   // — start screen —
   "Can You Trust Your Car? · Chapter 2":"你能信任你的车吗？· 第 2 章",
   "Inside the Machine":"机器之内",
@@ -371,6 +378,7 @@ window.ZH = {
   });
 })();
 </script>
+<script src="glossary.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 /* ========================= AUDIO — Web Audio, no assets =========================
@@ -959,13 +967,18 @@ window.AUDIO=(function(){
 
   /* ---- beats (typewriter + letterbox) ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
+  let beatTaught=false;
+  function setBeatHint(){ const h=$('beat-hint'); if(!h)return;
+    const t=beatTaught?tr('click to continue'):tr('Click anywhere, or press Space, to continue');
+    h.innerHTML=''; h.appendChild(document.createTextNode(t+' '));
+    const c=document.createElement('span'); c.className='chev'; c.textContent='›'; h.appendChild(c); }
   function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
     curBeat=b; who.textContent=tr(b.who||''); who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    const full=tr(b.tx); let i=0,done=false,raf=null;
-    function fin(){done=true;tx.textContent=full;p.classList.add('ready');}
+    const full=tr(b.tx); let i=0,done=false,raf=null,auto=null;
+    function fin(){done=true;tx.textContent=full;if(window.Glossary)Glossary.wrap(tx);setBeatHint();p.classList.add('ready');beatTaught=true;auto=setTimeout(()=>{auto=null;adv();},10000);}
     function step(){ if(RM){fin();return;} if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
-    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); res(); }
-    function cleanup(){ p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
+    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } if(auto){clearTimeout(auto);auto=null;} cleanup(); res(); }
+    function cleanup(){ if(auto){clearTimeout(auto);auto=null;} p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
     function onKey(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.stopPropagation(); adv(); } }
     p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
   }); }
@@ -981,6 +994,7 @@ window.AUDIO=(function(){
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
       b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
       b.onclick=()=>choose(curDecision,o.k); wrap.appendChild(b); });
+    if(window.Glossary)Glossary.wrap($('decision'));
   }
   function askDecision(id){ const c=DECISIONS[id]; if(!c)return; TD.pause(true); curDecision=id;
     paintDecision(c);
@@ -999,6 +1013,7 @@ window.AUDIO=(function(){
     $('o-plain').textContent=tr(d.plain||''); $('o-plain').style.display=d.plain?'':'none';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
     $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=tr(d.ins||''); $('o-quote').querySelector('.who').textContent=tr(d.who||'');
+    if(window.Glossary)Glossary.wrap($('outcome'));
   }
   function showOutcome(d,cont){ curOutcome=d; paintOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
@@ -1060,6 +1075,7 @@ window.AUDIO=(function(){
     document.querySelector('#debrief .db-head').textContent=tr('Chapter 2 · Inside the Machine');
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
     $('db-verdict').textContent=tr(verdict());
+    if(window.Glossary)Glossary.wrap($('debrief'));
     $('debrief').classList.add('show');
   }
 
@@ -1122,6 +1138,7 @@ window.AUDIO=(function(){
     if(curBeat && $('beat').classList.contains('show')){
       $('beat-who').textContent=tr(curBeat.who||''); $('beat-who').style.display=curBeat.who?'':'none';
       $('beat-tx').textContent=tr(curBeat.tx);
+      if(window.Glossary)Glossary.wrap($('beat-tx')); setBeatHint();
     }
     if(curDecision && $('decision').classList.contains('show')) paintDecision(DECISIONS[curDecision]);
     if(curOutcome && $('outcome').classList.contains('show')) paintOutcome(curOutcome);

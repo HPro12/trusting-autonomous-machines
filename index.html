@@ -170,6 +170,28 @@
     .cta,.stop,.nav,.nav-links a,.road::after{transition:none}
   }
 
+  /* ---------------- welcome gate (calm on-ramp, first visit only) ---------------- */
+  body.gated{overflow:hidden}
+  #welcome{position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center;
+    padding:clamp(24px,6vw,48px); background:radial-gradient(1100px 720px at 50% 36%, #13161d, #0B0C0F 74%);
+    opacity:1; transition:opacity .6s var(--ease)}
+  #welcome[hidden]{display:none}
+  #welcome.hide{opacity:0; pointer-events:none}
+  .w-card{max-width:min(640px,92vw); text-align:center; animation:wrise .85s var(--ease) both}
+  @keyframes wrise{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+  .w-card .eyebrow{margin-bottom:1.5rem}
+  .w-card h1{font-size:clamp(34px,6vw,60px); line-height:1.03; font-weight:800; margin:0 0 1.4rem; letter-spacing:-.015em}
+  .w-lede{font-size:clamp(16px,2vw,20px); line-height:1.66; color:var(--sub); margin:0 auto 1.7rem; max-width:46ch}
+  .w-meta{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:0 0 2.4rem}
+  .w-meta span{font-size:12.5px; letter-spacing:.03em; color:var(--accent-strong);
+    padding:6px 14px; border-radius:999px; border:1px solid var(--accent-line); background:var(--accent-tint)}
+  .w-actions{display:flex; gap:22px; justify-content:center; align-items:center; flex-wrap:wrap}
+  .ghost{background:none; border:none; color:var(--mut); font-family:var(--font); font-size:14px; cursor:pointer;
+    letter-spacing:.02em; padding:8px 4px; border-bottom:1px solid transparent; transition:color .25s var(--ease), border-color .25s var(--ease)}
+  .ghost:hover{color:var(--ink); border-color:var(--accent-line)}
+  .ghost[hidden]{display:none}
+  @media (prefers-reduced-motion: reduce){ #welcome{transition:none} .w-card{animation:none} }
+
   /* ---------------- language toggle (shared across all pages) ---------------- */
   #langtoggle{position:fixed; top:14px; right:14px; z-index:100;
     font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
@@ -182,6 +204,27 @@
 <body>
 
 <button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
+<!-- ============================ WELCOME GATE ============================ -->
+<div id="welcome" hidden role="dialog" aria-modal="true" aria-label="Welcome">
+  <div class="w-card">
+    <div class="eyebrow" data-i18n>Before you begin</div>
+    <h1 class="gradtext" data-i18n>A quiet moment,<br>then the road.</h1>
+    <p class="w-lede" data-i18n>This is a short interactive story about one hard question: when should we trust a self-driving car? You'll drive one, see through its eyes, weigh the evidence, and decide. No technical knowledge needed — you pick it up as you go.</p>
+    <div class="w-meta">
+      <span data-i18n>5 short chapters</span>
+      <span data-i18n>10–15 minutes</span>
+      <span data-i18n>No tech knowledge needed</span>
+    </div>
+    <div class="w-actions">
+      <a class="cta" id="w-begin" href="can_you_trust_your_car_chapter1.html">
+        <span id="w-begin-label">Begin the experience</span>
+        <span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0C0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <button class="ghost" id="w-look" type="button" data-i18n>Look around first</button>
+    </div>
+  </div>
+</div>
 
 <nav class="nav" id="nav" aria-label="Primary">
   <div class="nav-inner">
@@ -288,6 +331,7 @@
       <p data-i18n>An interactive experience about when we should trust machines, and how much. Best on a laptop or desktop, with sound on. <span class="keys">Controls live in the car: A/D or arrow keys to steer, M to mute, Space or Enter to advance.</span></p>
     </div>
     <button class="restart" id="restart-foot" hidden type="button" data-i18n>Start over and clear my progress</button>
+    <button class="ghost" id="show-intro" type="button" data-i18n>Replay the intro</button>
   </div>
 </footer>
 
@@ -297,6 +341,15 @@
    Chinese. Static elements marked [data-i18n] swap innerHTML; JS/canvas strings go through
    tr(). Language persists in localStorage['ttm.lang'] so the choice carries across pages. */
 window.ZH = {
+  // — welcome gate —
+  "Before you begin":"在开始之前",
+  "A quiet moment,<br>then the road.":"先静一静，<br>再上路。",
+  "This is a short interactive story about one hard question: when should we trust a self-driving car? You'll drive one, see through its eyes, weigh the evidence, and decide. No technical knowledge needed — you pick it up as you go.":"这是一个简短的互动故事，围绕一个难题展开：我们该在何时信任一辆自动驾驶汽车？你将亲自驾驶它、透过它的眼睛观察、权衡证据，然后做出判断。无需任何技术知识——你会在过程中慢慢明白。",
+  "5 short chapters":"5 个简短章节",
+  "10–15 minutes":"10–15 分钟",
+  "No tech knowledge needed":"无需技术知识",
+  "Look around first":"先四处看看",
+  "Replay the intro":"重看开场",
   // — nav / hero —
   "Trust the Machine":"信任机器",
   "The experience":"体验",
@@ -381,6 +434,7 @@ window.ZH = {
   });
 })();
 </script>
+<script src="glossary.js"></script>
 
 <script>
 /* ---------- save (shares cytc.v1 with the chapters; merge-on-write) ---------- */
@@ -436,9 +490,11 @@ function render(){
   var begin=document.getElementById('begin'); begin.href=target; document.getElementById('begin-label').textContent=label;
   var navcta=document.getElementById('nav-cta'); navcta.href=target;
   document.getElementById('nav-cta-label').textContent = doneCount===0 ? tr('Begin') : (allDone ? tr('Replay') : tr('Resume'));
+  var wb=document.getElementById('w-begin'); if(wb){ wb.href=target; document.getElementById('w-begin-label').textContent=label; }
   document.getElementById('restart-hero').hidden=!began;
   document.getElementById('restart-foot').hidden=!(doneCount>0);
 
+  if(window.Glossary){ Glossary.wrap(document.getElementById('road')); Glossary.wrap(document.getElementById('research')); }
   observeReveals();
 }
 
@@ -534,6 +590,22 @@ function observeReveals(){
   }
   resize();
   if(reduce){ frame(); } else { start(); }
+})();
+
+/* ---------- welcome gate: a calm on-ramp shown only on the first visit ---------- */
+(function(){
+  var IKEY='ttm.introSeen', w=document.getElementById('welcome');
+  if(!w) return;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function seen(){ try{ return localStorage.getItem(IKEY)==='1'; }catch(e){ return false; } }
+  function mark(){ try{ localStorage.setItem(IKEY,'1'); }catch(e){} }
+  function open(){ w.hidden=false; w.classList.remove('hide'); document.body.classList.add('gated'); }
+  function close(){ mark(); w.classList.add('hide'); document.body.classList.remove('gated');
+    setTimeout(function(){ w.hidden=true; }, reduce?0:600); }
+  if(!seen()) open();
+  document.getElementById('w-look').addEventListener('click', close);
+  document.getElementById('w-begin').addEventListener('click', mark);   // navigates onward; remember it was seen
+  var si=document.getElementById('show-intro'); if(si) si.addEventListener('click', open);
 })();
 
 window.onLangChange = render;   // re-render dynamic road + CTA labels when language toggles

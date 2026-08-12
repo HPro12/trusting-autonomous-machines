@@ -35,7 +35,15 @@
   #start .eyebrow{font-size:clamp(11px,1.4vw,14px);letter-spacing:.18em;text-transform:uppercase;color:#9aa6c2;margin-bottom:1rem}
   #start .title{font-size:clamp(30px,6vw,58px);font-weight:800;line-height:1.05;margin-bottom:1rem;
     background:linear-gradient(180deg,#fff,#b9c8ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  #start .sub{font-size:clamp(14px,1.9vw,19px);color:#c3cde6;max-width:min(460px,84vw);line-height:1.6;margin-bottom:1.8rem}
+  #start .sub{font-size:clamp(14px,1.9vw,19px);color:#c3cde6;max-width:min(460px,84vw);line-height:1.6;margin-bottom:1.4rem}
+  #start .howto{display:flex;flex-direction:column;gap:.62rem;margin-bottom:1.8rem;text-align:left;
+    max-width:min(430px,86vw);background:rgba(16,22,44,.5);border:1px solid rgba(138,176,224,.18);
+    border-radius:14px;padding:1rem 1.2rem}
+  #start .ht-row{display:flex;align-items:flex-start;gap:.7rem;font-size:clamp(12.5px,1.5vw,15px);color:#cdd7ee;line-height:1.45}
+  #start .ht-i{flex:none;width:1.5em;color:#8AB0E0;font-weight:800;text-align:center}
+  #start .ht-row b{color:#bcd4ff;font-weight:700}
+  #start .ht-row kbd{font-family:inherit;font-size:.86em;padding:1px 6px;border-radius:6px;background:rgba(138,176,224,.16);
+    border:1px solid rgba(138,176,224,.32);color:#dbe6ff;margin:0 1px}
   #start button{pointer-events:auto;background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;
     padding:clamp(12px,1.6vh,17px) clamp(24px,3vw,42px);border-radius:13px;font-size:clamp(15px,1.9vw,20px);font-weight:800;cursor:pointer;
     box-shadow:0 12px 30px rgba(245,166,35,.34)}
@@ -56,8 +64,27 @@
   #beat.show{opacity:1;pointer-events:auto}
   #beat-who{display:block;font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;text-transform:uppercase;color:#8AB0E0;margin-bottom:.5rem}
   #beat-tx{font-size:clamp(15px,2vw,21px);line-height:1.5;color:#eef2ff;min-height:1.5em}
-  #beat-hint{position:absolute;right:16px;bottom:11px;font-size:15px;color:#9aa6c2;opacity:0}
-  #beat.ready #beat-hint{opacity:.75}
+  #beat-hint{position:absolute;right:14px;bottom:10px;font-size:12px;letter-spacing:.04em;color:#aeb9d4;opacity:0;
+    display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;
+    background:rgba(138,176,224,.12);border:1px solid rgba(138,176,224,.28);transition:opacity .35s;pointer-events:none}
+  #beat.ready #beat-hint{opacity:1;animation:beatpulse 1.7s ease-in-out infinite}
+  #beat-hint .chev{font-size:15px;line-height:1;animation:beatbob 1.1s ease-in-out infinite}
+  @keyframes beatpulse{0%,100%{box-shadow:0 0 0 0 rgba(138,176,224,.34)}50%{box-shadow:0 0 0 5px rgba(138,176,224,0)}}
+  @keyframes beatbob{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+  /* phone notification (Lin Wei) — DOM overlay that reads as a chat, auto-dismisses */
+  #phonemsg{position:fixed;top:18px;left:50%;z-index:9;width:min(360px,88vw);
+    transform:translateX(-50%) translateY(-150%);opacity:0;pointer-events:none;
+    background:rgba(28,28,32,.97);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:12px 15px;
+    box-shadow:0 20px 55px rgba(0,0,0,.6);color:#fff;text-align:left;
+    transition:transform .55s cubic-bezier(.2,.85,.25,1),opacity .4s}
+  #phonemsg.show{transform:translateX(-50%) translateY(0);opacity:1}
+  #phonemsg .pm-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  #phonemsg .pm-av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;
+    color:#fff;background:linear-gradient(135deg,#3a6df0,#7b4ff0)}
+  #phonemsg .pm-name{font-size:14px;font-weight:700;flex:1}
+  #phonemsg .pm-time{font-size:12px;color:#9a9aa2}
+  #phonemsg .pm-body{font-size:15px;line-height:1.42;color:#f1f1f4}
+  @media (prefers-reduced-motion: reduce){ #phonemsg{transition:opacity .35s} }
   #edgewarn{position:fixed;top:clamp(40px,12vh,120px);left:50%;transform:translateX(-50%);z-index:7;display:none;
     padding:12px 22px;border-radius:12px;background:rgba(255,60,80,.16);border:1px solid rgba(255,90,106,.6);
     color:#ff7684;font-weight:800;letter-spacing:.08em;font-size:clamp(15px,2.2vw,22px);text-align:center;animation:blink .7s infinite}
@@ -113,7 +140,7 @@
   .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
   .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
-  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm{animation:none} }
+  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm,#beat.ready #beat-hint,#beat-hint .chev{animation:none} }
 
   /* ---------------- language toggle (shared across all pages) ---------------- */
   #langtoggle{position:fixed; top:14px; right:120px; z-index:100;   /* offset left of the mute chip */
@@ -134,6 +161,15 @@
 window.ZH = {
   // — document title —
   "Can You Trust Your Car? — Night Drive":"你能信任你的车吗？——夜间行驶",
+  // — dialogue cue / phone / how-to (added in the comprehension pass) —
+  "click to continue":"点击继续",
+  "Click anywhere, or press Space, to continue":"点击任意处，或按空格，继续",
+  "now":"刚刚",
+  "Nearly midnight on the expressway. You are behind the wheel — just drive, and see what the night asks of you.":"高速上已近午夜。你坐在方向盘后——只管开，看看这一夜会向你要求些什么。",
+  "Click, or press <kbd>Space</kbd>, to move the story forward.":"点击，或按 <kbd>Space</kbd>，推进剧情。",
+  "Steer with <kbd>A</kbd> <kbd>D</kbd> or the arrow keys.":"用 <kbd>A</kbd> <kbd>D</kbd> 或方向键转向。",
+  "Tap the <b>glowing blue words</b> any time to learn what they mean.":"随时点一点<b>发光的蓝字</b>，看看它们是什么意思。",
+  "When a choice appears, pick with <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> or a click.":"出现选项时，用 <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> 或点击来选。",
   // — static HUD / start / overlays —
   "<kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane":"<kbd>A</kbd> / <kbd>←</kbd> 和 <kbd>D</kbd> / <kbd>→</kbd> 变道",
   "KM/H":"公里/时",
@@ -329,6 +365,7 @@ window.ZH = {
   });
 })();
 </script>
+<script src="glossary.js"></script>
 
 <canvas id="c"></canvas>
 
@@ -341,7 +378,11 @@ window.ZH = {
 
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
-<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
+<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint"></span></div>
+<div id="phonemsg">
+  <div class="pm-top"><span class="pm-av">L</span><span class="pm-name"></span><span class="pm-time"></span></div>
+  <div class="pm-body"></div>
+</div>
 <div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
@@ -375,7 +416,13 @@ window.ZH = {
 <div id="start">
   <div class="eyebrow" data-i18n>Can You Trust Your Car?</div>
   <div class="title" data-i18n>The Night Drive</div>
-  <div class="sub" data-i18n>Nearly midnight on the expressway. Keep it between the lines. Change lanes with A/D or the arrow keys.</div>
+  <div class="sub" data-i18n>Nearly midnight on the expressway. You are behind the wheel — just drive, and see what the night asks of you.</div>
+  <div class="howto">
+    <div class="ht-row"><span class="ht-i">›</span><span data-i18n>Click, or press <kbd>Space</kbd>, to move the story forward.</span></div>
+    <div class="ht-row"><span class="ht-i">⇆</span><span data-i18n>Steer with <kbd>A</kbd> <kbd>D</kbd> or the arrow keys.</span></div>
+    <div class="ht-row"><span class="ht-i">✦</span><span data-i18n>Tap the <b>glowing blue words</b> any time to learn what they mean.</span></div>
+    <div class="ht-row"><span class="ht-i">Ⓐ</span><span data-i18n>When a choice appears, pick with <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> or a click.</span></div>
+  </div>
   <button id="startbtn" data-i18n>Start driving →</button>
 </div>
 
@@ -769,7 +816,7 @@ window.AUDIO=(function(){
   });
 
   /* ========================= DRIVE STATE + iMESSAGE BEAT ========================= */
-  const state={started:false, paused:false, speed:0, driveTime:0, phoneShown:false, autoPhone:true};
+  const state={started:false, paused:false, speed:0, driveTime:0, phoneShown:false, autoPhone:false};  // phone is now a DOM notification (showPhoneMessage), not a 3D texture
   function startDrive(){ document.getElementById('start').classList.add('hide'); state.started=true;
     if(window.AUDIO){ AUDIO.unlock(); AUDIO.setScene('calm'); }
     if(window.STORY && !window.STORY.running) window.STORY.begin(); }
@@ -891,22 +938,42 @@ window.AUDIO=(function(){
 
   /* beats */
   function showLetterbox(on){$('letterbox').classList.toggle('on',on);}
+  let beatTaught=false;
+  function setBeatHint(){ const h=$('beat-hint'); if(!h)return;
+    const t=beatTaught?tr('click to continue'):tr('Click anywhere, or press Space, to continue');
+    h.innerHTML=''; h.appendChild(document.createTextNode(t+' '));
+    const c=document.createElement('span'); c.className='chev'; c.textContent='›'; h.appendChild(c); }
   function playBeat(b){return new Promise(res=>{
     const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
     curBeat=b;
     who.textContent=b.who?tr(b.who):'';who.style.display=b.who?'':'none';tx.textContent='';
     p.classList.remove('ready');p.classList.add('show');
-    let i=0,done=false,raf=null;
+    let i=0,done=false,raf=null,auto=null;
     function cur(){return tr(b.tx);}                          // read live so a mid-beat toggle switches language
-    function fin(){done=true;tx.textContent=cur();p.classList.add('ready');}
+    function fin(){done=true;tx.textContent=cur();if(window.Glossary)Glossary.wrap(tx);
+      setBeatHint();p.classList.add('ready');beatTaught=true;
+      auto=setTimeout(()=>{auto=null;adv();},10000);}         // ~10s auto-advance safety net
     function step(){if(RM){fin();return;} const full=cur(); if(i<=full.length){tx.textContent=full.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin();}
-    function adv(){if(!done){if(raf)clearTimeout(raf);fin();return;} cleanup();res();}
-    function cleanup(){curBeat=null;p.removeEventListener('click',adv);document.removeEventListener('keydown',onKey,true);}
+    function adv(){if(!done){if(raf)clearTimeout(raf);fin();return;} if(auto){clearTimeout(auto);auto=null;} cleanup();res();}
+    function cleanup(){curBeat=null;if(auto){clearTimeout(auto);auto=null;}p.removeEventListener('click',adv);document.removeEventListener('keydown',onKey,true);}
     function onKey(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ev.stopPropagation();adv();}}
     p.addEventListener('click',adv);document.addEventListener('keydown',onKey,true);step();
   });}
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return;
     showLetterbox(true); for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
+
+  /* phone notification (Lin Wei) — slides in over the scene, auto-dismisses like a real alert */
+  let pmTimer=null, pmMsg=null;
+  function showPhoneMessage(sender,enText){
+    const el=$('phonemsg'); if(!el)return; pmMsg={sender,enText};
+    el.querySelector('.pm-name').textContent=sender;
+    el.querySelector('.pm-av').textContent=(sender||'?').trim().charAt(0).toUpperCase();
+    el.querySelector('.pm-time').textContent=tr('now');
+    el.querySelector('.pm-body').textContent=tr(enText);
+    el.classList.add('show'); if(window.AUDIO)AUDIO.sfx('imsg');
+    if(pmTimer)clearTimeout(pmTimer);
+    pmTimer=setTimeout(()=>{el.classList.remove('show'); pmMsg=null;},5000);
+  }
 
   /* decisions */
   let curDecision=null,decResolve=null,decKey=null,curOut=null,curBeat=null;
@@ -916,7 +983,8 @@ window.AUDIO=(function(){
     $('d-question').textContent=tr(c.q);const wrap=$('d-options');wrap.innerHTML='';
     c.opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.dataset.key=o.k;
       b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
-      b.onclick=()=>choose(id,o.k);wrap.appendChild(b);}); }
+      b.onclick=()=>choose(id,o.k);wrap.appendChild(b);});
+    if(window.Glossary)Glossary.wrap($('decision')); }
   function askDecision(id){const c=DECISIONS[id];if(!c)return; TD.pause(true);
     paintDecision(id);
     curDecision=id;$('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
@@ -936,7 +1004,8 @@ window.AUDIO=(function(){
     $('o-plain').textContent=tr(d.plain||'');$('o-plain').style.display=d.plain?'':'none';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
     $('o-delta').innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{const up=c.delta>=0;return '<span class="chip '+(up?'up':'down')+'">'+tr(c.label)+' '+(up?'+':'')+c.delta+'</span>';}).join('');
-    $('o-quote').querySelector('.tx').textContent=tr(d.ins||'');$('o-quote').querySelector('.who').textContent=tr(d.who||''); }
+    $('o-quote').querySelector('.tx').textContent=tr(d.ins||'');$('o-quote').querySelector('.who').textContent=tr(d.who||'');
+    if(window.Glossary)Glossary.wrap($('outcome')); }
   function showOutcome(d,chips,cont){
     curOut={d,chips};
     paintOutcome(d,chips);
@@ -1057,6 +1126,7 @@ window.AUDIO=(function(){
       {scene:tr('Dawn · Your next car'),call:carCall(),cons:{t:'',c:''}}];
     $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
     $('db-verdict').textContent=verdict();
+    if(window.Glossary)Glossary.wrap($('debrief'));
     $('debrief').classList.add('show');
   }
   function continueCh2(){ save();
@@ -1094,7 +1164,7 @@ window.AUDIO=(function(){
     try{
       await warmup();
       await beats(BEATS.intro);
-      TD.showIMessage('Lin Wei',tr("Did you see the news about the crash on the G2 tonight?"));
+      showPhoneMessage('Lin Wei',"Did you see the news about the crash on the G2 tonight?");
       await wait(2400);
       await ask('drive1'); await beats(BEATS.drive1_after);
       TD.mood('rain'); await beats(BEATS.l2_intro); await ask('l2');
@@ -1111,11 +1181,12 @@ window.AUDIO=(function(){
     try{
       document.title = tr('Can You Trust Your Car? — Night Drive');
       if(window.AUDIO && AUDIO.syncChip) AUDIO.syncChip();
-      if(window.TD && TD.drawMap) TD.drawMap();   // ponytail: a live iMessage on the dash reverts to the map on toggle
+      if(window.TD && TD.drawMap) TD.drawMap();
+      if(pmMsg) showPhoneMessage(pmMsg.sender,pmMsg.enText);   // re-render a live phone message in the new language
       const bp=$('beat');
       if(bp && bp.classList.contains('show') && curBeat){
         $('beat-who').textContent = curBeat.who?tr(curBeat.who):'';
-        if(bp.classList.contains('ready')) $('beat-tx').textContent = tr(curBeat.tx);   // mid-type switches on the next tick via cur()
+        if(bp.classList.contains('ready')){ $('beat-tx').textContent = tr(curBeat.tx); if(window.Glossary)Glossary.wrap($('beat-tx')); setBeatHint(); }   // mid-type switches on the next tick via cur()
       }
       if(curDecision) paintDecision(curDecision);
       if($('outcome').classList.contains('show') && curOut) paintOutcome(curOut.d,curOut.chips);

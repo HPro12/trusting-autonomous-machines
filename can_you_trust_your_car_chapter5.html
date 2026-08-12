@@ -54,8 +54,13 @@
   #beat.show{opacity:1;pointer-events:auto}
   #beat-who{display:block;font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;text-transform:uppercase;color:#8AB0E0;margin-bottom:.5rem}
   #beat-tx{font-size:clamp(15px,2vw,21px);line-height:1.5;color:#eef2ff;min-height:1.5em}
-  #beat-hint{position:absolute;right:16px;bottom:11px;font-size:15px;color:#9aa6c2;opacity:0}
-  #beat.ready #beat-hint{opacity:.75}
+  #beat-hint{position:absolute;right:14px;bottom:10px;font-size:12px;letter-spacing:.04em;color:#aeb9d4;opacity:0;
+    display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;
+    background:rgba(138,176,224,.12);border:1px solid rgba(138,176,224,.28);transition:opacity .35s;pointer-events:none}
+  #beat.ready #beat-hint{opacity:1;animation:beatpulse 1.7s ease-in-out infinite}
+  #beat-hint .chev{font-size:15px;line-height:1;animation:beatbob 1.1s ease-in-out infinite}
+  @keyframes beatpulse{0%,100%{box-shadow:0 0 0 0 rgba(138,176,224,.34)}50%{box-shadow:0 0 0 5px rgba(138,176,224,0)}}
+  @keyframes beatbob{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
   #edgewarn{position:fixed;top:clamp(40px,12vh,120px);left:50%;transform:translateX(-50%);z-index:7;display:none;
     padding:12px 22px;border-radius:12px;background:rgba(255,60,80,.16);border:1px solid rgba(255,90,106,.6);
     color:#ff7684;font-weight:800;letter-spacing:.08em;font-size:clamp(15px,2.2vw,22px);text-align:center;animation:blink .7s infinite}
@@ -111,7 +116,7 @@
   .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
   .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
-  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent{animation:none} }
+  @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#beat.ready #beat-hint,#beat-hint .chev{animation:none} }
 
   /* ---- Chapter 3: control-room chrome over the 3D footage ---- */
   #footbox{position:fixed;z-index:4;pointer-events:none;transform:translate(-50%,-50%);display:none}
@@ -257,15 +262,15 @@
 
 <div id="ui">
   <div id="hud-speed"><b id="spd">0</b><span>KM/H</span></div>
-  <div id="hint"><kbd>A</kbd> / <kbd>←</kbd> and <kbd>D</kbd> / <kbd>→</kbd> change lane</div>
+  <div id="hint"></div>
   <button id="mute" aria-pressed="false" aria-label="Toggle sound"><span class="mic">🔊</span><span class="mtx">Sound</span></button>
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
 </div>
 
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
-<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint">▸</span></div>
-<div id="edgewarn">⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
+<div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint"></span></div>
+<div id="edgewarn"></div>
 
 <div id="decision">
   <div class="d-eyebrow" id="d-eyebrow"></div>
@@ -310,6 +315,8 @@ window.ZH = {
   "Can You Trust Your Car? — The Trust Gap":"你能信任你的车吗？— 信任鸿沟",
   // — mute chip / a11y —
   "Sound":"声音", "Muted":"已静音", "Toggle sound":"切换声音",
+  "click to continue":"点击继续",
+  "Click anywhere, or press Space, to continue":"点击任意处，或按空格，继续",
   // — static buttons —
   "Continue →":"继续 →", "Review again":"再看一遍",
   // — start / boot / chrome (initChrome, boot) —
@@ -607,6 +614,7 @@ window.ZH = {
   });
 })();
 </script>
+<script src="glossary.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 /* ========================= AUDIO — Web Audio, no assets =========================
@@ -1159,31 +1167,37 @@ window.AUDIO=(function(){
 
   /* ---- beats ---- */
   function showLetterbox(on){ $('letterbox').classList.toggle('on',on); }
-  function playBeat(b){ return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
+  let beatTaught=false;
+  function setBeatHint(){ const h=$('beat-hint'); if(!h)return;
+    const t=beatTaught?tr('click to continue'):tr('Click anywhere, or press Space, to continue');
+    h.innerHTML=''; h.appendChild(document.createTextNode(t+' '));
+    const c=document.createElement('span'); c.className='chev'; c.textContent='›'; h.appendChild(c); }
+  function playBeat(b){ curBeat=b; return new Promise(res=>{ const p=$('beat'),who=$('beat-who'),tx=$('beat-tx');
     who.textContent=b.who?tr(b.who):''; who.style.display=b.who?'':'none'; tx.textContent=''; p.classList.remove('ready'); p.classList.add('show');
-    let i=0,done=false,raf=null;
+    let i=0,done=false,raf=null,auto=null;
     function full(){ return tr(b.tx); }
-    function fin(){done=true;tx.textContent=full();p.classList.add('ready');}
+    function fin(){done=true;tx.textContent=full();if(window.Glossary)Glossary.wrap(tx);setBeatHint();p.classList.add('ready');beatTaught=true;auto=setTimeout(()=>{auto=null;adv();},10000);}
     function step(){ if(RM){fin();return;} const f=full(); if(i<=f.length){tx.textContent=f.slice(0,i);if(i%3===0&&window.AUDIO)AUDIO.sfx('ui');i++;raf=setTimeout(step,26);} else fin(); }
-    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } cleanup(); S.repaint=null; res(); }
-    function cleanup(){ p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
+    function adv(){ if(!done){ if(raf)clearTimeout(raf); fin(); return; } if(auto){clearTimeout(auto);auto=null;} cleanup(); S.repaint=null; res(); }
+    function cleanup(){ if(auto){clearTimeout(auto);auto=null;} curBeat=null; p.removeEventListener('click',adv); document.removeEventListener('keydown',onKey,true); }
     function onKey(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ev.stopPropagation(); adv(); } }
     // live language toggle: retype current text, or snap to full if it had finished
-    S.repaint=()=>{ who.textContent=b.who?tr(b.who):''; if(done)tx.textContent=full(); };
+    S.repaint=()=>{ who.textContent=b.who?tr(b.who):''; if(done){tx.textContent=full();if(window.Glossary)Glossary.wrap(tx);setBeatHint();} };
     p.addEventListener('click',adv); document.addEventListener('keydown',onKey,true); step();
   }); }
   async function beats(arr){ const list=typeof arr==='function'?arr():arr; if(!list||!list.length)return; showLetterbox(true);
     for(const b of list) await playBeat(b); $('beat').classList.remove('show','ready'); showLetterbox(false); }
 
   /* ---- decisions ---- */
-  let curDecision=null,decResolve=null,decKey=null;
+  let curDecision=null,decResolve=null,decKey=null,curBeat=null;
   function ask(id){ return new Promise(res=>{ decResolve=res; askDecision(id); }); }
   function fillDecision(id){ const c=DECISIONS[id]; if(!c)return;
     const eb=$('d-eyebrow'); eb.textContent=tr(c.eyebrow); eb.className='d-eyebrow'+(c.urgent?' urgent':'');
     $('d-question').textContent=tr(c.q); const wrap=$('d-options'); wrap.innerHTML='';
     c.opts.forEach(o=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.key=o.k;
       b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
-      b.onclick=()=>choose(id,o.k); wrap.appendChild(b); }); }
+      b.onclick=()=>choose(id,o.k); wrap.appendChild(b); });
+    if(window.Glossary)Glossary.wrap($('decision')); }
   function askDecision(id){ const c=DECISIONS[id]; if(!c)return;
     fillDecision(id); S.repaint=()=>fillDecision(id);
     curDecision=id; $('decision').classList.add('show'); if(window.AUDIO)AUDIO.sfx('ui');
@@ -1198,7 +1212,8 @@ window.AUDIO=(function(){
     $('o-label').textContent=d.label?tr(d.label):''; $('o-ctx').textContent=d.ctx?tr(d.ctx):'';
     $('o-plain').textContent=d.plain?tr(d.plain):''; $('o-plain').style.display=d.plain?'':'none';
     $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins?tr(d.ins):''; $('o-quote').querySelector('.who').textContent=d.who?tr(d.who):''; }
+    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=d.ins?tr(d.ins):''; $('o-quote').querySelector('.who').textContent=d.who?tr(d.who):'';
+    if(window.Glossary)Glossary.wrap($('outcome')); }
   function showOutcome(d,cont){ fillOutcome(d); S.repaint=()=>fillOutcome(d);
     const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
     $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); S.repaint=null; if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
@@ -1434,7 +1449,7 @@ window.AUDIO=(function(){
     v+=" "+T("Across five chapters you were the driver, the machine’s eyes, the evaluator, the regulator, and finally the official who says yes or no. The question was never whether the car can be trusted. It was who has to decide that it can, and you just did, five times over.");
     $('db-verdict').textContent=v;
     const b=$('db-ch2'); b.textContent=T('You’ve reached the end');
-    $('debrief').classList.add('show'); S.repaint=renderDebrief;
+    $('debrief').classList.add('show'); if(window.Glossary)Glossary.wrap($('debrief')); S.repaint=renderDebrief;
   }
   function finish(){ save();
     try{ if(typeof sendPrompt==='function'){ sendPrompt('I finished all five chapters of Can You Trust Your Car. What did I just build, and what are natural next steps?'); return; } }catch(e){}

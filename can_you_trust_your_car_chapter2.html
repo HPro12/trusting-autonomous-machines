@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Can You Trust Your Car? — Night Drive</title>
+<title>Can You Trust Your Car? · Night Drive</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:#05070f;overflow:hidden}
@@ -183,7 +183,7 @@
   <div class="fz-help" data-i18n>Drag each slider to set how much the car trusts that sensor, then Lock it in.</div>
   <div class="fz-cert"><span data-i18n>Certainty</span><b id="fz-cert-v">—</b></div>
   <div class="fz-bar"><div class="fz-fill" id="fz-fill"></div></div>
-  <div class="fz-actions"><button id="fz-auto" data-i18n>AUTO — let the car weigh them</button><button id="fz-go" data-i18n>Lock it in →</button></div>
+  <div class="fz-actions"><button id="fz-auto" data-i18n>AUTO: let the car weigh them</button><button id="fz-go" data-i18n>Lock it in →</button></div>
 </div>
 
 <div id="ui">
@@ -201,7 +201,7 @@
 <div id="flash"></div>
 <div id="letterbox"><div class="bar top"></div><div class="bar bot"></div></div>
 <div id="beat"><span id="beat-who"></span><p id="beat-tx"></p><span id="beat-hint"></span></div>
-<div id="edgewarn" data-i18n>⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
+<div id="edgewarn" data-i18n>⚠ TAKE OVER · CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small></div>
 
 <div id="decision">
   <div class="d-eyebrow" id="d-eyebrow"></div>
@@ -260,10 +260,10 @@ window.ZH = {
   "AUTO":"自动",
   "Drag each slider to set how much the car trusts that sensor, then Lock it in.":"拖动每个滑块，设定车对该传感器的信任程度，然后锁定。",
   "Certainty":"确定度",
-  "AUTO — let the car weigh them":"自动 —— 让车自行权衡",
+  "AUTO: let the car weigh them":"自动 —— 让车自行权衡",
   "Lock it in →":"锁定 →",
   // — takeover warning —
-  "⚠ TAKE OVER — CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>你的车道上有障碍物。按 A / D 变道避让。</small>",
+  "⚠ TAKE OVER · CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>你的车道上有障碍物。按 A / D 变道避让。</small>",
   // — mute chip —
   "Sound":"声音",
   "Muted":"已静音",
@@ -276,8 +276,8 @@ window.ZH = {
   "iMessage · now":"iMessage · 刚刚",
   "Did you see the news about the crash on the G2 tonight?":"你看到今晚 G2 上那起事故的新闻了吗？",
   // — warm-up —
-  "You're driving again. Ease into the next lane — press D or → to move right.":"你又开起来了。缓缓并入下一条车道——按 D 或 → 向右移。",
-  "Good. Now pull back — press A or ← to move left.":"很好。现在退回来——按 A 或 ← 向左移。",
+  "You're driving again. Ease into the next lane. Press D or → to move right.":"你又开起来了。缓缓并入下一条车道——按 D 或 → 向右移。",
+  "Good. Now pull back. Press A or ← to move left.":"很好。现在退回来——按 A 或 ← 向左移。",
   // — beats —
   "You":"你",
   "Car":"车",
@@ -286,7 +286,7 @@ window.ZH = {
   "Back on the G2, in the L2 highway-assist car from last time. Tonight the dashboard shows you something new.":"又回到 G2，坐进上次那辆 L2 高速辅助驾驶车里。今晚，仪表盘会给你看一些新东西。",
   "Back on the G2, in the robotaxi from last time. Tonight the dashboard shows you something new.":"又回到 G2，坐进上次那辆无人驾驶出租车里。今晚，仪表盘会给你看一些新东西。",
   "Perception online. Every object it tracks, it draws for you: a camera box, a LiDAR cloud, a radar bracket, and a number for how sure it is.":"感知已上线。它追踪的每一个物体，都会为你画出来：一个摄像头框、一片激光雷达点云、一副雷达括线，以及一个表示它有多确定的数字。",
-  "Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs — blending all three into one answer is called sensor fusion.":"框线锁定你周围的车。青色是摄像头，蓝点是激光雷达（激光测距），琥珀色是雷达（用无线电回波测算距离与速度）。当它们一致时，数字就会上升——把三者融合成同一个答案，就叫传感器融合。",
+  "Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs. Blending all three into one answer is called sensor fusion.":"框线锁定你周围的车。青色是摄像头，蓝点是激光雷达（激光测距），琥珀色是雷达（用无线电回波测算距离与速度）。当它们一致时，数字就会上升——把三者融合成同一个答案，就叫传感器融合。",
   "A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one.":"前方路边有一个身影在等待。每个传感器都对它有各自的判断。拖动滑块，决定车对每一个传感器的信任程度。",
   "Weighted right, the read holds. All three sensors point the same way.":"权重设得当，这次判断站得住。三个传感器都指向同一个方向。",
   "The read is shaky. The sensors don't fully agree yet.":"判断并不牢靠。传感器之间还没有完全达成一致。",
@@ -304,18 +304,18 @@ window.ZH = {
   "Stopped":"已停车",
   "Believed the sensors that could see":"相信了仍能看见的传感器",
   "You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.":"你刹住了车。那是一辆熄着灯抛锚的车：对致盲的摄像头而言它不可见，对激光雷达而言却一目了然。",
-  "What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off — you trusted the sensors that could still see.":"你的做法：尽管致盲的摄像头显示路面空旷，你仍因激光雷达和雷达看到了实在的物体而刹车。那是一辆熄灯抛锚的车——你信任了仍能看见的传感器。",
-  "LiDAR, microwave radar, cameras — we call them all sensors, and the system fuses them into a single judgement.":"激光雷达、微波雷达、摄像头——我们把它们统称为传感器，系统会把它们融合成同一个判断。",
+  "What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off. You trusted the sensors that could still see.":"你的做法：尽管致盲的摄像头显示路面空旷，你仍因激光雷达和雷达看到了实在的物体而刹车。那是一辆熄灯抛锚的车——你信任了仍能看见的传感器。",
+  "LiDAR, microwave radar, cameras: we call them all sensors, and the system fuses them into a single judgement.":"激光雷达、微波雷达、摄像头——我们把它们统称为传感器，系统会把它们融合成同一个判断。",
   "Technology & product manager":"技术与产品经理",
   "Slowed":"已减速",
   "Let the fusion arbitrate":"让融合来裁决",
   "You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.":"你松开油门，把决定交给融合。它给了激光雷达很高的权重，及时减了速。这一次是这样。",
-  "What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time — safe this once, but only because the balance between sensors happened to be right.":"你的做法：把决定交给车的综合判断。它倚重激光雷达，刚好及时减速——这一次安全了，但只是因为传感器之间的权衡恰好正确。",
+  "What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time, safe this once, but only because the balance between sensors happened to be right.":"你的做法：把决定交给车的综合判断。它倚重激光雷达，刚好及时减速——这一次安全了，但只是因为传感器之间的权衡恰好正确。",
   "Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.":"Waymo 把眼睛装得到处都是，所以它的大脑只需要一个五岁孩子的水平。Tesla 用的是更弱的眼睛，所以它需要一个成熟、专业司机的大脑。",
   "Robotaxi commercialization strategist":"无人驾驶出租车商业化策略师",
   "Impact":"撞击",
   "Trusted the blind sensor":"信任了失明的传感器",
-  "What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing — not safety. You drove into what the other sensors plainly saw.":"你的做法：相信了摄像头所谓的“道路空旷”，无视了激光雷达和雷达。致盲的摄像头报告的是“什么都没有”——而不是“安全”。你径直撞上了其他传感器清清楚楚看到的东西。",
+  "What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing, not safety. You drove into what the other sensors saw.":"你的做法：相信了摄像头所谓的“道路空旷”，无视了激光雷达和雷达。致盲的摄像头报告的是“什么都没有”——而不是“安全”。你径直撞上了其他传感器清清楚楚看到的东西。",
   "For plain detection and recognition, the human eye may still beat the camera.":"在单纯的探测与识别上，人眼或许仍然胜过摄像头。",
   "Deployment & data engineer":"部署与数据工程师",
   // — outcome stat values / labels —
@@ -350,7 +350,7 @@ window.ZH = {
   "You let the fusion arbitrate and it held this time. Redundancy bought the margin; next time the weighting has to be right before you need it.":"你让融合来裁决，这一次它撑住了。冗余为你争取了余量；但下一次，权重必须在你需要之前就已经设对。",
   "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing. It does not report safety. The crash lives in the gap between the two.":"你把失明传感器的沉默当了真，径直撞上了其他传感器清清楚楚看到的东西。一个看不见的摄像头，报告的是“什么都没有”。它并不报告“安全”。事故就住在这两者之间的缝隙里。",
   // — document title —
-  "Can You Trust Your Car? — Night Drive":"你能信任你的车吗？—— 夜间行驶"
+  "Can You Trust Your Car? · Night Drive":"你能信任你的车吗？—— 夜间行驶"
 };
 (function(){
   var LKEY='ttm.lang';
@@ -1026,7 +1026,7 @@ window.AUDIO=(function(){
   const BEATS={
     intro:()=>[ {who:'You', tx:(S.car?("Back on the G2, in the "+ (carName[S.car]||'car') +" from last time."):"Back on the G2 at night.")+" Tonight the dashboard shows you something new."},
       {who:'Car', tx:"Perception online. Every object it tracks, it draws for you: a camera box, a LiDAR cloud, a radar bracket, and a number for how sure it is."} ],
-    see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs — blending all three into one answer is called sensor fusion."} ],
+    see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs. Blending all three into one answer is called sensor fusion."} ],
     fuse_intro:[ {who:'', tx:"A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one."} ],
     fuse_after:(c)=>[ {who:'You', tx:(c>=70?"Weighted right, the read holds. All three sensors point the same way.":"The read is shaky. The sensors don't fully agree yet.")} ],
     fail_intro:[ {who:'', tx:"Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses."},
@@ -1039,17 +1039,17 @@ window.AUDIO=(function(){
       opts:[
         {k:'A',t:'Brake for the LiDAR return', outcome:{big:'Stopped',label:'Believed the sensors that could see',danger:'none',
           ctx:'You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.',
-          plain:'What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off — you trusted the sensors that could still see.',
+          plain:'What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off. You trusted the sensors that could still see.',
           stats:[{v:'LiDAR',l:'Trusted',c:'good'},{v:'Safe',l:'Outcome',c:'good'}],
-          ins:'LiDAR, microwave radar, cameras — we call them all sensors, and the system fuses them into a single judgement.',who:'Technology & product manager'}},
+          ins:'LiDAR, microwave radar, cameras: we call them all sensors, and the system fuses them into a single judgement.',who:'Technology & product manager'}},
         {k:'B',t:'Trust the fused read', outcome:{big:'Slowed',label:'Let the fusion arbitrate',danger:'mid',
           ctx:'You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.',
-          plain:"What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time — safe this once, but only because the balance between sensors happened to be right.",
+          plain:"What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time, safe this once, but only because the balance between sensors happened to be right.",
           stats:[{v:'Fusion',l:'Trusted',c:'ok'},{v:'Close',l:'Outcome',c:'ok'}],
           ins:'Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.',who:'Robotaxi commercialization strategist'}},
         {k:'C',t:'Assume the camera is right (false alarm)', outcome:{big:'Impact',label:'Trusted the blind sensor',danger:'high',crash:true,
           stats:[{v:'Camera',l:'Trusted',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-          plain:"What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing — not safety. You drove into what the other sensors plainly saw.",
+          plain:"What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing, not safety. You drove into what the other sensors saw.",
           ins:'For plain detection and recognition, the human eye may still beat the camera.',who:'Deployment & data engineer'}}
       ]}
   };
@@ -1090,8 +1090,8 @@ window.AUDIO=(function(){
     const hint=$('hint'), beat=$('beat'), who=$('beat-who'), tx=$('beat-tx'), bh=$('beat-hint');
     hint.classList.add('warm'); showLetterbox(true);
     who.style.display='none'; if(bh)bh.style.display='none'; beat.classList.add('show','ready');
-    const prompts=[tr("You're driving again. Ease into the next lane — press D or → to move right."),
-                   tr("Good. Now pull back — press A or ← to move left.")];
+    const prompts=[tr("You're driving again. Ease into the next lane. Press D or → to move right."),
+                   tr("Good. Now pull back. Press A or ← to move left.")];
     let stage=0; tx.textContent=prompts[0];
     function onKey(e){ if(e.repeat)return; const k=e.key;
       const right=(k==='d'||k==='D'||k==='ArrowRight'), left=(k==='a'||k==='A'||k==='ArrowLeft');
@@ -1132,7 +1132,7 @@ window.AUDIO=(function(){
   }
   /* ---- live language toggle: re-render whatever is currently on screen ---- */
   window.onLangChange=function(){
-    document.title = tr("Can You Trust Your Car? — Night Drive");
+    document.title = tr("Can You Trust Your Car? · Night Drive");
     if(window.TD && TD.drawMap) TD.drawMap();                 // car map status strip (baked texture)
     if(window.AUDIO && AUDIO.syncChip) AUDIO.syncChip();      // mute chip label
     if($('fz-mode')) $('fz-mode').textContent=tr(fzMode);

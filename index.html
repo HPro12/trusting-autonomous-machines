@@ -160,7 +160,8 @@
   .stance p{font-size:15.5px; line-height:1.65; color:var(--sub)}
   .stance p:first-of-type{margin-top:1.1rem}
   .stance strong{color:var(--ink); font-weight:700}
-  .reportlink{display:inline-flex; align-items:center; gap:9px; margin-top:clamp(28px,4vh,40px); text-decoration:none;
+  .reportlinks{display:flex; flex-direction:column; align-items:flex-start; gap:16px; margin-top:clamp(28px,4vh,40px)}
+  .reportlink{display:inline-flex; align-items:center; gap:9px; text-decoration:none;
     font-size:15px; font-weight:600; color:var(--accent-strong); letter-spacing:.01em;
     padding-bottom:3px; border-bottom:1px solid var(--accent-line); transition:color .25s var(--ease), gap .25s var(--ease)}
   .reportlink:hover{color:var(--ink); gap:13px}
@@ -436,10 +437,16 @@
           <li data-i18n>Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.</li>
           <li data-i18n>The crashes and testimonies are dramatized; the numbers and the insights behind them are not.</li>
         </ul>
-        <a class="reportlink" href="report/trust_report.html">
-          <span data-i18n>Read the policy report</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
+        <div class="reportlinks">
+          <a class="reportlink" href="report/trust_report.html">
+            <span data-i18n>Read the policy report</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="reportlink" href="interviews.html">
+            <span data-i18n>Read the interview summaries</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
       </div>
       <div class="stance reveal">
         <div class="n" data-i18n>Where we stand</div>
@@ -541,6 +548,7 @@ window.ZH = {
   "Every statistic in the experience traces to a real source: reaction times, the miles needed to prove safety, the exposure gap.":"体验中的每一项数据都可追溯到真实来源：反应时间、证明安全所需的里程、暴露差距。",
   "The crashes and testimonies are dramatized; the numbers and the insights behind them are not.":"其中的事故与证词经过戏剧化处理；但背后的数字与洞见并非虚构。",
   "Read the policy report":"阅读政策报告",
+  "Read the interview summaries":"阅读访谈摘要",
   "Where we stand":"我们的立场",
   "<strong>Nowhere on purpose.</strong> This project takes no position on whether autonomous driving should be trusted. That's the one thing it deliberately refuses to do.":"<strong>刻意不站队。</strong>本项目对自动驾驶是否值得信任不持任何立场。这正是它刻意拒绝去做的一件事。",
   "Instead it hands you the same uncertainty the people building and regulating these systems live with every day, and lets you sit in it. What you conclude is yours.":"取而代之，它把建造与监管这些系统的人每天都在面对的那份不确定交到你手中，让你身处其中。你得出的结论，属于你自己。",

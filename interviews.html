@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Field notes</title>
+<meta name="description" content="Anonymized summaries of interviews with autonomous-driving professionals working in China.">
+<style>
+  /* Palette inherited from the main experience ("Deliberate"): graphite base,
+     one moonlight-azure accent. English-only, like the policy report. */
+  :root{
+    --bg:#0B0C0F; --surface:#14161C; --surface-2:#1B1E25;
+    --line:1px solid rgba(255,255,255,.08); --line-strong:1px solid rgba(255,255,255,.15);
+    --ink:#ECEEF2; --sub:#B7BCC6; --mut:#888D98;
+    --accent:#8AB0E0; --accent-strong:#A6C4EC; --accent-tint:rgba(138,176,224,.13); --accent-line:rgba(138,176,224,.34);
+    --shadow-soft:0 8px 30px rgba(0,0,0,.30);
+    --ease:cubic-bezier(.22,.68,0,1);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+    --wrap:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0; font-family:var(--font); color:var(--ink); background:var(--bg);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; letter-spacing:.005em;
+    background-image:radial-gradient(1100px 700px at 82% -10%, rgba(138,176,224,.06), transparent 58%);}
+  a{color:inherit}
+  ::selection{background:rgba(138,176,224,.26)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:0 clamp(22px,5vw,44px)}
+  .eyebrow{font-size:clamp(11px,1.3vw,13px); letter-spacing:.24em; text-transform:uppercase; color:var(--accent); font-weight:600}
+
+  /* header */
+  header{padding:clamp(72px,13vh,140px) 0 clamp(40px,7vh,64px); border-bottom:var(--line)}
+  .back{display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--mut);
+    font-size:13px; letter-spacing:.02em; margin-bottom:clamp(28px,5vh,44px); transition:color .25s var(--ease)}
+  .back:hover{color:var(--ink)}
+  .back svg{width:14px; height:14px}
+  header h1{font-size:clamp(32px,5.4vw,60px); line-height:1.03; font-weight:800; letter-spacing:-.015em;
+    margin:1.4rem 0 1.3rem; max-width:20ch;
+    background:linear-gradient(180deg,#FFFFFF,#C2CAD8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  header .lede{font-size:clamp(16px,1.9vw,20px); line-height:1.65; color:var(--sub); max-width:56ch; margin:0}
+  header .method{margin-top:1.6rem; font-size:13.5px; line-height:1.6; color:var(--mut); max-width:60ch}
+
+  /* common threads */
+  .threads{padding:clamp(48px,8vh,80px) 0; border-bottom:var(--line)}
+  .threads h2{font-size:clamp(22px,3vw,32px); font-weight:800; letter-spacing:-.01em; margin:0 0 clamp(24px,4vh,36px)}
+  .tgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(16px,2.4vw,26px)}
+  .thread{padding:24px 22px; border-radius:16px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft)}
+  .thread h3{font-size:15.5px; font-weight:700; margin:0 0 .5rem; color:var(--accent-strong)}
+  .thread p{font-size:14px; line-height:1.6; color:var(--sub); margin:0}
+  @media (max-width:720px){ .tgrid{grid-template-columns:1fr} }
+
+  /* interview cards */
+  .interviews{padding:clamp(52px,9vh,88px) 0 clamp(72px,11vh,120px)}
+  .interviews > .lab{font-size:11.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--mut); font-weight:600; margin-bottom:clamp(26px,4vh,40px)}
+  .cards{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(18px,2.6vw,28px)}
+  @media (max-width:820px){ .cards{grid-template-columns:1fr} }
+  .card{padding:clamp(26px,3vw,34px); border-radius:18px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft);
+    display:flex; flex-direction:column}
+  .card .n{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700}
+  .card h3{font-size:clamp(18px,2vw,22px); font-weight:700; line-height:1.2; margin:.7rem 0 .35rem; letter-spacing:-.01em}
+  .card .org{font-size:13px; color:var(--mut); margin:0 0 1.2rem; line-height:1.5}
+  .card ul{list-style:none; margin:0; padding:0; display:grid; gap:13px}
+  .card li{position:relative; padding-left:22px; font-size:14.5px; line-height:1.58; color:var(--sub)}
+  .card li::before{content:""; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:2px; background:var(--accent)}
+  .card blockquote{margin:1.4rem 0 0; padding:16px 18px; border-radius:12px; border-left:3px solid var(--accent-line);
+    background:var(--surface-2); font-family:var(--serif); font-size:15.5px; line-height:1.55; color:var(--ink); font-style:italic}
+
+  footer{border-top:var(--line); padding:clamp(48px,8vh,80px) 0}
+  footer p{font-size:13px; line-height:1.7; color:var(--mut); margin:0 0 .7rem; max-width:64ch}
+  footer a{color:var(--accent-strong); text-decoration:none; border-bottom:1px solid var(--accent-line)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      Trust the Machine
+    </a>
+    <div class="eyebrow">Field interviews · anonymized</div>
+    <h1>What the people building it actually said.</h1>
+    <p class="lede">Nine practitioners working in China's autonomous-driving industry — engineers, operations, safety, and commercialization — on what earns public trust and what quietly erodes it.</p>
+    <p class="method">Summaries are condensed from recorded interviews. Names and employers are withheld; each person is described only by role and organization type. Quotes are translated and tightened for length.</p>
+  </div>
+</header>
+
+<section class="threads">
+  <div class="wrap">
+    <h2>What they tend to agree on</h2>
+    <div class="tgrid">
+      <div class="thread">
+        <h3>The floor matters more than the ceiling</h3>
+        <p>Trust rests on the worst case a system can produce, not its best. Regulators and engineers alike prize high redundancy and a safe fallback over a dazzling demo.</p>
+      </div>
+      <div class="thread">
+        <h3>Trust is ridden, not argued</h3>
+        <p>Almost everyone lands in the same place: people form fair judgments only after they personally ride one. Working in the industry doesn't grant trust automatically — experience does.</p>
+      </div>
+      <div class="thread">
+        <h3>Run first, legislate later</h3>
+        <p>Several describe China's approach as a whitelist that opens zone by zone once capability is proven — pragmatic, but leaving law, insurance, and liability lagging the technology.</p>
+      </div>
+      <div class="thread">
+        <h3>The trolley problem is a distraction</h3>
+        <p>To a vehicle the answer is usually just "brake." The harder, quieter problem is explainability — when a learned model errs, no one can fully reconstruct why, which makes liability murky.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="interviews">
+  <div class="wrap">
+    <div class="lab">Nine voices</div>
+    <div class="cards">
+
+      <article class="card">
+        <div class="n">01 · Operations</div>
+        <h3>Robotaxi operations lead</h3>
+        <p class="org">Ride-hailing operator running robotaxis with a technology partner</p>
+        <ul>
+          <li>Policy uncertainty is the biggest operational risk; one high-profile incident triggered nationwide tightening that disrupted rollout plans, cost, and pace.</li>
+          <li>Argues robotaxis are safer than regular taxis through enforced safety flows: the car won't move without a seatbelt, and stops itself if a door opens mid-trip.</li>
+          <li>Runs a mature tiered incident response (P0/P1/P2): in-car SOS, live remote operators, and ground crew dispatched to reach the scene within a set time.</li>
+          <li>Sees the L4-to-L5 gap as mostly algorithm, vision, and hardware maturity; today's service already covers roughly 80% of ride-hailing hotspots.</li>
+        </ul>
+        <blockquote>"Honestly I feel a robotaxi is actually safer than a regular taxi — its whole chain of safety-redundant procedures protects the passenger the entire trip."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">02 · Engineering</div>
+        <h3>Perception &amp; decision engineer</h3>
+        <p class="org">Autonomous-driving technology company</p>
+        <ul>
+          <li>Frames the L4 stack as a layered closed loop: sensor perception, intent prediction, finite-state decision, path planning, and vehicle-side control.</li>
+          <li>Handles corner cases by collecting rare scenarios and generating validated simulation data, then ranking threats by distance, speed, collision probability, and harm.</li>
+          <li>On no-win crashes there is no mature industry standard; the firm weights all lives equally and defaults to braking and avoidance rather than choosing whom to spare.</li>
+          <li>Names deep-learning explainability as the core bottleneck: unexplainable decisions make post-accident liability and reconstruction extremely hard.</li>
+        </ul>
+        <blockquote>"A rule you can derive mathematically; a deep-learning model is a huge pile of fitted parameters — meet data it has never seen and the output stops being explainable."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">03 · Operations</div>
+        <h3>Operations &amp; regulatory strategy</h3>
+        <p class="org">Robotaxi operator</p>
+        <ul>
+          <li>Reads China's regulation as a "whitelist": nothing is allowed until proven, then access opens zone by zone — trending steadily more open over time.</li>
+          <li>Most complaints aren't about safety but a user-education gap: fixed pickup points feel like bus stops beside a human driver's flexible curb stops.</li>
+          <li>Argues trust ultimately rests on solving the core need — moving safely from A to B at low cost, whatever the vehicle.</li>
+          <li>China's denser, more chaotic roads push operators toward rule-bound, safety-first strategies rather than the openness-first approach seen abroad.</li>
+        </ul>
+        <blockquote>"Regulators default to no, then grant you space once you prove a capability — so the trajectory is always toward more openness, never less."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">04 · Engineering</div>
+        <h3>Autonomy / planning engineer</h3>
+        <p class="org">AV software company</p>
+        <ul>
+          <li>Treats driving as multi-objective constrained optimization: safety is a hard constraint, traffic rules a strong one, comfort and efficiency optimized within them.</li>
+          <li>Builds trust by making models strong enough to cover ~99% of scenes, then catching corner cases through data-return loops and simulation.</li>
+          <li>Believes the surest route to public confidence is more people personally riding, so the system is judged fairly rather than as "does everything" or "worse than a novice."</li>
+          <li>Flags an emerging risk: pedestrians exploiting guaranteed yielding, cutting across confident the car will always stop.</li>
+        </ul>
+        <blockquote>"Once people ride these cars themselves, they form a far more objective judgment of what the system can and cannot actually do."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">05 · Data operations</div>
+        <h3>Data operations &amp; delivery lead</h3>
+        <p class="org">Robotaxi operator / AV data services</p>
+        <ul>
+          <li>Calls the trolley problem a non-issue: for a vehicle the technical answer is simply to brake, not to perform moral calculus.</li>
+          <li>Separates consumer ADAS — a comfort feature, "70–80 points," never meant to solve A-to-B — from full robotaxi autonomy.</li>
+          <li>Sees trust as four dimensions — regulation, technology maturity, industrialization cost, and public cognition — and favors "run first, legislate later."</li>
+          <li>Warns the real hidden risk is that models keep improving while no one defines what a perfect "100 points" even looks like.</li>
+        </ul>
+        <blockquote>"Everyone advertises that the technology improved, but never tells you what 100 points should be — that undefined ceiling is the biggest hidden risk."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">06 · Product</div>
+        <h3>Product operations, robotaxi platform</h3>
+        <p class="org">Robotaxi operator</p>
+        <ul>
+          <li>Speaks first as a driver: highway assist genuinely cuts fatigue, but city roads feel risky enough that he avoids engaging it.</li>
+          <li>Argues trust is earned incrementally through personal experience, not conferred automatically by working in the industry.</li>
+          <li>Stresses robotaxi value is geographically uneven and bound to its operating domain; forcing it into unsuitable areas creates traffic problems, not benefit.</li>
+          <li>Wants unified national legislation on top of traffic law, since fragmented local rules and divergent company definitions of edge cases threaten public safety.</li>
+        </ul>
+        <blockquote>"Without a clear higher-level standard, each company's race to define autonomy differently could create real threats to public traffic."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">07 · Commercialization</div>
+        <h3>AV commercialization lead</h3>
+        <p class="org">Robotaxi operator's L4 business unit</p>
+        <ul>
+          <li>Public trust hinges on the safety floor, not the ceiling; regulators favor high-redundancy systems and confine vision-only "brute force" to simpler roads.</li>
+          <li>Sees a real split: a low-floor/high-ceiling data-driven path (very smart but occasionally dumb) versus a high-floor/lower-ceiling sensor-heavy path (safe but limited).</li>
+          <li>L4 deploys where the economics close, not where the tech allows — dense, standardized urban roads; rural and intercity routes fail on scale, jurisdiction, and rail competition.</li>
+          <li>Automakers own the full "golden" training data — auto-collected near-miss and collision events — and argues China needn't publish safety data publicly, unlike the US disclosure model.</li>
+        </ul>
+        <blockquote>"Facing anything new we're contradictory: it must never cause an accident, yet we also want it perfectly idealized — that tension is why both approaches survive at once."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">08 · Engineering</div>
+        <h3>AV algorithm engineer</h3>
+        <p class="org">Robotaxi operator running L4 vehicles from third-party AV firms</p>
+        <ul>
+          <li>Safety is the first-order metric across L2–L4; decision modules are moving from modular pipelines toward end-to-end models trained to imitate human driving.</li>
+          <li>Handles known corner cases — darting pedestrians, extreme weather — through targeted data collection, simulation, and data synthesis.</li>
+          <li>Rejects engineering the trolley problem; models converge to the aggregate of human choices via shadow-mode comparison, treating human decisions as ground truth.</li>
+          <li>Believes the public over-fears machine error while tolerating human error, sensing a "loss of control" anxiety that wider, calmer adoption could ease.</li>
+        </ul>
+        <blockquote>"People accept that humans err as fate or bad luck, but they can't accept that a machine makes mistakes too."</blockquote>
+      </article>
+
+      <article class="card">
+        <div class="n">09 · Product</div>
+        <h3>Product &amp; technology manager</h3>
+        <p class="org">Robotaxi operator</p>
+        <ul>
+          <li>Says the main barrier to L5 isn't technology, which is nearing maturity, but law, insurance, liability rules, and public acceptance.</li>
+          <li>Distinguishes safety (quantifiable, rule-controllable) from risk (probabilistic, never zero); trolley-type dilemmas are rare — an ethics and regulation issue more than an algorithm one.</li>
+          <li>Ranks safety first, then rules; the system can "downgrade" — break a rule to avoid a child — rather than choose between two fixed options.</li>
+          <li>Notes speed and zone limits are phased and set by road law, matching human limits, so they don't meaningfully hurt commercialization.</li>
+        </ul>
+        <blockquote>"The technology is basically there; what still lags is law, insurance, liability, and the public's willingness to just get in without a second thought."</blockquote>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>These summaries inform the <a href="report/trust_report.html">policy report</a> and the <a href="index.html">interactive experience</a>. Interviewees are anonymized; the drama in the experience is invented, the insights here are not.</p>
+    <p>Trust the Machine — a public-interest research initiative.</p>
+  </div>
+</footer>
+
+</body>
+</html>

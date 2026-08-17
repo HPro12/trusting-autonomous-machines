@@ -7,14 +7,14 @@
 <title>Field notes</title>
 <meta name="description" content="Anonymized summaries of interviews with autonomous-driving professionals working in China.">
 <style>
-  /* Palette inherited from the main experience ("Deliberate"): graphite base,
-     one moonlight-azure accent. English-only, like the policy report. */
+  /* Light briefing-paper palette — matches the policy report (navy + teal, coral accents). */
   :root{
-    --bg:#0B0C0F; --surface:#14161C; --surface-2:#1B1E25;
-    --line:1px solid rgba(255,255,255,.08); --line-strong:1px solid rgba(255,255,255,.15);
-    --ink:#ECEEF2; --sub:#B7BCC6; --mut:#888D98;
-    --accent:#8AB0E0; --accent-strong:#A6C4EC; --accent-tint:rgba(138,176,224,.13); --accent-line:rgba(138,176,224,.34);
-    --shadow-soft:0 8px 30px rgba(0,0,0,.30);
+    --bg:#FBFBF8; --surface:#FFFFFF; --surface-2:#EEF2F7;
+    --line:1px solid #E2E7EE; --line-strong:1px solid #D3DAE4;
+    --ink:#1A2330; --sub:#48525F; --mut:#7B8695;
+    --navy:#14243D; --navy-2:#0F1B2E;
+    --accent:#2A9D8F; --accent-strong:#1F7A6E; --accent-tint:rgba(42,157,143,.12); --accent-line:rgba(42,157,143,.30);
+    --shadow-soft:0 6px 22px rgba(20,36,61,.07);
     --ease:cubic-bezier(.22,.68,0,1);
     --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
@@ -24,25 +24,27 @@
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{margin:0; font-family:var(--font); color:var(--ink); background:var(--bg);
-    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; letter-spacing:.005em;
-    background-image:radial-gradient(1100px 700px at 82% -10%, rgba(138,176,224,.06), transparent 58%);}
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; letter-spacing:.005em;}
   a{color:inherit}
-  ::selection{background:rgba(138,176,224,.26)}
+  h1,h2,h3,h4{font-family:var(--serif)}
+  ::selection{background:rgba(42,157,143,.22)}
   :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px}
   .wrap{max-width:var(--wrap); margin:0 auto; padding:0 clamp(22px,5vw,44px)}
   .eyebrow{font-size:clamp(11px,1.3vw,13px); letter-spacing:.24em; text-transform:uppercase; color:var(--accent); font-weight:600}
 
-  /* header */
-  header{padding:clamp(72px,13vh,140px) 0 clamp(40px,7vh,64px); border-bottom:var(--line)}
-  .back{display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--mut);
+  /* header — navy masthead over the light body, mirroring the report cover */
+  header{padding:clamp(72px,13vh,140px) 0 clamp(48px,8vh,72px); color:#E9F0F8;
+    background:radial-gradient(1100px 620px at 82% -10%, rgba(42,157,143,.22), transparent 60%), linear-gradient(180deg,#14243D,#0F1B2E)}
+  header .eyebrow{color:#8FD3C8}
+  .back{display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:rgba(233,240,248,.7);
     font-size:13px; letter-spacing:.02em; margin-bottom:clamp(28px,5vh,44px); transition:color .25s var(--ease)}
-  .back:hover{color:var(--ink)}
+  .back:hover{color:#fff}
   .back svg{width:14px; height:14px}
   header h1{font-size:clamp(32px,5.4vw,60px); line-height:1.03; font-weight:800; letter-spacing:-.015em;
     margin:1.4rem 0 1.3rem; max-width:20ch;
     background:linear-gradient(180deg,#FFFFFF,#C2CAD8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
-  header .lede{font-size:clamp(16px,1.9vw,20px); line-height:1.65; color:var(--sub); max-width:56ch; margin:0}
-  header .method{margin-top:1.6rem; font-size:13.5px; line-height:1.6; color:var(--mut); max-width:60ch}
+  header .lede{font-size:clamp(16px,1.9vw,20px); line-height:1.65; color:#B9C6D8; max-width:56ch; margin:0}
+  header .method{margin-top:1.6rem; font-size:13.5px; line-height:1.6; color:rgba(233,240,248,.6); max-width:60ch}
 
   /* common threads */
   .threads{padding:clamp(48px,8vh,80px) 0; border-bottom:var(--line)}

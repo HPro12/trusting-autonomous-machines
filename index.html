@@ -65,11 +65,19 @@
   @media (max-width:640px){ .nav-links{display:none} }
 
   /* ---------------- hero ---------------- */
-  .hero{position:relative; min-height:100dvh; display:flex; align-items:center; overflow:hidden}
+  .hero{position:relative; min-height:clamp(500px,70vh,740px); display:flex; align-items:center; overflow:hidden}
   #bg{position:absolute; inset:0; width:100%; height:100%; z-index:0; display:block}
   .hero-veil{position:absolute; inset:0; z-index:1; pointer-events:none;
     background:radial-gradient(1200px 780px at 50% 32%, rgba(24,30,42,.22), rgba(11,12,15,.74) 66%, rgba(11,12,15,.97));}
-  .hero .wrap{position:relative; z-index:2; padding-top:15vh; padding-bottom:15vh}
+  .hero .wrap{position:relative; z-index:2; padding-top:clamp(94px,13vh,148px); padding-bottom:clamp(60px,9vh,108px)}
+  /* a quiet "scroll to the road" cue under the hero CTA */
+  .hero .to-road{display:inline-flex; align-items:center; gap:9px; margin-top:2.4rem; color:var(--mut); font-size:13px;
+    letter-spacing:.03em; text-decoration:none; transition:color .25s var(--ease)}
+  .hero .to-road:hover{color:var(--ink)}
+  .hero .to-road .dot{width:26px; height:26px; border-radius:999px; border:var(--line); display:grid; place-items:center}
+  .hero .to-road svg{width:13px; height:13px; animation:nudge 2.2s var(--ease) infinite}
+  @keyframes nudge{0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)}}
+  @media (prefers-reduced-motion: reduce){ .hero .to-road svg{animation:none} }
   .hero .eyebrow{margin-bottom:1.6rem}
   .hero h1{font-size:clamp(44px,8.6vw,98px); line-height:.98; font-weight:800; margin:0 0 1.6rem; letter-spacing:-.015em; max-width:14ch}
   .hero .lede{font-size:clamp(17px,2.2vw,23px); line-height:1.6; color:var(--sub); max-width:46ch; margin:0 0 2.8rem; font-weight:400}
@@ -162,6 +170,34 @@
   .foot p{font-size:13px; line-height:1.65; color:var(--mut); margin:0}
   .foot .keys{color:var(--sub)}
 
+  /* ---------------- stakes: oversized stat band (visual, big-number rhythm) ---------------- */
+  .stakes{border-top:var(--line); background:radial-gradient(1100px 640px at 14% -22%, rgba(138,176,224,.07), transparent 60%)}
+  .statband{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(28px,4.4vw,60px); margin-top:clamp(46px,7vh,72px)}
+  .stat{position:relative}
+  .stat .fig{font-size:clamp(48px,8.4vw,92px); font-weight:800; letter-spacing:-.03em; line-height:.9;
+    background:linear-gradient(180deg,#EAF1FB,var(--accent)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  .stat .cap{margin-top:1.1rem; font-size:15px; line-height:1.55; color:var(--sub); max-width:34ch}
+  .stat .src{display:block; margin-top:.7rem; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--mut)}
+  @media (max-width:760px){ .statband{grid-template-columns:1fr; gap:36px} .stat .cap{max-width:42ch} }
+
+  /* ---------------- levels: the autonomy ladder (signature diagram) ---------------- */
+  .levels{border-top:var(--line)}
+  .ladder{margin-top:clamp(44px,7vh,72px); display:grid; grid-template-columns:repeat(6,1fr); gap:10px}
+  .rung{padding:20px 15px 17px; border-radius:15px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft);
+    display:flex; flex-direction:column; min-height:172px}
+  .rung .lv{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--mut); font-weight:700}
+  .rung .hd{font-size:clamp(14px,1.5vw,17px); font-weight:700; margin:.55rem 0 .45rem; line-height:1.15}
+  .rung .ds{font-size:12.5px; line-height:1.5; color:var(--mut); margin:0}
+  .rung.mark{border-color:var(--accent-line); background:var(--surface-2)}
+  .rung.mark .lv{color:var(--accent)}
+  .rung .you{margin-top:auto; padding-top:14px}
+  .rung .you span{display:inline-block; font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--accent-strong);
+    padding:4px 10px; border-radius:999px; border:1px solid var(--accent-line); background:var(--accent-tint); line-height:1.35}
+  .ladder-scale{margin-top:18px; display:flex; align-items:center; gap:14px; color:var(--mut); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase}
+  .ladder-scale .bar{flex:1; height:3px; border-radius:3px; background:linear-gradient(90deg,rgba(138,176,224,.14),var(--accent))}
+  @media (max-width:880px){ .ladder{grid-template-columns:repeat(3,1fr)} .rung{min-height:0} }
+  @media (max-width:520px){ .ladder{grid-template-columns:repeat(2,1fr)} .ladder-scale{display:none} }
+
   /* ---------------- reveal-on-scroll ---------------- */
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .85s var(--ease), transform .85s var(--ease)}
   .reveal.in{opacity:1; transform:none}
@@ -230,8 +266,8 @@
   <div class="nav-inner">
     <span class="nav-mark" data-i18n>Trust&nbsp;the&nbsp;Machine</span>
     <div class="nav-links">
-      <a href="#about" data-i18n>The experience</a>
       <a href="#arc" data-i18n>The road</a>
+      <a href="#levels" data-i18n>The levels</a>
       <a href="#research" data-i18n>The research</a>
     </div>
     <a class="cta" id="nav-cta" href="can_you_trust_your_car_chapter1.html" style="padding:8px 10px 8px 18px; font-size:13.5px; box-shadow:none">
@@ -256,8 +292,102 @@
       </a>
       <button class="restart" id="restart-hero" hidden type="button" data-i18n>Start over from the beginning</button>
     </div>
+    <a class="to-road" href="#arc">
+      <span data-i18n>Five chapters wait below</span>
+      <span class="dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#B7BCC6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span>
+    </a>
   </div>
 </header>
+
+<!-- ============================ THE ROAD (the game, right below the title) ============================ -->
+<section class="arc" id="arc">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow" data-i18n>The road · five chapters</div>
+      <h2 class="gradtext" data-i18n>One road. Five ways of seeing it.</h2>
+      <p data-i18n>You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.</p>
+    </div>
+    <div class="road" id="road"><!-- chapters injected --></div>
+  </div>
+</section>
+
+<!-- ============================ THE STAKES (big-number stat band) ============================ -->
+<section class="stakes" id="stakes">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow" data-i18n>Why the question is hard</div>
+      <h2 class="gradtext" data-i18n>Three numbers you'll carry.</h2>
+      <p data-i18n>Not talking points. Each one is a moment inside the drive, and each traces to a real source.</p>
+    </div>
+    <div class="statband">
+      <div class="stat reveal">
+        <div class="fig">68<span style="font-size:.5em;font-weight:700;letter-spacing:0"> m</span></div>
+        <p class="cap" data-i18n>driven completely blind during a two-second glance at your phone, at highway speed.</p>
+        <span class="src" data-i18n>NHTSA · VTTI</span>
+      </div>
+      <div class="stat reveal">
+        <div class="fig">82<span style="font-size:.5em;font-weight:700;letter-spacing:0"> %</span></div>
+        <p class="cap" data-i18n>fewer injury crashes claimed for one driverless fleet, measured against human drivers.</p>
+        <span class="src" data-i18n>Waymo · Swiss Re</span>
+      </div>
+      <div class="stat reveal">
+        <div class="fig">248,000</div>
+        <p class="cap" data-i18n>lives lost on China's roads every year, the human baseline any machine is measured against.</p>
+        <span class="src" data-i18n>WHO, 2023</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THE LEVELS (autonomy ladder diagram) ============================ -->
+<section class="levels" id="levels">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow" data-i18n>The machine · what it can actually do</div>
+      <h2 class="gradtext" data-i18n>Six levels. Only two share the road.</h2>
+      <p data-i18n>"Self-driving" isn't one thing. It's a ladder. Tonight you drive Level 2, hands off but eyes on. In the last chapter, you decide whether a city is ready for Level 4.</p>
+    </div>
+    <div class="ladder reveal" role="img" aria-label="The six SAE levels of driving automation, from Level 0 to Level 5">
+      <div class="rung">
+        <div class="lv">L0</div>
+        <div class="hd" data-i18n>No automation</div>
+        <p class="ds" data-i18n>You do everything. Wheel, pedals, eyes, all yours.</p>
+      </div>
+      <div class="rung">
+        <div class="lv">L1</div>
+        <div class="hd" data-i18n>Assistance</div>
+        <p class="ds" data-i18n>One thing at a time. Cruise holds speed, or lane-keep nudges the wheel. Not both.</p>
+      </div>
+      <div class="rung mark">
+        <div class="lv">L2</div>
+        <div class="hd" data-i18n>Partial</div>
+        <p class="ds" data-i18n>Steers and holds speed together, but you watch every second and take over instantly.</p>
+        <div class="you"><span data-i18n>You drive this tonight</span></div>
+      </div>
+      <div class="rung">
+        <div class="lv">L3</div>
+        <div class="hd" data-i18n>Conditional</div>
+        <p class="ds" data-i18n>The car drives itself in limited conditions, and can hand back with little warning.</p>
+      </div>
+      <div class="rung mark">
+        <div class="lv">L4</div>
+        <div class="hd" data-i18n>High</div>
+        <p class="ds" data-i18n>No one at the wheel, but only inside mapped city zones. This is a robotaxi.</p>
+        <div class="you"><span data-i18n>Chapter 5 decides on this</span></div>
+      </div>
+      <div class="rung">
+        <div class="lv">L5</div>
+        <div class="hd" data-i18n>Full</div>
+        <p class="ds" data-i18n>Drives anywhere a person could, in any conditions. Does not exist yet.</p>
+      </div>
+    </div>
+    <div class="ladder-scale reveal" aria-hidden="true">
+      <span data-i18n>You drive</span>
+      <span class="bar"></span>
+      <span data-i18n>The car drives</span>
+    </div>
+  </div>
+</section>
 
 <!-- ============================ WHAT THIS IS ============================ -->
 <section class="about" id="about">
@@ -283,18 +413,6 @@
         <p data-i18n>The perspective changes each chapter; the world stays the same. By the end the goal isn't agreement. It's understanding why experts disagree.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============================ THE ROAD ============================ -->
-<section class="arc" id="arc">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow" data-i18n>The road · five chapters</div>
-      <h2 class="gradtext" data-i18n>One road. Five ways of seeing it.</h2>
-      <p data-i18n>You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.</p>
-    </div>
-    <div class="road" id="road"><!-- chapters injected --></div>
   </div>
 </section>
 
@@ -354,7 +472,9 @@ window.ZH = {
   "Trust the Machine":"信任机器",
   "The experience":"体验",
   "The road":"旅程",
+  "The levels":"分级",
   "The research":"研究",
+  "Five chapters wait below":"五个章节，就在下方",
   "An interactive experience · autonomous driving":"一次互动体验 · 自动驾驶",
   "Experience autonomous driving from the inside, as driver, engineer, regulator, and citizen, before you decide what you think of it.":"从内部体验自动驾驶——作为驾驶员、工程师、监管者与市民——然后再决定你如何看待它。",
   "Start over from the beginning":"从头重新开始",
@@ -374,6 +494,36 @@ window.ZH = {
   "The road · five chapters":"旅程 · 五个章节",
   "One road. Five ways of seeing it.":"同一条路。五种观看它的方式。",
   "You start behind the wheel and end deciding whether a city should trust these cars at all. Same road, every time. Only your seat changes.":"你从方向盘后出发，最终决定一座城市是否该信任这些车。每一次都是同一条路，改变的只有你的座位。",
+  // — the stakes / stat band —
+  "Why the question is hard":"这个问题为何艰难",
+  "Three numbers you'll carry.":"三个你会一直记住的数字。",
+  "Not talking points. Each one is a moment inside the drive, and each traces to a real source.":"不是空谈。每一个都是驾驶途中的一个真实瞬间，而且都能追溯到真实来源。",
+  "driven completely blind during a two-second glance at your phone, at highway speed.":"在高速上瞟一眼手机的两秒里，完全盲开的距离。",
+  "NHTSA · VTTI":"美国交通安全管理局 · VTTI",
+  "fewer injury crashes claimed for one driverless fleet, measured against human drivers.":"某无人车队宣称、相较人类驾驶员减少的伤人事故比例。",
+  "Waymo · Swiss Re":"Waymo · 瑞士再保险",
+  "lives lost on China's roads every year, the human baseline any machine is measured against.":"中国每年在道路上逝去的生命——任何机器都要以此为人类基准来衡量。",
+  "WHO, 2023":"世界卫生组织，2023",
+  // — the levels / autonomy ladder —
+  "The machine · what it can actually do":"机器 · 它究竟能做什么",
+  "Six levels. Only two share the road.":"六个等级。真正上路的只有两个。",
+  "\"Self-driving\" isn't one thing. It's a ladder. Tonight you drive Level 2, hands off but eyes on. In the last chapter, you decide whether a city is ready for Level 4.":"“自动驾驶”并非单一概念，而是一道阶梯。今晚你驾驶的是 L2——手可以放开，但眼睛不能离开。在最后一章，你要决定一座城市是否已为 L4 做好准备。",
+  "No automation":"无自动化",
+  "You do everything. Wheel, pedals, eyes, all yours.":"一切都由你来。方向盘、踏板、眼睛，全归你。",
+  "Assistance":"辅助",
+  "One thing at a time. Cruise holds speed, or lane-keep nudges the wheel. Not both.":"一次只做一件事。定速巡航保持车速，或车道保持轻推方向盘——不会两者兼有。",
+  "Partial":"部分自动化",
+  "Steers and holds speed together, but you watch every second and take over instantly.":"同时控制转向与车速，但你必须时刻盯着，随时立即接管。",
+  "You drive this tonight":"今晚你驾驶的就是它",
+  "Conditional":"有条件自动化",
+  "The car drives itself in limited conditions, and can hand back with little warning.":"车在有限条件下自行驾驶，且可能几乎不加预警便交还给你。",
+  "High":"高度自动化",
+  "No one at the wheel, but only inside mapped city zones. This is a robotaxi.":"无人握方向盘，但仅限于已精细建图的城市区域。这就是无人出租车。",
+  "Chapter 5 decides on this":"第 5 章要为它做决定",
+  "Full":"完全自动化",
+  "Drives anywhere a person could, in any conditions. Does not exist yet.":"能在任何人类可及之处、任何条件下驾驶。目前尚不存在。",
+  "You drive":"你在开",
+  "The car drives":"车在开",
   // — research —
   "Grounded, not guessed.":"基于事实，而非臆测。",
   "A public-interest education project, built on primary research rather than headlines.":"一个公益教育项目，建立在一手研究之上，而非新闻头条。",
@@ -494,7 +644,7 @@ function render(){
   document.getElementById('restart-hero').hidden=!began;
   document.getElementById('restart-foot').hidden=!(doneCount>0);
 
-  if(window.Glossary){ Glossary.wrap(document.getElementById('road')); Glossary.wrap(document.getElementById('research')); }
+  if(window.Glossary){ ['road','stakes','levels','research'].forEach(function(id){ var el=document.getElementById(id); if(el) Glossary.wrap(el); }); }
   observeReveals();
 }
 

@@ -88,38 +88,36 @@
   .opt .k{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#0a1330;color:#8AB0E0;font-weight:800;border:1px solid rgba(138,176,224,.4)}
   .opt .t{font-size:clamp(15px,1.8vw,20px);font-weight:700}
   .opt .s{font-size:clamp(11px,1.3vw,14px);color:#9aa6c2}
+  #o-did{font-size:clamp(18px,2.6vw,27px);font-weight:700;line-height:1.4;color:#fff;max-width:min(700px,92vw);margin-bottom:clamp(14px,2.4vh,26px)}
   #o-big{font-size:clamp(46px,11vw,120px);font-weight:800;line-height:.92;color:#fff}
-  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:1rem}
-  #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;max-width:min(680px,92vw)}
-  #o-plain{font-size:clamp(13px,1.6vw,17px);color:#dbe6ff;line-height:1.5;margin-top:1.1rem;max-width:min(680px,92vw);
-    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.7rem 1rem;text-align:left}
+  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:.9rem}
+  #o-mean{font-size:clamp(14px,1.8vw,19px);color:#dbe6ff;line-height:1.58;margin-top:clamp(14px,2.4vh,24px);max-width:min(680px,92vw);
+    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.9rem 1.15rem;text-align:left}
   .fz-help{font-size:clamp(11px,1.3vw,13px);color:#9aa6c2;margin:2px 0 10px}
-  .o-stats{display:flex;gap:clamp(16px,3vw,48px);margin-top:clamp(16px,3vh,30px);flex-wrap:wrap;justify-content:center}
-  .o-stat .v{font-size:clamp(22px,3vw,34px);font-weight:800}.o-stat .v.bad{color:#ff5a6a}.o-stat .v.ok{color:#f5b13f}.o-stat .v.good{color:#42d98a}
-  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}.o-cite{display:block;font-size:clamp(9px,1vw,11px);color:#7f8db0;text-decoration:none;margin-top:5px;border-bottom:1px dotted #566}.o-cite:hover{color:#9fb0d8}
-  .o-delta{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;justify-content:center}
-  .chip{font-size:clamp(11px,1.3vw,14px);font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(150,180,255,.14);background:rgba(24,32,58,.72);color:#9aa6c2}
-  .chip.up{color:#42d98a;border-color:rgba(66,217,138,.4)}.chip.down{color:#ff5a6a;border-color:rgba(255,90,106,.4)}
-  .o-quote{margin-top:clamp(16px,3vh,28px);max-width:min(620px,90vw);font-size:clamp(13px,1.6vw,17px);line-height:1.55;color:#cfeaf5;border-left:3px solid #8AB0E0;padding-left:14px;text-align:left}
-  .o-quote .who{display:block;margin-top:.5rem;color:#9aa6c2;font-style:italic}
-  .cont{margin-top:clamp(20px,3.4vh,40px);background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;
+  .o-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:clamp(20px,3.4vh,40px)}
+  .cont{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;
     padding:14px 34px;border-radius:12px;font-size:clamp(15px,1.8vw,19px);font-weight:800;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s}
   #outcome.ready .cont{opacity:1;pointer-events:auto}
+  .o-again{background:transparent;border:1px solid rgba(150,180,255,.28);color:#9aa6c2;
+    padding:13px 24px;border-radius:12px;font-size:clamp(13px,1.6vw,16px);font-weight:700;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s,color .2s,border-color .2s}
+  .o-again:hover{color:#eaf0ff;border-color:#8AB0E0}
+  #outcome.ready .o-again{opacity:1;pointer-events:auto}
+  .o-again.hide{display:none}
   .db-head{font-size:clamp(11px,1.4vw,14px);letter-spacing:.16em;text-transform:uppercase;color:#f5b13f;margin-bottom:.5rem}
   .db-title{font-size:clamp(24px,3.4vw,38px);font-weight:800;margin-bottom:1.2rem}
-  .db-meters{display:flex;gap:clamp(16px,3vw,32px);flex-wrap:wrap;justify-content:center;margin-bottom:1.3rem;width:100%}
-  .db-meter{flex:1 1 0;min-width:0;text-align:left}
-  .db-meter .ml{display:flex;justify-content:space-between;font-size:clamp(11px,1.3vw,13px);letter-spacing:.06em;text-transform:uppercase;color:#9aa6c2;margin-bottom:6px}
-  .db-meter .mbar{height:10px;border-radius:6px;background:#161d2c;overflow:hidden}
-  .db-meter .mfill{height:100%;width:0;border-radius:6px;transition:width .9s ease;background:linear-gradient(90deg,#ff5a6a,#f5b13f,#42d98a)}
   .db-timeline{width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(150,180,255,.14);margin-bottom:1.2rem}
   .db-row{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:11px 15px;background:rgba(14,20,40,.7);text-align:left;align-items:baseline}
   .db-row .rw-scene{font-size:clamp(11px,1.3vw,13px);color:#9aa6c2;grid-column:1;grid-row:1}
   .db-row .rw-call{font-size:clamp(14px,1.7vw,17px);font-weight:700;color:#eaf0ff;grid-column:1;grid-row:2}
-  .db-row .rw-cons{grid-column:2;grid-row:1/3;align-self:center;font-size:clamp(12px,1.4vw,14px);color:#8AB0E0;text-align:right}
-  .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
-  .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
+  .db-row .rw-explain{grid-column:2;grid-row:1/3;align-self:center;background:transparent;border:1px solid rgba(138,176,224,.4);color:#8AB0E0;padding:6px 14px;border-radius:9px;font-size:clamp(12px,1.4vw,14px);font-weight:600;cursor:pointer;white-space:nowrap}
+  .db-row .rw-explain:hover{border-color:#8AB0E0;background:rgba(138,176,224,.12)}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
+  .db-modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(4,7,16,.72);padding:5vw}
+  .db-modal.show{display:flex}
+  .db-modal-card{width:min(460px,92vw);background:linear-gradient(180deg,#1b2444,#141a30);border:1px solid rgba(150,180,255,.18);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:14px;text-align:left}
+  .db-modal-scene{font-size:clamp(11px,1.3vw,13px);letter-spacing:.06em;text-transform:uppercase;color:#9aa6c2}
+  .db-modal-body{font-size:clamp(14px,1.7vw,17px);line-height:1.6;color:#eaf0ff}
+  .db-modal .db-btn{align-self:flex-end;padding:10px 22px}
   @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm,#beat.ready #beat-hint,#beat-hint .chev{animation:none} }
 
   /* ---- Chapter 2: sensor HUD, perception overlays, fusion panel ---- */
@@ -210,29 +208,32 @@
 </div>
 
 <div id="outcome"><div style="display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)">
-  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
-  <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
-  <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont" data-i18n>Continue →</button>
+  <div id="o-did"></div>
+  <div id="o-big"></div><div id="o-label"></div>
+  <div id="o-mean"></div>
+  <div class="o-actions">
+    <button class="o-again" id="o-again" data-i18n>← Choose again</button>
+    <button class="cont" id="o-cont" data-i18n>Continue →</button>
+  </div>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
-  <div class="db-head">Chapter 1 · Debrief</div>
-  <div class="db-title">Your last human decision</div>
-  <div class="db-meters">
-    <div class="db-meter"><div class="ml"><span>Trust in system</span><span id="db-trust-v">—</span></div><div class="mbar"><div class="mfill" id="db-trust-f"></div></div></div>
-    <div class="db-meter"><div class="ml"><span>Attention left</span><span id="db-att-v">—</span></div><div class="mbar"><div class="mfill" id="db-att-f"></div></div></div>
-  </div>
+  <div class="db-head" data-i18n>Chapter 2 · Debrief</div>
+  <div class="db-title" data-i18n>Every call, and what it meant</div>
   <div class="db-timeline" id="db-timeline"></div>
-  <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
     <button class="db-btn" id="db-ch2" data-i18n>Continue to Chapter 3 ↗</button>
     <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Review again</button>
   </div>
+  <div id="db-explain" class="db-modal"><div class="db-modal-card">
+    <div id="db-explain-scene" class="db-modal-scene"></div>
+    <div id="db-explain-body" class="db-modal-body"></div>
+    <button id="db-explain-close" class="db-btn" data-i18n>Got it</button>
+  </div></div>
 </div></div>
 
 <div id="start">
-  <div class="eyebrow" data-i18n>Can You Trust Your Car? · Chapter 2</div>
+  <div class="eyebrow" data-i18n>Chapter 2</div>
   <div class="title" data-i18n>Inside the Machine</div>
   <div class="sub" data-i18n>Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?</div>
   <button id="startbtn" data-i18n>See through its eyes →</button>
@@ -245,7 +246,7 @@ window.ZH = {
   "click to continue":"点击继续",
   "Click anywhere, or press Space, to continue":"点击任意处，或按空格，继续",
   // — start screen —
-  "Can You Trust Your Car? · Chapter 2":"你能信任你的车吗？· 第 2 章",
+  "Chapter 2":"第 2 章",
   "Inside the Machine":"机器之内",
   "Same road, same night. This time you see what the car sees: every sensor, every guess. When they disagree, who do you believe?":"同一条路，同一个夜晚。这一次，你能看到车所看到的：每一个传感器，每一次猜测。当它们彼此矛盾时，你该相信谁？",
   "See through its eyes →":"透过它的眼睛去看 →",
@@ -300,55 +301,47 @@ window.ZH = {
   "Brake for the LiDAR return":"为激光雷达的回波刹车",
   "Trust the fused read":"相信融合后的判断",
   "Assume the camera is right (false alarm)":"认定摄像头没错（虚警）",
-  // — outcomes —
+  // — outcomes (what you did → the number → what it means) —
+  "You braked for something the camera swore was not there.":"你为一个摄像头一口咬定并不存在的东西刹了车。",
   "Stopped":"已停车",
-  "Believed the sensors that could see":"相信了仍能看见的传感器",
-  "You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.":"你刹住了车。那是一辆熄着灯抛锚的车：对致盲的摄像头而言它不可见，对激光雷达而言却一目了然。",
-  "What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off. You trusted the sensors that could still see.":"你的做法：尽管致盲的摄像头显示路面空旷，你仍因激光雷达和雷达看到了实在的物体而刹车。那是一辆熄灯抛锚的车——你信任了仍能看见的传感器。",
-  "LiDAR, microwave radar, cameras: we call them all sensors, and the system fuses them into a single judgement.":"激光雷达、微波雷达、摄像头——我们把它们统称为传感器，系统会把它们融合成同一个判断。",
-  "Technology & product manager":"技术与产品经理",
+  "you trusted the sensors that could see":"你信任了仍能看见的传感器",
+  "It was a stalled car running dark: invisible to a blinded camera, but solid and obvious to LiDAR (laser range-finding) and radar (radio echoes that gauge distance in any light). No single sensor is trustworthy alone, so the car blends all three into one judgement — that is sensor fusion, and the discipline it asks is to lean on whichever sensor can still see. Waymo carries camera, LiDAR and radar for exactly this reason.":"那是一辆熄着灯抛锚的车：对致盲的摄像头不可见，对激光雷达（激光测距）和雷达（无论明暗都能靠无线电回波测距）却清晰而确凿。没有哪一个传感器可以被单独信赖，所以车把三者融合成同一个判断——这就是传感器融合，而它要求的自律，是倚靠那个仍然看得见的传感器。Waymo 同时装载摄像头、激光雷达和雷达，正是出于这个原因。",
+  "You let the car's fused judgement make the call.":"你把这次判断交给了车的融合结果。",
   "Slowed":"已减速",
-  "Let the fusion arbitrate":"让融合来裁决",
-  "You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.":"你松开油门，把决定交给融合。它给了激光雷达很高的权重，及时减了速。这一次是这样。",
-  "What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time, safe this once, but only because the balance between sensors happened to be right.":"你的做法：把决定交给车的综合判断。它倚重激光雷达，刚好及时减速——这一次安全了，但只是因为传感器之间的权衡恰好正确。",
-  "Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.":"Waymo 把眼睛装得到处都是，所以它的大脑只需要一个五岁孩子的水平。Tesla 用的是更弱的眼睛，所以它需要一个成熟、专业司机的大脑。",
-  "Robotaxi commercialization strategist":"无人驾驶出租车商业化策略师",
+  "the fusion arbitrated, and got it right this once":"融合做了裁决——这一次，它裁对了",
+  "The car weighted LiDAR heavily and slowed just in time. It worked, but only because the balance between the sensors happened to be right. Fusion buys you a margin by cross-checking three imperfect sensors against each other; when their weighting is off, that margin quietly disappears before you ever notice it was gone.":"车给了激光雷达很高的权重，刚好及时减了速。它奏效了，但只是因为传感器之间的平衡恰好正确。融合靠让三个并不完美的传感器互相校验来为你换取余量；一旦权重失衡，这份余量会在你察觉之前就悄悄消失。",
+  "You believed the camera's “clear road” and ignored the rest.":"你相信了摄像头的“道路空旷”，无视了其余的一切。",
   "Impact":"撞击",
-  "Trusted the blind sensor":"信任了失明的传感器",
-  "What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing, not safety. You drove into what the other sensors saw.":"你的做法：相信了摄像头所谓的“道路空旷”，无视了激光雷达和雷达。致盲的摄像头报告的是“什么都没有”——而不是“安全”。你径直撞上了其他传感器清清楚楚看到的东西。",
-  "For plain detection and recognition, the human eye may still beat the camera.":"在单纯的探测与识别上，人眼或许仍然胜过摄像头。",
-  "Deployment & data engineer":"部署与数据工程师",
-  // — outcome stat values / labels —
-  "LiDAR":"激光雷达",
-  "Camera":"摄像头",
-  "Fusion":"融合",
-  "Safe":"安全",
-  "Close":"险些",
-  "Collision":"碰撞",
-  "Trusted":"已信任",
-  "Outcome":"结果",
+  "you trusted the blind sensor":"你信任了失明的那个传感器",
+  "A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (NTSB HAR-19/03)":"致盲的摄像头并不报告“安全”——它什么都没报告，而你把这份沉默当成了“一路畅通”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这种失效，在 2018 年夺走了亚利桑那州坦佩一名行人的生命：车在撞击前 5.6 秒就探测到了她，系统却没有对传感器所见做出任何反应。（NTSB HAR-19/03）",
   // — continue / replay —
+  "← Choose again":"← 重新选择",
   "Continue →":"继续 →",
   "Continue to Chapter 3 ↗":"前往第 3 章 ↗",
   "Review again":"重新回顾",
   // — debrief —
   "Chapter 2 · Debrief":"第 2 章 · 复盘",
-  "Chapter 2 · Inside the Machine":"第 2 章 · 机器之内",
-  "Certainty · clear":"确定度 · 清晰",
-  "Certainty · glare":"确定度 · 眩光",
+  "Every call, and what it meant":"每一次判断，以及它意味着什么",
   "Fusion · clear night":"融合 · 清朗夜色",
   "Fusion · under glare":"融合 · 眩光之下",
   "Object in the lane":"车道内的物体",
-  "Confident":"有把握",
-  "Shaky":"不牢靠",
-  "Held":"撑住了",
-  "Lost it":"跟丢了",
+  "Read held":"判断站住了",
+  "Read shaky":"判断不牢靠",
+  "Held through glare":"在眩光中撑住了",
+  "Lost the read":"判断跟丢了",
   "Braked for LiDAR":"为激光雷达刹车",
   "Trusted the fusion":"相信了融合",
   "Believed the camera":"相信了摄像头",
-  "You trusted the sensors that could still see, and stopped for something the camera never showed you. That is what fusion promises, and the discipline it asks for.":"你信任了仍能看见的传感器，为一个摄像头从未向你显示的东西停了下来。这正是融合所承诺的，也是它所要求的自律。",
-  "You let the fusion arbitrate and it held this time. Redundancy bought the margin; next time the weighting has to be right before you need it.":"你让融合来裁决，这一次它撑住了。冗余为你争取了余量；但下一次，权重必须在你需要之前就已经设对。",
-  "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing. It does not report safety. The crash lives in the gap between the two.":"你把失明传感器的沉默当了真，径直撞上了其他传感器清清楚楚看到的东西。一个看不见的摄像头，报告的是“什么都没有”。它并不报告“安全”。事故就住在这两者之间的缝隙里。",
+  "Explain":"解释",
+  "Got it":"知道了",
+  // — debrief Explain popups —
+  "You weighted the three sensors so they agreed, and certainty climbed to {fc}%. That is sensor fusion working: when camera, LiDAR and radar point the same way, the combined read is far stronger than any one of them alone.":"你把三个传感器的权重设得彼此一致，确定度攀升到了 {fc}%。这就是传感器融合在起作用：当摄像头、激光雷达和雷达都指向同一个方向时，融合后的判断远比其中任何一个单独要强得多。",
+  "Your weighting left the sensors disagreeing, so certainty stalled at {fc}%. Fusion only pays off when the weights let the sensors cross-check each other; badly balanced, three sensors are no better than one.":"你的权重让传感器彼此意见不合，确定度停在了 {fc}%。只有当权重让传感器能够互相校验时，融合才划得来；一旦失衡，三个传感器并不比一个更强。",
+  "High-beams blinded the camera, but you leaned on LiDAR and radar and held the track at {gc}% certainty. Losing one sensor without losing the object is called graceful degradation — the whole reason a car carries more than one kind of eye.":"远光灯致盲了摄像头，但你倚靠激光雷达和雷达，把目标在 {gc}% 的确定度下持续追踪住了。丢掉一个传感器却没丢掉目标，这叫优雅降级——也正是一辆车要装不止一种“眼睛”的全部理由。",
+  "When the glare blinded the camera your read collapsed to {gc}%, because too much weight still sat on the sensor that could no longer see. Graceful degradation means shifting trust to the sensors that still work the instant one goes dark.":"当眩光致盲摄像头时，你的判断跌到了 {gc}%，因为仍有过多权重压在那个已经看不见的传感器上。优雅降级意味着：某个传感器一失明，就立刻把信任转移到仍然管用的那些上。",
+  "LiDAR and radar saw a stalled car the blinded camera could not. You trusted the sensors that could still see — exactly what sensor fusion is for.":"激光雷达和雷达看到了一辆致盲摄像头看不到的抛锚车。你信任了仍能看见的传感器——这正是传感器融合的用意。",
+  "You let the fused judgement decide and it slowed in time, but only because the weighting happened to be right. Fusion buys a margin only while the balance holds.":"你把决定交给融合，它及时减了速，但只是因为权重恰好正确。融合换来的余量，只在平衡维持时才成立。",
+  "A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (NTSB HAR-19/03)":"致盲的摄像头报告的是“什么都没有”，而不是“安全”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这道缝隙，在 2018 年夺走了亚利桑那州坦佩一名行人的生命。（NTSB HAR-19/03）",
   // — document title —
   "Can You Trust Your Car? · Night Drive":"你能信任你的车吗？—— 夜间行驶"
 };
@@ -722,7 +715,8 @@ window.AUDIO=(function(){
     for(const n of npcActive){ if(n.userData.laneX===laneX && Math.abs(n.position.z-aheadZ)<22) return; }
     const g=getNpc(); g.visible=true; g.rotation.y=oncoming?Math.PI:0;
     g.position.set(laneX,0,aheadZ);
-    const speed=oncoming? CRUISE*(0.9+Math.random()*0.5) : CRUISE*(0.75+Math.random()*0.5);
+    // ponytail: same-dir traffic kept at/above cruise so the player never overtakes and drives through it (oncoming is on the other carriageway, never shares the player's X)
+    const speed=oncoming? CRUISE*(0.9+Math.random()*0.5) : CRUISE*(1.05+Math.random()*0.4);
     g.userData={laneX,dir,speed}; npcActive.push(g);
   }
   function updateNpcs(dt){
@@ -961,8 +955,8 @@ window.AUDIO=(function(){
       fzMode='AUTO'; $('fz-mode').textContent=tr('AUTO'); read(); if(window.AUDIO)AUDIO.sfx('chime'); });
     $('fz-mode').textContent=tr(fzMode); read();
   })();
-  function fusionPuzzle(kind){ return new Promise(res=>{ TD.pause(true); const f=$('fusion'); f.classList.add('show');
-    const go=()=>{ f.classList.remove('show'); $('fz-go').removeEventListener('click',go); TD.pause(false);
+  function fusionPuzzle(kind){ return new Promise(res=>{ const wasPaused=TD.state.paused; TD.pause(true); const f=$('fusion'); f.classList.add('show');
+    const go=()=>{ f.classList.remove('show'); $('fz-go').removeEventListener('click',go); TD.pause(wasPaused);
       const c=updateCert(); S.choices[kind]=PERC.getWeights(); if(kind==='fuse')S.fuseCert=c; else S.failCert=c; if(window.AUDIO)AUDIO.sfx('ui'); res(c); };
     $('fz-go').addEventListener('click',go); }); }
 
@@ -1007,19 +1001,26 @@ window.AUDIO=(function(){
     if(window.AUDIO)AUDIO.sfx('ui'); S.choices[id]=k; if(id==='decide'){ S.decision=k; S.outcome=(o.outcome.crash?'crash':(o.outcome.danger==='mid'?'close':'safe')); }
     setTimeout(()=>{ $('decision').classList.remove('show');
       if(o.outcome.crash && window.TD) TD.crashFx();
-      showOutcome(o.outcome,()=>{ const r=decResolve; decResolve=null; TD.pause(false); if(r)r(k); }); },240);
+      showOutcome(o.outcome,
+        ()=>{ const r=decResolve; decResolve=null; TD.pause(false); if(r)r(k); },   // Continue → resolve the story
+        ()=>{ askDecision(id); });                                                  // Choose again → reopen this question
+    },240);
   }
-  function paintOutcome(d){ $('o-big').textContent=tr(d.big||''); $('o-big').style.display=d.big?'':'none'; $('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=tr(d.label||''); $('o-ctx').textContent=tr(d.ctx||'');
-    $('o-plain').textContent=tr(d.plain||''); $('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=''; $('o-quote').querySelector('.tx').textContent=tr(d.ins||''); $('o-quote').querySelector('.who').textContent=tr(d.who||'');
+  function paintOutcome(d){
+    $('o-did').textContent=tr(d.did||'');$('o-did').style.display=d.did?'':'none';
+    $('o-big').textContent=tr(d.big||'');$('o-big').style.display=d.big?'':'none';$('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
+    $('o-label').textContent=tr(d.label||'');$('o-label').style.display=d.label?'':'none';
+    $('o-mean').textContent=tr(d.mean||'');$('o-mean').style.display=d.mean?'':'none';
     if(window.Glossary)Glossary.wrap($('outcome'));
   }
-  function showOutcome(d,cont){ curOutcome=d; paintOutcome(d);
-    const o=$('outcome'); o.classList.remove('ready'); o.classList.add('show');
-    $('o-cont').onclick=()=>{ o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont(); };
-    const kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ document.removeEventListener('keydown',kc); $('o-cont').click(); } };
+  function showOutcome(d,cont,onRetry){ curOutcome=d; paintOutcome(d);
+    const o=$('outcome'),again=$('o-again'); o.classList.remove('ready'); o.classList.add('show');
+    again.classList.toggle('hide',!onRetry);
+    let kc;
+    const finish=fn=>{ document.removeEventListener('keydown',kc); o.classList.remove('show','ready'); if(window.AUDIO)AUDIO.sfx('ui'); fn&&fn(); };
+    $('o-cont').onclick=()=>finish(cont);
+    again.onclick=onRetry?()=>finish(onRetry):null;
+    kc=ev=>{ if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){ $('o-cont').click(); } };
     document.addEventListener('keydown',kc); setTimeout(()=>o.classList.add('ready'),1500); }
 
   /* ---- content ---- */
@@ -1037,45 +1038,50 @@ window.AUDIO=(function(){
   const DECISIONS={
     decide:{eyebrow:'01:12 · Camera blind · Object in lane', urgent:true, q:'The camera sees clear road. LiDAR and radar see something solid ahead. What do you do?',
       opts:[
-        {k:'A',t:'Brake for the LiDAR return', outcome:{big:'Stopped',label:'Believed the sensors that could see',danger:'none',
-          ctx:'You brake. It was a stalled car running dark: invisible to the blinded camera, obvious to LiDAR.',
-          plain:'What you did: braked because LiDAR and radar saw something solid, even though the blinded camera showed clear road. It was a stalled car with its lights off. You trusted the sensors that could still see.',
-          stats:[{v:'LiDAR',l:'Trusted',c:'good'},{v:'Safe',l:'Outcome',c:'good'}],
-          ins:'LiDAR, microwave radar, cameras: we call them all sensors, and the system fuses them into a single judgement.',who:'Technology & product manager'}},
-        {k:'B',t:'Trust the fused read', outcome:{big:'Slowed',label:'Let the fusion arbitrate',danger:'mid',
-          ctx:'You ease off and let the fusion decide. It weighted LiDAR heavily and slowed in time. This time.',
-          plain:"What you did: let the car's combined judgement decide. It leaned on LiDAR and slowed just in time, safe this once, but only because the balance between sensors happened to be right.",
-          stats:[{v:'Fusion',l:'Trusted',c:'ok'},{v:'Close',l:'Outcome',c:'ok'}],
-          ins:'Waymo puts eyes everywhere, so its brain only needs to be a five-year-old’s. Tesla runs weaker eyes, so it needs a grown, expert driver’s brain.',who:'Robotaxi commercialization strategist'}},
-        {k:'C',t:'Assume the camera is right (false alarm)', outcome:{big:'Impact',label:'Trusted the blind sensor',danger:'high',crash:true,
-          stats:[{v:'Camera',l:'Trusted',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'}],
-          plain:"What you did: believed the camera's “clear road” and ignored LiDAR and radar. A blinded camera reports nothing, not safety. You drove into what the other sensors saw.",
-          ins:'For plain detection and recognition, the human eye may still beat the camera.',who:'Deployment & data engineer'}}
+        {k:'A',t:'Brake for the LiDAR return', outcome:{danger:'none',
+          did:'You braked for something the camera swore was not there.',
+          big:'Stopped', label:'you trusted the sensors that could see',
+          mean:'It was a stalled car running dark: invisible to a blinded camera, but solid and obvious to LiDAR (laser range-finding) and radar (radio echoes that gauge distance in any light). No single sensor is trustworthy alone, so the car blends all three into one judgement — that is sensor fusion, and the discipline it asks is to lean on whichever sensor can still see. Waymo carries camera, LiDAR and radar for exactly this reason.'}},
+        {k:'B',t:'Trust the fused read', outcome:{danger:'mid',
+          did:"You let the car's fused judgement make the call.",
+          big:'Slowed', label:'the fusion arbitrated, and got it right this once',
+          mean:'The car weighted LiDAR heavily and slowed just in time. It worked, but only because the balance between the sensors happened to be right. Fusion buys you a margin by cross-checking three imperfect sensors against each other; when their weighting is off, that margin quietly disappears before you ever notice it was gone.'}},
+        {k:'C',t:'Assume the camera is right (false alarm)', outcome:{danger:'high',crash:true,
+          did:"You believed the camera's “clear road” and ignored the rest.",
+          big:'Impact', label:'you trusted the blind sensor',
+          mean:'A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (NTSB HAR-19/03)'}}
       ]}
   };
-  function verdict(){ const k=S.decision;
-    if(k==='A') return "You trusted the sensors that could still see, and stopped for something the camera never showed you. That is what fusion promises, and the discipline it asks for.";
-    if(k==='B') return "You let the fusion arbitrate and it held this time. Redundancy bought the margin; next time the weighting has to be right before you need it.";
-    return "You believed the blind sensor's silence and drove into what the others plainly saw. A camera that cannot see reports nothing. It does not report safety. The crash lives in the gap between the two.";
-  }
 
   /* ---- debrief (reuses #debrief shell) ---- */
-  function setLabel(meterEl,txt){ const s=meterEl.querySelector('.ml span'); if(s)s.textContent=txt; }
+  const EXPLAIN={
+    fuse:{
+      high:"You weighted the three sensors so they agreed, and certainty climbed to {fc}%. That is sensor fusion working: when camera, LiDAR and radar point the same way, the combined read is far stronger than any one of them alone.",
+      low:"Your weighting left the sensors disagreeing, so certainty stalled at {fc}%. Fusion only pays off when the weights let the sensors cross-check each other; badly balanced, three sensors are no better than one." },
+    fail:{
+      high:"High-beams blinded the camera, but you leaned on LiDAR and radar and held the track at {gc}% certainty. Losing one sensor without losing the object is called graceful degradation — the whole reason a car carries more than one kind of eye.",
+      low:"When the glare blinded the camera your read collapsed to {gc}%, because too much weight still sat on the sensor that could no longer see. Graceful degradation means shifting trust to the sensors that still work the instant one goes dark." },
+    decide:{
+      A:"LiDAR and radar saw a stalled car the blinded camera could not. You trusted the sensors that could still see — exactly what sensor fusion is for.",
+      B:"You let the fused judgement decide and it slowed in time, but only because the weighting happened to be right. Fusion buys a margin only while the balance holds.",
+      C:"A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (NTSB HAR-19/03)" }
+  };
+  function explainText(id){ const fc=S.fuseCert!=null?S.fuseCert:0, gc=S.failCert!=null?S.failCert:0;
+    const key = id==='fuse' ? (fc>=70?'high':'low') : id==='fail' ? (gc>=60?'high':'low') : S.decision;
+    let s=EXPLAIN[id]&&EXPLAIN[id][key]; if(!s)return '';
+    return tr(s).replace('{fc}',fc).replace('{gc}',gc); }
+  function openExplain(scene,body){$('db-explain-scene').textContent=scene;$('db-explain-body').textContent=body;$('db-explain').classList.add('show');}
   function renderDebrief(){ save();
-    const meters=document.querySelectorAll('#debrief .db-meter');
-    if(meters[0]) setLabel(meters[0],tr('Certainty · clear')); if(meters[1]) setLabel(meters[1],tr('Certainty · glare'));
     const fc=S.fuseCert!=null?S.fuseCert:0, gc=S.failCert!=null?S.failCert:0;
-    $('db-trust-v').textContent=fc+'%'; $('db-att-v').textContent=gc+'%';
-    setTimeout(()=>{ $('db-trust-f').style.width=fc+'%'; $('db-att-f').style.width=gc+'%'; },90);
     const decLabel=tr({A:'Braked for LiDAR',B:'Trusted the fusion',C:'Believed the camera'}[S.decision]||'—');
-    const decCons={A:{t:tr('Safe'),c:'good'},B:{t:tr('Close'),c:''},C:{t:tr('Collision'),c:'bad'}}[S.decision]||{t:''};
-    const rows=[ {scene:tr('Fusion · clear night'),call:tr('Certainty ')+fc+'%',cons:{t:fc>=70?tr('Confident'):tr('Shaky'),c:fc>=70?'good':''}},
-      {scene:tr('Fusion · under glare'),call:tr('Certainty ')+gc+'%',cons:{t:gc>=60?tr('Held'):tr('Lost it'),c:gc>=60?'good':'bad'}},
-      {scene:tr('Object in the lane'),call:decLabel,cons:decCons} ];
-    document.querySelector('#debrief .db-title').textContent=tr('Chapter 2 · Debrief');
-    document.querySelector('#debrief .db-head').textContent=tr('Chapter 2 · Inside the Machine');
-    $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
-    $('db-verdict').textContent=tr(verdict());
+    const rows=[ {id:'fuse',scene:tr('Fusion · clear night'),call:fc>=70?tr('Read held'):tr('Read shaky')},
+      {id:'fail',scene:tr('Fusion · under glare'),call:gc>=60?tr('Held through glare'):tr('Lost the read')},
+      {id:'decide',scene:tr('Object in the lane'),call:decLabel} ];
+    const tl=$('db-timeline'); tl.innerHTML='';
+    rows.forEach(r=>{ const row=document.createElement('div'); row.className='db-row';
+      row.innerHTML='<div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div>';
+      const b=document.createElement('button'); b.className='rw-explain'; b.textContent=tr('Explain');
+      b.onclick=()=>openExplain(r.scene,explainText(r.id)); row.appendChild(b); tl.appendChild(row); });
     if(window.Glossary)Glossary.wrap($('debrief'));
     $('debrief').classList.add('show');
   }
@@ -1084,6 +1090,8 @@ window.AUDIO=(function(){
     location.href='can_you_trust_your_car_chapter3.html'; }
   $('db-ch2').addEventListener('click',continueCh3);
   $('db-replay').addEventListener('click',()=>location.reload());
+  $('db-explain-close').addEventListener('click',()=>$('db-explain').classList.remove('show'));
+  $('db-explain').addEventListener('click',e=>{ if(e.target===$('db-explain'))$('db-explain').classList.remove('show'); });
 
   /* ---- warm-up: prove the drive is interactive before the story ---- */
   function warmup(){ return new Promise(res=>{
@@ -1115,7 +1123,7 @@ window.AUDIO=(function(){
       await beats(BEATS.intro);
       PERC.setActive(true); if(window.AUDIO)AUDIO.sfx('chime');
       await beats(BEATS.see);
-      TD.spawnPedestrian(48); glareOn=false; PERC.setCamConf(1);
+      TD.spawnPedestrian(48); TD.pause(true); glareOn=false; PERC.setCamConf(1);   // freeze the approach so the car assesses the figure instead of driving into it
       await beats(BEATS.fuse_intro);
       const c1=await fusionPuzzle('fuse');
       await beats(BEATS.fuse_after(c1));
@@ -1125,7 +1133,7 @@ window.AUDIO=(function(){
       await beats(BEATS.fail_after);
       await beats(BEATS.decide_intro);
       await ask('decide');
-      TD.setGlare(false); $('sb-cam').classList.remove('alert'); PERC.setActive(false); $('sensorhud').classList.remove('show');
+      TD.setGlare(false); TD.hidePedestrian(); $('sb-cam').classList.remove('alert'); PERC.setActive(false); $('sensorhud').classList.remove('show');
       if(window.TD)TD.mood('dawn');
       renderDebrief();
     }catch(e){ console.error('story',e); }

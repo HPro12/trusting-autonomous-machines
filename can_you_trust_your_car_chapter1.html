@@ -110,37 +110,37 @@
   .opt .k{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#0a1330;color:#8AB0E0;font-weight:800;border:1px solid rgba(138,176,224,.4)}
   .opt .t{font-size:clamp(15px,1.8vw,20px);font-weight:700}
   .opt .s{font-size:clamp(11px,1.3vw,14px);color:#9aa6c2}
+  .opt .od{font-size:clamp(12px,1.4vw,15px);color:#cdd6ee;line-height:1.5}
+  .opt .oe{font-size:clamp(11px,1.25vw,13px);color:#8fa0c4;font-style:italic}
+  #o-did{font-size:clamp(18px,2.6vw,27px);font-weight:700;line-height:1.4;color:#fff;max-width:min(700px,92vw);margin-bottom:clamp(14px,2.4vh,26px)}
   #o-big{font-size:clamp(46px,11vw,120px);font-weight:800;line-height:.92;color:#fff}
-  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:1rem}
-  #o-ctx{font-size:clamp(14px,1.9vw,20px);color:#d4dcec;line-height:1.5;margin-top:.9rem;max-width:min(680px,92vw)}
-  #o-plain{font-size:clamp(13px,1.6vw,17px);color:#dbe6ff;line-height:1.5;margin-top:1.1rem;max-width:min(680px,92vw);
-    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.7rem 1rem;text-align:left}
-  .o-stats{display:flex;gap:clamp(16px,3vw,48px);margin-top:clamp(16px,3vh,30px);flex-wrap:wrap;justify-content:center}
-  .o-stat .v{font-size:clamp(22px,3vw,34px);font-weight:800}.o-stat .v.bad{color:#ff5a6a}.o-stat .v.ok{color:#f5b13f}.o-stat .v.good{color:#42d98a}
-  .o-stat .l{font-size:clamp(10px,1.2vw,13px);color:#9aa6c2;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}.o-cite{display:block;font-size:clamp(9px,1vw,11px);color:#7f8db0;text-decoration:none;margin-top:5px;border-bottom:1px dotted #566}.o-cite:hover{color:#9fb0d8}
-  .o-delta{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;justify-content:center}
-  .chip{font-size:clamp(11px,1.3vw,14px);font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(150,180,255,.14);background:rgba(24,32,58,.72);color:#9aa6c2}
-  .chip.up{color:#42d98a;border-color:rgba(66,217,138,.4)}.chip.down{color:#ff5a6a;border-color:rgba(255,90,106,.4)}
-  .o-quote{margin-top:clamp(16px,3vh,28px);max-width:min(620px,90vw);font-size:clamp(13px,1.6vw,17px);line-height:1.55;color:#cfeaf5;border-left:3px solid #8AB0E0;padding-left:14px;text-align:left}
-  .o-quote .who{display:block;margin-top:.5rem;color:#9aa6c2;font-style:italic}
-  .cont{margin-top:clamp(20px,3.4vh,40px);background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;
+  #o-label{font-size:clamp(12px,1.7vw,18px);letter-spacing:.2em;text-transform:uppercase;color:#8AB0E0;margin-top:.9rem}
+  #o-mean{font-size:clamp(14px,1.8vw,19px);color:#dbe6ff;line-height:1.58;margin-top:clamp(14px,2.4vh,24px);max-width:min(680px,92vw);
+    background:rgba(24,32,58,.6);border:1px solid rgba(138,176,224,.22);border-radius:12px;padding:.9rem 1.15rem;text-align:left}
+  .o-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:clamp(20px,3.4vh,40px)}
+  .cont{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;
     padding:14px 34px;border-radius:12px;font-size:clamp(15px,1.8vw,19px);font-weight:800;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s}
   #outcome.ready .cont{opacity:1;pointer-events:auto}
+  .o-again{background:transparent;border:1px solid rgba(150,180,255,.28);color:#9aa6c2;
+    padding:13px 24px;border-radius:12px;font-size:clamp(13px,1.6vw,16px);font-weight:700;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s,color .2s,border-color .2s}
+  .o-again:hover{color:#eaf0ff;border-color:#8AB0E0}
+  #outcome.ready .o-again{opacity:1;pointer-events:auto}
+  .o-again.hide{display:none}
   .db-head{font-size:clamp(11px,1.4vw,14px);letter-spacing:.16em;text-transform:uppercase;color:#f5b13f;margin-bottom:.5rem}
   .db-title{font-size:clamp(24px,3.4vw,38px);font-weight:800;margin-bottom:1.2rem}
-  .db-meters{display:flex;gap:clamp(16px,3vw,32px);flex-wrap:wrap;justify-content:center;margin-bottom:1.3rem;width:100%}
-  .db-meter{flex:1 1 0;min-width:0;text-align:left}
-  .db-meter .ml{display:flex;justify-content:space-between;font-size:clamp(11px,1.3vw,13px);letter-spacing:.06em;text-transform:uppercase;color:#9aa6c2;margin-bottom:6px}
-  .db-meter .mbar{height:10px;border-radius:6px;background:#161d2c;overflow:hidden}
-  .db-meter .mfill{height:100%;width:0;border-radius:6px;transition:width .9s ease;background:linear-gradient(90deg,#ff5a6a,#f5b13f,#42d98a)}
   .db-timeline{width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(150,180,255,.14);margin-bottom:1.2rem}
   .db-row{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:11px 15px;background:rgba(14,20,40,.7);text-align:left;align-items:baseline}
   .db-row .rw-scene{font-size:clamp(11px,1.3vw,13px);color:#9aa6c2;grid-column:1;grid-row:1}
   .db-row .rw-call{font-size:clamp(14px,1.7vw,17px);font-weight:700;color:#eaf0ff;grid-column:1;grid-row:2}
-  .db-row .rw-cons{grid-column:2;grid-row:1/3;align-self:center;font-size:clamp(12px,1.4vw,14px);color:#8AB0E0;text-align:right}
-  .db-row .rw-cons.bad{color:#ff5a6a}.db-row .rw-cons.good{color:#42d98a}
-  .db-verdict{text-align:left;width:100%;margin-bottom:1.3rem;font-size:clamp(14px,1.7vw,18px);line-height:1.55;color:#e8f0ff;border-left:4px solid #8AB0E0;padding:.2rem 0 .2rem 11px}
+  .db-row .rw-explain{grid-column:2;grid-row:1/3;align-self:center;background:transparent;border:1px solid rgba(138,176,224,.4);color:#8AB0E0;padding:6px 14px;border-radius:9px;font-size:clamp(12px,1.4vw,14px);font-weight:600;cursor:pointer;white-space:nowrap}
+  .db-row .rw-explain:hover{border-color:#8AB0E0;background:rgba(138,176,224,.12)}
   .db-btn{background:linear-gradient(180deg,#ffc659,#f5a623);color:#20140a;border:none;padding:13px 28px;border-radius:12px;font-size:clamp(14px,1.6vw,17px);font-weight:800;cursor:pointer}
+  .db-modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(4,7,16,.72);padding:5vw}
+  .db-modal.show{display:flex}
+  .db-modal-card{width:min(460px,92vw);background:linear-gradient(180deg,#1b2444,#141a30);border:1px solid rgba(150,180,255,.18);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:14px;text-align:left}
+  .db-modal-scene{font-size:clamp(11px,1.3vw,13px);letter-spacing:.06em;text-transform:uppercase;color:#9aa6c2}
+  .db-modal-body{font-size:clamp(14px,1.7vw,17px);line-height:1.6;color:#eaf0ff}
+  .db-modal .db-btn{align-self:flex-end;padding:10px 22px}
   @media (prefers-reduced-motion: reduce){ #flash.on,#edgewarn,.d-eyebrow.urgent,#hint.warm,#beat.ready #beat-hint,#beat-hint .chev{animation:none} }
 
   /* ---------------- language toggle (shared across all pages) ---------------- */
@@ -177,7 +177,7 @@ window.ZH = {
   "⚠ TAKE OVER · CHANGE LANE<small>An obstacle is in your lane. Press A / D to move over.</small>":"⚠ 接管——请变道<small>障碍物就在你的车道上。按 A / D 变道避让。</small>",
   "Continue →":"继续 →",
   "Chapter 1 · Debrief":"第 1 章 · 复盘",
-  "Your last human decision":"你最后一次由人做出的决定",
+  "Every choice, and what it meant":"每一个选择，以及它意味着什么",
   "Trust in system":"系统信任",
   "Attention left":"剩余注意力",
   "Continue to Chapter 2 ↗":"前往第 2 章 ↗",
@@ -331,13 +331,73 @@ window.ZH = {
   "Standard (L0)":"标准版 (L0)",
   "Highway assist (L2)":"高速辅助 (L2)",
   "Robotaxi (L4)":"无人驾驶出租车 (L4)",
-  // — verdicts —
-  "You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.":"车放手的那一刻你接住了它，而你依然愿意把钥匙交给一辆无人驾驶出租车。你信任机器，是因为你亲眼看着自己差点失手，而不是因为某个标签向你保证你不会。",
-  "Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.":"关键时刻你的手在。你还会再次接受同样的辅助，只是看清了其中的隐患：它一直帮着你，直到它帮不了的那一秒，而唯有你的注意力能守住那一秒。",
-  "You made the move, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.":"你做出了那个动作，而你更愿意自己来开。今晚让你懂得了注意力的代价，你宁愿自己付，也不愿把它交给一个会在最糟时刻把账单甩回给你的系统。",
-  "The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked.":"车在你唯一接不住的那一刻交还了方向盘，而你依然会选那辆根本没有方向盘的车。也许你是对的——它本就不该开口相询。",
-  "It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That gap between what L2 promises and what it delivers is the whole subject of this project.":"它交还了控制权，而你没能接住，可你明天还会再买同一级别的辅助。L2 所承诺的与它所兑现的之间的那道落差，正是这个项目要谈的全部。",
-  "It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology stands.":"它在边缘情况上失手了，而你宁愿自己握着方向盘，也不愿去信任一次靠不住的接管。这份直觉，是对这项技术当前处境的一个诚实判断。"
+  // — start screen / UI (added in the Chapter 1 rewrite) —
+  "Chapter 1":"第 1 章",
+  "A few minutes to midnight, and you are two hundred kilometres into the drive home. Your car is a new electric sedan with <b>Highway Assist</b> — a <b>Level 2</b> system that can steer and hold its own speed for you, but only while you keep watching the road, ready to take back control the instant it needs you. Right now it is switched off. Just you, the dark, and sixty kilometres to go.":"还差几分钟就到午夜，回家的路你已经开了两百公里。你的车是一辆全新的电动轿车，带有<b>高速辅助</b>——一套 <b>L2 级</b>系统，能替你转向、保持车速，但前提是你始终盯着路面，随时准备在它需要的那一刻接过控制权。此刻它还关着。只有你、黑夜，和剩下的六十公里。",
+  "← Choose again":"← 重新选择",
+  "Got it":"明白了",
+  "Explain":"说明",
+  // — beats (Chapter 1 rewrite) —
+  "It's a few minutes to midnight. Two hundred kilometres of motorway sit behind you; sixty still lie ahead, and in the dark every one of them looks the same.":"还差几分钟就到午夜。两百公里的高速已在身后，还有六十公里在前方，而在黑暗里，每一公里看上去都一模一样。",
+  "Your eyes have gone hot and gritty. You blink hard, roll your shoulders, and the lane lines drift back into focus. The heater hums, the tyres drone. It would be so easy to let them close, just for a second.":"你的眼睛又干又涩，发烫。你用力眨眼，转了转肩膀，车道线才重新聚拢清晰。暖风嗡嗡，轮胎低鸣。让眼皮合上，哪怕只是一秒，都太容易了。",
+  "For a heartbeat the world was the little screen in your hand — and in that heartbeat the tyres found the lane line. The car twitches, a low rumble runs up through the seat, and your head snaps back up.":"有那么一瞬，整个世界只剩你手里那块小小的屏幕——而就在这一瞬，轮胎压上了车道线。车身一颤，一阵低沉的震动顺着座椅传上来，你猛地抬起头。",
+  "The message can wait. You sit on the hard shoulder a moment, engine ticking, breath slowing, then check your mirror and ease back out into the empty lane.":"消息可以等等。你在路肩上停了一会儿，发动机轻响，呼吸渐渐平稳，然后看了看后视镜，缓缓并回空荡荡的车道。",
+  "Whatever it is, it can wait. You keep your eyes where they belong — on the white line unspooling out of the dark — and let the phone go quiet on its own.":"不管是什么，都可以等。你把目光留在该在的地方——那条从黑暗里延展出来的白线上——任由手机自己安静下来。",
+  "Rested, a little sharper, you press on. Then the first fat drops of rain freckle the windscreen, and within a minute it's coming down hard.":"歇过之后清醒了些，你继续赶路。接着，第一批豆大的雨点打上挡风玻璃，不到一分钟就下大了。",
+  "Your hands are tight on the wheel now, the near-miss still humming in your chest. And then, as if the night wanted more, the rain begins.":"此刻你双手紧握方向盘，那次险情仍在胸口发颤。接着，仿佛这一夜还嫌不够，雨下了起来。",
+  "The rain starts without warning, fine at first, then heavy, smearing the tail-lights ahead into long red streaks across the glass.":"雨毫无预兆地下了起来，先是细密，随后转急，把前方的尾灯在玻璃上晕成一道道长长的红痕。",
+  "A soft chime. On the dash: HIGHWAY ASSIST AVAILABLE. Tired, half-blinded by the rain, you thumb it on — and feel the wheel come alive under your hands, correcting, holding the lane, keeping your speed. For the first time all night you are not the one driving.":"一声轻柔的提示音。仪表盘上：高速辅助可用。又累又被雨遮了大半视线的你按下开关——方向盘在你手下活了过来，自行修正、稳住车道、保持车速。这一整夜里，第一次不是你在开车。",
+  "Roadworks. Cones funnel the lanes, and out of the rain a stalled car looms dead ahead in yours — no lights but the slow orange tick of its hazards.":"前方施工。锥形桶把车道收窄，雨幕中一辆抛锚的车赫然停在你正前方的车道上——没有别的灯，只有双闪缓慢的橙色闪烁。",
+  "TAKE OVER NOW. The chime turns urgent and the wheel goes light in your hands. The car has run out of answers. This one is yours — change lanes to get around it: press A or D.":"立即接管。提示音变得急促，方向盘在你手中变轻。车已经无计可施。这一下得靠你——变道绕过它：按 A 或 D。",
+  "You throw it into the next lane, tyres hissing on the wet, heart slamming against your ribs. The stalled car flashes past close enough to touch — and the road opens up clear ahead again.":"你猛地切进旁边的车道，轮胎在湿路面上嘶鸣，心脏撞着肋骨狂跳。那辆抛锚的车近得几乎能碰到，一闪而过——前方的路重新变得空旷通畅。",
+  "You wrench the wheel over, but a beat too late. There's a sharp crack as your mirror catches the wreck, glass spraying, and then you're past — shaking, but still moving.":"你猛打方向，却慢了半拍。后视镜蹭上那辆残骸，一声脆响，玻璃飞溅，随后你冲了过去——浑身发抖，但车还在走。",
+  "There's no time. The stalled car swells until it fills the whole windscreen, and then there is only noise and light.":"来不及了。那辆抛锚的车越胀越大，直到填满整块挡风玻璃，然后就只剩下声响与强光。",
+  "Later. An amber tow-truck light sweeps slowly over the wreck. You're sitting on the barrier, a blanket round your shoulders, unhurt — and you cannot stop replaying the half-second where the car handed everything back to you.":"稍后。琥珀色的拖车灯缓缓扫过车祸现场。你坐在护栏上，肩上披着毯子，毫发无伤——却止不住地反复回放车把一切交还给你的那半秒。",
+  "Dawn finds you parked at a rest area, both hands wrapped round a coffee that's gone cold, watching the sky turn from grey to gold. You've been thinking about that wheel going light in your hands ever since.":"黎明时分，你把车停在服务区，双手捧着一杯早已凉透的咖啡，望着天色由灰转金。从那以后，你一直在想方向盘在手中变轻的那一刻。",
+  // — decision outcomes (Chapter 1 rewrite) —
+  "You looked down at the screen for about two seconds.":"你低头看了屏幕约两秒。",
+  "driven blind":"盲目行驶",
+  "At 108 km/h, two seconds is 68 metres — most of a football pitch — covered with no one watching the road. The average glance at a text lasts about 5 seconds: a whole pitch and more, driven with your eyes shut. (NHTSA / VTTI)":"以 108 km/h 计，两秒就是 68 米——几乎一整个足球场那么长——而这段路没有人在看。平均看一条短信要约 5 秒：一整个球场还不止，全程闭着眼开。（NHTSA / VTTI）",
+  "You left the phone glowing and kept your eyes forward.":"你任由手机亮着，目光始终朝前。",
+  "your reaction, tired":"你疲劳时的反应",
+  "Wide awake, you would react in about half a second. Tired, it stretches closer to 0.9 — nearly twice as slow, which at this speed adds roughly 18 metres to your stopping distance. Still far safer than looking away.":"清醒时，你大约半秒就能反应。疲惫时会拉长到接近 0.9 秒——几乎慢了一倍，以这个速度会给你的刹车距离多加约 18 米。但仍远比移开视线安全。",
+  "You eased onto the hard shoulder, read the message, then pulled back on.":"你缓缓驶上路肩，读完消息，再重新并回车流。",
+  "Not a single metre of road went unwatched. It cost you a minute or two and nothing else — of the three, the only choice that added zero risk.":"没有一米路是没人看着的。它只花了你一两分钟，别无损耗——三个选项里，唯一零增加风险的那个。",
+  "You said the car was to blame — but it is not. You are driving a Level 2 system: it steers and brakes, yet you are still the driver in the eyes of the law, so every legal consequence lands on you. It is exactly why the industry quietly calls today’s tech “L2-plus” rather than claiming Level 3 or Level 4.":"你说该怪车——但不是。你开的是 L2 级系统：它负责转向和刹车，可在法律眼中你仍是驾驶员，因此每一项法律后果都落在你身上。这正是业内私下把如今的技术称作“L2 加”、而不敢宣称 L3 或 L4 的原因。",
+  "Correct — and it is the hard answer. On Level 2 the car handles the easy, steady driving while you stay responsible for watching it and for catching every surprise. Drivers using partial automation spend more than 30% of that time with their eyes off the road (IIHS, 2024) — which is exactly where it goes wrong.":"正确——而且是那个艰难的答案。在 L2 级，车负责轻松、平稳的驾驶，而监控它、并接住每一个意外的责任仍在你。使用部分自动驾驶的驾驶员，有超过 30% 的时间视线离开路面（IIHS，2024）——问题恰恰就出在这里。",
+  "You blamed the maker. For a Level 2 car, product-liability claims almost never succeed in court: the driver was the one who was supposed to be watching. The company is rarely held liable.":"你把责任推给了厂商。对一辆 L2 级的车而言，产品责任索赔在法庭上几乎从不成功：本该盯着路的是驾驶员。厂商很少被判担责。",
+  // — compare cards (Chapter 1 rewrite) —
+  "Level 0 · you drive":"L0 级 · 你来开",
+  "Level 2 · like tonight":"L2 级 · 一如今晚",
+  "Level 4 · no driver":"L4 级 · 无驾驶员",
+  "You do all the driving. No steering or braking help — the car only does what your hands and feet tell it.":"全程由你来开。没有转向或刹车辅助——车只做你的手脚吩咐它做的事。",
+  "e.g. an ordinary petrol or electric car.":"例如一辆普通的燃油车或电动车。",
+  "Steers and holds its speed on the motorway — exactly what you drove tonight — but you must watch every second and be ready to take over instantly.":"在高速上负责转向并保持车速——正是你今晚开的那种——但你必须时刻盯着，随时准备立即接管。",
+  "e.g. Tesla Autopilot, GM Super Cruise.":"例如特斯拉 Autopilot、通用 Super Cruise。",
+  "Drives itself with nobody at the wheel — but only inside the specific city zones it has mapped and learned in fine detail.":"无人握着方向盘，车自己开——但只在它已精细建图、烂熟于心的特定城市区域之内。",
+  "e.g. Waymo, carrying passengers with an empty driver seat.":"例如 Waymo，驾驶座空着载客。",
+  "You would take the standard car and do all the driving yourself. No help, but no false sense of safety either — every metre is yours, for better and for worse.":"你会选那辆标准版的车，全程自己来开。没有辅助，但也没有虚假的安全感——每一米都是你的，无论好坏。",
+  "You would take the same Highway Assist you used tonight. It carries you on the easy stretches, but the trap is real: it helps right up until the second it cannot, and only your attention covers that second.":"你会选今晚用过的同一套高速辅助。它在轻松的路段替你分担，但陷阱是真实存在的：它一直帮着你，直到它帮不了的那一秒，而唯有你的注意力能守住那一秒。",
+  "You would hand the keys to a car with no driver at all. It can earn that trust — but only inside the city zones it has mapped in fine detail, nothing like tonight’s open motorway.":"你会把钥匙交给一辆根本没有驾驶员的车。它能赢得这份信任——但只在它精细建过图的城市区域之内，完全不同于今晚这条开阔的高速。",
+  // — edge takeover outcome (Chapter 1 rewrite) —
+  "you cleared it":"你避开了",
+  "a beat too late":"慢了半拍",
+  "You saw the stalled car and changed lanes in {s}. That split-second reflex is exactly what the car had just handed back to you — the one thing it could not do itself.":"你看见那辆抛锚的车，在 {s} 内完成了变道。那一瞬间的反射，正是车刚刚交还给你的东西——它自己做不到的那一件事。",
+  "You reacted in {s} — a fraction too slow — and clipped the wreck as you passed. At 108 km/h you cover 30 metres for every second you hesitate, so those few tenths are the whole gap between a near-miss and a crash.":"你在 {s} 内做出反应——差了那么一点点——擦身而过时蹭上了那辆残骸。以 108 km/h 计，你每犹豫一秒就驶过 30 米，那几分之一秒，正是虚惊与事故之间的全部差距。",
+  "You did not move in time, so the car drove straight into the stalled one. You trusted it with the very thing it had just handed back to you — a trap called automation complacency, and the whole point of this chapter. Distracted driving killed 3,308 people in the United States in 2022 alone. (NHTSA)":"你没能及时避让，于是车径直撞上了那辆抛锚的车。你信任它去处理的，恰恰是它刚刚交还给你的那件事——这个陷阱叫做“自动化自满”，也正是本章的全部要义。仅 2022 年一年，分心驾驶就在美国夺去了 3,308 人的生命。（NHTSA）",
+  // — debrief explain popups (Chapter 1 rewrite) —
+  "Looking down for about two seconds at 108 km/h means roughly 68 m driven with nobody watching the road — most of a football pitch, blind.":"以 108 km/h 低头约两秒，意味着约 68 米路无人看着——几乎一整个足球场，全程盲开。",
+  "You kept your eyes forward. Tired, your reaction slows to about 0.9 s — nearly twice as slow as when you are fresh — but far safer than looking away.":"你保持目视前方。疲惫时反应放慢到约 0.9 秒——几乎是清醒时的两倍慢——但远比移开视线安全。",
+  "You pulled onto the hard shoulder to read it. Not one metre went unwatched: it cost a minute and added zero risk.":"你驶上路肩去读它。没有一米是没人看着的：只花了一分钟，零增加风险。",
+  "On a Level 2 system the car steers and brakes, but you are still the driver in the eyes of the law — so blaming the car does not hold. Every consequence lands on you.":"在 L2 级系统上，车负责转向和刹车，但在法律眼中你仍是驾驶员——所以怪车站不住脚。每一项后果都落在你身上。",
+  "Correct, and the hard answer: on L2 you stay responsible for watching it. Drivers on partial automation spend 30%+ of that time with eyes off the road (IIHS, 2024).":"正确，也是那个艰难的答案：在 L2 上，监控它的责任仍在你。使用部分自动驾驶的驾驶员，有超过 30% 的时间视线离开路面（IIHS，2024）。",
+  "For a Level 2 car, product-liability claims against the maker almost never win in court — the driver was the one who was meant to be watching.":"对一辆 L2 级的车而言，针对厂商的产品责任索赔在法庭上几乎从不胜诉——本该盯着路的是驾驶员。",
+  "You changed lanes in {t}s — the split-second reflex the car had just handed back to you, the one thing it could not do itself.":"你在 {t}s 内完成变道——那一瞬间的反射，正是车刚刚交还给你、而它自己做不到的那件事。",
+  "You reacted in {t}s, a fraction too slow, and clipped the wreck. At 108 km/h you cover about 30 m for every second you hesitate.":"你在 {t}s 内反应，差了一点点，蹭上了那辆残骸。以 108 km/h 计，你每犹豫一秒就驶过约 30 米。",
+  "You did not move in time and the car drove into the stalled one — automation complacency, the trap this whole chapter is about. Distracted driving killed 3,308 people in the US in 2022 (NHTSA).":"你没能及时避让，车撞上了那辆抛锚的车——自动化自满，正是本章要谈的陷阱。2022 年，分心驾驶在美国夺去了 3,308 人的生命（NHTSA）。",
+  "You would do all the driving yourself. No help — but no false sense of safety either.":"你会全程自己开。没有辅助——但也没有虚假的安全感。",
+  "You would take the same Highway Assist as tonight. It helps right up until the second it cannot, and only your attention covers that second.":"你会选今晚同样的高速辅助。它一直帮着你，直到它帮不了的那一秒，而唯有你的注意力能守住那一秒。",
+  "You would hand the keys to a car with no driver. It earns that trust only inside city zones mapped in fine detail — nothing like tonight’s motorway.":"你会把钥匙交给一辆没有驾驶员的车。它只在精细建过图的城市区域内赢得这份信任——完全不同于今晚这条高速。"
 };
 (function(){
   var LKEY='ttm.lang';
@@ -393,31 +453,34 @@ window.ZH = {
 </div>
 
 <div id="outcome"><div style="display:flex;flex-direction:column;align-items:center;max-width:min(760px,92vw)">
-  <div id="o-big"></div><div id="o-label"></div><div id="o-ctx"></div><div id="o-plain"></div>
-  <div class="o-stats" id="o-stats"></div><div class="o-delta" id="o-delta"></div>
-  <div class="o-quote" id="o-quote"><span class="tx"></span><span class="who"></span></div>
-  <button class="cont" id="o-cont" data-i18n>Continue →</button>
+  <div id="o-did"></div>
+  <div id="o-big"></div><div id="o-label"></div>
+  <div id="o-mean"></div>
+  <div class="o-actions">
+    <button class="o-again" id="o-again" data-i18n>← Choose again</button>
+    <button class="cont" id="o-cont" data-i18n>Continue →</button>
+  </div>
 </div></div>
 
 <div id="debrief"><div style="display:flex;flex-direction:column;align-items:center;width:min(560px,92vw)">
   <div class="db-head" data-i18n>Chapter 1 · Debrief</div>
-  <div class="db-title" data-i18n>Your last human decision</div>
-  <div class="db-meters">
-    <div class="db-meter"><div class="ml"><span data-i18n>Trust in system</span><span id="db-trust-v">—</span></div><div class="mbar"><div class="mfill" id="db-trust-f"></div></div></div>
-    <div class="db-meter"><div class="ml"><span data-i18n>Attention left</span><span id="db-att-v">—</span></div><div class="mbar"><div class="mfill" id="db-att-f"></div></div></div>
-  </div>
+  <div class="db-title" data-i18n>Every choice, and what it meant</div>
   <div class="db-timeline" id="db-timeline"></div>
-  <div class="db-verdict" id="db-verdict"></div>
   <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
     <button class="db-btn" id="db-ch2" data-i18n>Continue to Chapter 2 ↗</button>
     <button class="db-btn" id="db-replay" style="background:transparent;border:1px solid rgba(150,180,255,.2);color:#9aa6c2;box-shadow:none" data-i18n>Drive again</button>
   </div>
+  <div id="db-explain" class="db-modal"><div class="db-modal-card">
+    <div id="db-explain-scene" class="db-modal-scene"></div>
+    <div id="db-explain-body" class="db-modal-body"></div>
+    <button id="db-explain-close" class="db-btn" data-i18n>Got it</button>
+  </div></div>
 </div></div>
 
 <div id="start">
-  <div class="eyebrow" data-i18n>Can You Trust Your Car?</div>
+  <div class="eyebrow" data-i18n>Chapter 1</div>
   <div class="title" data-i18n>The Night Drive</div>
-  <div class="sub" data-i18n>Nearly midnight on the expressway. You are behind the wheel. Just drive, and see what the night asks of you.</div>
+  <div class="sub" data-i18n>A few minutes to midnight, and you are two hundred kilometres into the drive home. Your car is a new electric sedan with <b>Highway Assist</b> — a <b>Level 2</b> system that can steer and hold its own speed for you, but only while you keep watching the road, ready to take back control the instant it needs you. Right now it is switched off. Just you, the dark, and sixty kilometres to go.</div>
   <div class="howto">
     <div class="ht-row"><span class="ht-i">›</span><span data-i18n>Click, or press <kbd>Space</kbd>, to move the story forward.</span></div>
     <div class="ht-row"><span class="ht-i">⇆</span><span data-i18n>Steer with <kbd>A</kbd> <kbd>D</kbd> or the arrow keys.</span></div>
@@ -770,7 +833,9 @@ window.AUDIO=(function(){
     for(const n of npcActive){ if(n.userData.laneX===laneX && Math.abs(n.position.z-aheadZ)<22) return; }
     const g=getNpc(); g.visible=true; g.rotation.y=oncoming?Math.PI:0;
     g.position.set(laneX,0,aheadZ);
-    const speed=oncoming? CRUISE*(0.9+Math.random()*0.5) : CRUISE*(0.75+Math.random()*0.5);
+    // same-direction cars stay at/above cruise so the player never overtakes and drives through one.
+    // ponytail: no real collision in free-roam — the only scripted crash is the takeover obstacle (edgeEvent).
+    const speed=oncoming? CRUISE*(0.9+Math.random()*0.5) : CRUISE*(1.05+Math.random()*0.4);
     g.userData={laneX,dir,speed}; npcActive.push(g);
   }
   function updateNpcs(dt){
@@ -983,7 +1048,7 @@ window.AUDIO=(function(){
     const eb=$('d-eyebrow');eb.textContent=tr(c.eyebrow);eb.className='d-eyebrow'+(c.urgent?' urgent':'');
     $('d-question').textContent=tr(c.q);const wrap=$('d-options');wrap.innerHTML='';
     c.opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.dataset.key=o.k;
-      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'');
+      b.innerHTML='<span class="k">'+o.k+'</span><span class="t">'+tr(o.t)+'</span>'+(o.s?'<span class="s">'+tr(o.s)+'</span>':'')+(o.desc?'<span class="od">'+tr(o.desc)+'</span>':'')+(o.example?'<span class="oe">'+tr(o.example)+'</span>':'');
       b.onclick=()=>choose(id,o.k);wrap.appendChild(b);});
     if(window.Glossary)Glossary.wrap($('decision')); }
   function askDecision(id){const c=DECISIONS[id];if(!c)return; TD.pause(true);
@@ -997,22 +1062,28 @@ window.AUDIO=(function(){
     if(window.AUDIO)AUDIO.sfx('ui'); S.choices[id]=k; if(id==='compare')S.car=o.car;
     const chips=applyEffects(o.effects);
     setTimeout(()=>{ $('decision').classList.remove('show');
-      showOutcome(o.outcome,chips,()=>{ const r=decResolve;decResolve=null;TD.pause(false); if(r)r(k); }); },220);
+      showOutcome(o.outcome,chips,
+        ()=>{ const r=decResolve;decResolve=null;TD.pause(false); if(r)r(k); },   // Continue → resolve the story
+        ()=>{ askDecision(id); });                                                // Choose again → reopen this question
+    },220);
   }
-  function paintOutcome(d,chips){
+  function paintOutcome(d){
+    $('o-did').textContent=tr(d.did||'');$('o-did').style.display=d.did?'':'none';
     $('o-big').textContent=tr(d.big||'');$('o-big').style.display=d.big?'':'none';$('o-big').style.color=(d.danger==='high')?'#ff5a6a':'#fff';
-    $('o-label').textContent=tr(d.label||'');$('o-ctx').textContent=tr(d.ctx||'');
-    $('o-plain').textContent=tr(d.plain||'');$('o-plain').style.display=d.plain?'':'none';
-    $('o-stats').innerHTML=(d.stats||[]).map(s=>'<div class="o-stat"><div class="v '+(s.c||'')+'">'+tr(s.v)+'</div><div class="l">'+tr(s.l)+'</div>'+(s.src?'<a class="o-cite" href="'+s.url+'" target="_blank" rel="noopener">'+s.src+'</a>':'')+'</div>').join('');
-    $('o-delta').innerHTML=(chips||[]).filter(c=>c.delta!==0).map(c=>{const up=c.delta>=0;return '<span class="chip '+(up?'up':'down')+'">'+tr(c.label)+' '+(up?'+':'')+c.delta+'</span>';}).join('');
-    $('o-quote').querySelector('.tx').textContent=tr(d.ins||'');$('o-quote').querySelector('.who').textContent=tr(d.who||'');
+    $('o-label').textContent=tr(d.label||'');$('o-label').style.display=d.label?'':'none';
+    $('o-mean').textContent=tr(d.mean||'');$('o-mean').style.display=d.mean?'':'none';
     if(window.Glossary)Glossary.wrap($('outcome')); }
-  function showOutcome(d,chips,cont){
-    curOut={d,chips};
-    paintOutcome(d,chips);
-    const o=$('outcome');o.classList.remove('ready');o.classList.add('show');
-    $('o-cont').onclick=()=>{o.classList.remove('show','ready'); curOut=null; if(window.AUDIO)AUDIO.sfx('ui'); cont&&cont();};
-    const kc=ev=>{if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){document.removeEventListener('keydown',kc);$('o-cont').click();}};
+  function showOutcome(d,chips,cont,onRetry){
+    curOut={d,chips,cont,onRetry};
+    paintOutcome(d);
+    const o=$('outcome'),again=$('o-again');
+    o.classList.remove('ready');o.classList.add('show');
+    again.classList.toggle('hide',!onRetry);
+    let kc;
+    const finish=fn=>{document.removeEventListener('keydown',kc);o.classList.remove('show','ready');curOut=null;if(window.AUDIO)AUDIO.sfx('ui');fn&&fn();};
+    $('o-cont').onclick=()=>finish(cont);
+    again.onclick=onRetry?()=>finish(onRetry):null;
+    kc=ev=>{if((ev.key==='Enter'||ev.key===' ')&&o.classList.contains('ready')){$('o-cont').click();}};
     document.addEventListener('keydown',kc);
     setTimeout(()=>o.classList.add('ready'),1500);
   }
@@ -1024,11 +1095,11 @@ window.AUDIO=(function(){
       S.edgeOutcome=outcome; S.reactionMs=rt; S.choices.edge=(outcome==='crash'?'froze':'dodged');
       const chips=applyEffects(outcome==='save'?{trust:5}:outcome==='clip'?{trust:-5}:{trust:-10});
       const out=Object.assign({},EDGE_OUT[outcome]);
-      if(rt!=null){const secs=(rt/1000).toFixed(1)+' s'; out.big=secs;
-        out.stats=[{v:secs,l:'Your reaction',c:outcome==='save'?'good':'ok'},{v:outcome==='save'?'Clear':'Grazed',l:'Outcome',c:outcome==='save'?'good':'ok'}];
-        out.plain=outcome==='save'
-          ? tr('What you did: spotted the stalled car and changed lanes in {s}. That split-second reflex is exactly what the car had just handed back to you — and could not do itself.').replace('{s}',secs)
-          : tr('What you did: reacted in {s}, a beat too late, and clipped the wreck as you passed. In a real car that is the difference between a scare and a crash.').replace('{s}',secs);}
+      if(rt!=null){const secs=(rt/1000).toFixed(1)+' s'; out.big=secs;   // reaction time shown once, as the headline number
+        out.label=outcome==='save'?'you cleared it':'a beat too late';
+        out.mean=outcome==='save'
+          ? tr('You saw the stalled car and changed lanes in {s}. That split-second reflex is exactly what the car had just handed back to you — the one thing it could not do itself.').replace('{s}',secs)
+          : tr('You reacted in {s} — a fraction too slow — and clipped the wreck as you passed. At 108 km/h you cover 30 metres for every second you hesitate, so those few tenths are the whole gap between a near-miss and a crash.').replace('{s}',secs);}
       showOutcome(out,chips,()=>res());
     });
   });}
@@ -1037,96 +1108,111 @@ window.AUDIO=(function(){
   const DECISIONS={
     drive1:{eyebrow:'23:47 · G2 Expressway',q:'Your phone lights up on the screen. What do you do?',
       opts:[
-        {k:'A',t:'Glance at it',effects:{attention:-25,flag:'glanced'},outcome:{big:'68 m',label:'Travelled blind',danger:'high',
-          ctx:'Two seconds with your eyes down at 108 km/h. The car covered sixty-eight metres you never saw.',
-          plain:'What you did: looked at your phone for about 2 seconds. At this speed the car travelled 68 m, most of a football pitch, with no one watching the road.',
-          stats:[{v:'2.0 s',l:'Eyes off road',c:'bad'},{v:'68 m',l:'Blind distance',c:'bad'},{v:'5 s',l:'Avg text = eyes shut',c:'bad',src:'NHTSA / VTTI',url:'https://www.nhtsa.gov/risky-driving/distracted-driving'}],
-          ins:'If the owner is scrolling a phone, or even dozing off, that’s personal behaviour, and that’s exactly where the risk creeps in.',who:'Robotaxi product lead, L2 driver'}},
-        {k:'B',t:'Eyes on the road',effects:{attention:-5},outcome:{big:'0.9 s',label:'Reaction, fatigued',danger:'mid',
-          ctx:'You leave it glowing. Alert you would react in half a second; tired, almost twice that.',
-          plain:'What you did: left the phone alone and kept watching the road. Tired, your reactions are about twice as slow as normal, still far safer than looking away.',
-          stats:[{v:'0.9 s',l:'Reaction',c:'ok',src:'FHWA',url:'https://highways.dot.gov/safety/speed-management/speed-concepts-informational-guide/chapter-4-engineering-and-technical'},{v:'18 m',l:'Extra braking',c:'ok'}],
-          ins:'A machine, just like a person, has an upper limit.',who:'Deployment & data engineer'}},
-        {k:'C',t:'Pull over first',effects:{attention:10,flag:'pulledOver'},outcome:{big:'0 m',label:'Risk added',danger:'none',
-          ctx:'You take the shoulder, read it, and breathe. Slower, and the only choice that costs nothing.',
-          plain:'What you did: pulled over to read it. It cost you time and nothing else, the only choice that added zero risk on the road.',
-          stats:[{v:'0 m',l:'Risk added',c:'good'}],ins:'Sometimes I do step in. A car is clearly speeding up behind us and it still wants to change lanes, so I override it.',who:'Robotaxi product lead, L2 driver'}}
+        {k:'A',t:'Glance at it',effects:{attention:-25,flag:'glanced'},outcome:{
+          did:'You looked down at the screen for about two seconds.',
+          big:'68 m',label:'driven blind',danger:'high',
+          mean:'At 108 km/h, two seconds is 68 metres — most of a football pitch — covered with no one watching the road. The average glance at a text lasts about 5 seconds: a whole pitch and more, driven with your eyes shut. (NHTSA / VTTI)'}},
+        {k:'B',t:'Eyes on the road',effects:{attention:-5},outcome:{
+          did:'You left the phone glowing and kept your eyes forward.',
+          big:'0.9 s',label:'your reaction, tired',danger:'mid',
+          mean:'Wide awake, you would react in about half a second. Tired, it stretches closer to 0.9 — nearly twice as slow, which at this speed adds roughly 18 metres to your stopping distance. Still far safer than looking away.'}},
+        {k:'C',t:'Pull over first',effects:{attention:10,flag:'pulledOver'},outcome:{
+          did:'You eased onto the hard shoulder, read the message, then pulled back on.',
+          big:'0 m',label:'driven blind',danger:'none',
+          mean:'Not a single metre of road went unwatched. It cost you a minute or two and nothing else — of the three, the only choice that added zero risk.'}}
       ]},
     l2:{eyebrow:'00:14 · Rain · Assist engaged',q:'The car is steering and holding your speed. If it crashes now, who answers for it?',
       opts:[
-        {k:'A',t:'The car',effects:{trust:15,flag:'overtrust'},outcome:{big:'You',label:'Wrong. You are liable',danger:'mid',
-          ctx:'This is a Level 2 system. It assists; you drive. Every legal consequence still lands on you.',
-          plain:'What you did: said the car is to blame. On a Level 2 system (it steers and brakes, but you are still the driver) it is not. The responsibility, in law, was yours.',
-          stats:[{v:'Incorrect',l:'Your answer',c:'bad'}],ins:'L2 and L4 are not one smooth scale. The decision logic differs. On L2 a person drives; on L4 the machine does.',who:'Robotaxi commercialization strategist'}},
-        {k:'B',t:'Me',effects:{trust:5,flag:'calibrated'},outcome:{big:'You',label:'Right, and it is hard',danger:'none',
-          ctx:'Correct. The car owns routine inputs; you own monitoring and every edge case.',
-          plain:'What you did: took responsibility yourself. That is right for Level 2: the car handles the easy, steady driving, but every consequence, and every surprise, is still yours.',
-          stats:[{v:'Correct',l:'Your answer',c:'good'},{v:'30%+',l:'Time eyes off, partial autonomy',c:'bad',src:'IIHS 2024',url:'https://www.iihs.org/news/detail/drivers-quickly-learn-to-skirt-limits-set-by-partial-automation-systems'}],ins:'Right now most of the industry is really L2-plus-plus. Very few will even claim L3 or L4.',who:'Perception-model engineer'}},
-        {k:'C',t:'The company',effects:{trust:-5},outcome:{big:'Rarely',label:'The courts, usually not',danger:'none',
-          ctx:'For L2, product-liability claims almost never win. The driver failed to monitor.',
-          plain:'What you did: blamed the maker. For a Level 2 car that almost never holds up in court. The driver was the one meant to be watching.',
-          stats:[{v:'Rare',l:'Company liable',c:'ok'}],ins:'When it can no longer cope, it just tells the person to take over.',who:'Robotaxi commercialization strategist'}}
+        {k:'A',t:'The car',effects:{trust:15,flag:'overtrust'},outcome:{big:'You',danger:'mid',
+          mean:'You said the car was to blame — but it is not. You are driving a Level 2 system: it steers and brakes, yet you are still the driver in the eyes of the law, so every legal consequence lands on you. It is exactly why the industry quietly calls today’s tech “L2-plus” rather than claiming Level 3 or Level 4.'}},
+        {k:'B',t:'Me',effects:{trust:5,flag:'calibrated'},outcome:{big:'You',danger:'none',
+          mean:'Correct — and it is the hard answer. On Level 2 the car handles the easy, steady driving while you stay responsible for watching it and for catching every surprise. Drivers using partial automation spend more than 30% of that time with their eyes off the road (IIHS, 2024) — which is exactly where it goes wrong.'}},
+        {k:'C',t:'The company',effects:{trust:-5},outcome:{big:'Rarely',danger:'none',
+          mean:'You blamed the maker. For a Level 2 car, product-liability claims almost never succeed in court: the driver was the one who was supposed to be watching. The company is rarely held liable.'}}
       ]},
     compare:{eyebrow:'Dawn · Your next car',q:'After tonight, which car would you actually trust?',
       opts:[
-        {k:'A',t:'Standard',s:'L0 · you drive',car:'L0',outcome:{big:'L0',label:'Full control, full weight',danger:'none',
-          ctx:'No help, no illusions. Everything that happens is yours.',ins:'Chapter 2: what a bare pair of eyes misses that sensors catch.',who:''}},
-        {k:'B',t:'Highway assist',s:'L2 · like tonight',car:'L2',outcome:{big:'L2',label:'Help, and its trap',danger:'none',
-          ctx:'The same hand on the wheel you felt tonight, useful until it hands back.',ins:'Chapter 2: inside the perception that makes L2 work, and where it fails.',who:''}},
-        {k:'C',t:'Robotaxi',s:'L4 · no driver',car:'L4',outcome:{big:'L4',label:'No wheel at all',danger:'none',
-          ctx:'It drives; you ride. Only inside mapped zones it has learned by heart.',ins:'Chapter 2: what it takes to earn that much trust.',who:''}}
+        {k:'A',t:'Standard',s:'Level 0 · you drive',car:'L0',
+          desc:'You do all the driving. No steering or braking help — the car only does what your hands and feet tell it.',
+          example:'e.g. an ordinary petrol or electric car.',
+          outcome:{big:'L0',danger:'none',
+            mean:'You would take the standard car and do all the driving yourself. No help, but no false sense of safety either — every metre is yours, for better and for worse.'}},
+        {k:'B',t:'Highway assist',s:'Level 2 · like tonight',car:'L2',
+          desc:'Steers and holds its speed on the motorway — exactly what you drove tonight — but you must watch every second and be ready to take over instantly.',
+          example:'e.g. Tesla Autopilot, GM Super Cruise.',
+          outcome:{big:'L2',danger:'none',
+            mean:'You would take the same Highway Assist you used tonight. It carries you on the easy stretches, but the trap is real: it helps right up until the second it cannot, and only your attention covers that second.'}},
+        {k:'C',t:'Robotaxi',s:'Level 4 · no driver',car:'L4',
+          desc:'Drives itself with nobody at the wheel — but only inside the specific city zones it has mapped and learned in fine detail.',
+          example:'e.g. Waymo, carrying passengers with an empty driver seat.',
+          outcome:{big:'L4',danger:'none',
+            mean:'You would hand the keys to a car with no driver at all. It can earn that trust — but only inside the city zones it has mapped in fine detail, nothing like tonight’s open motorway.'}}
       ]}
   };
   const EDGE_OUT={
-    save:{label:'Handover, safe',danger:'none',ins:'It can never be made completely free of risk.',who:'Technology & product manager'},
-    clip:{label:'Handover, barely',danger:'mid',ins:'That kind of consumer assist: its only real purpose is to sell cars.',who:'Deployment & data engineer'},
-    crash:{big:'Impact',label:'No takeover',danger:'high',stats:[{v:'0.0 s',l:'Your input',c:'bad'},{v:'Collision',l:'Outcome',c:'bad'},{v:'3,308',l:'US distracted-driving deaths, 2022',c:'bad',src:'NHTSA',url:'https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813559'}],
-      plain:"What happened: you didn't change lanes in time, so the car hit the stalled one. You trusted it to handle the very thing it had just handed back to you. That gap is called automation complacency, and it is the whole point of this chapter.",
-      ins:'The dangerous moment is when the assist quits and the scene lands back on a person to take over.',who:'Perception-model engineer'}
+    save:{danger:'none'},
+    clip:{danger:'mid'},
+    crash:{big:'Impact',danger:'high',
+      mean:"You did not move in time, so the car drove straight into the stalled one. You trusted it with the very thing it had just handed back to you — a trap called automation complacency, and the whole point of this chapter. Distracted driving killed 3,308 people in the United States in 2022 alone. (NHTSA)"}
   };
   const BEATS={
-    intro:[{who:'You',tx:"Almost midnight. Two hundred kilometres behind you, sixty still ahead."},
-           {who:'You',tx:"Your eyes have that hot, sandy feeling. You blink hard and the lane lines swim back into focus."}],
-    drive1_after(){ if(S.flags.glanced)return[{who:'',tx:"The tyres kiss the lane line and the car twitches. Your head snaps up."}];
-      if(S.flags.pulledOver)return[{who:'You',tx:"The message can wait. You breathe out on the shoulder, then pull back on."}];
-      return[{who:'You',tx:"You keep your eyes where they belong, on the white line unspooling into the dark."}]; },
-    l2_intro(){ const b=[]; if(S.flags.pulledOver)b.push({who:'You',tx:"Rested, a little sharper. Rain starts to freckle the windscreen."});
-      else if(S.flags.glanced)b.push({who:'You',tx:"Hands tight now, the near-miss still humming. Then the rain begins."});
-      else b.push({who:'You',tx:"Rain starts to fall, smearing the tail-lights ahead into long red streaks."});
-      b.push({who:'Car',tx:"Assist available. You thumb it on, and the wheel begins to steer itself."}); return b; },
-    edge_intro:[{who:'',tx:"Roadworks. A stalled car looms in your lane, hazards ticking."},
-                {who:'Car',tx:"TAKE OVER. The wheel goes light. This one is yours. Change lanes to get around it: press A or D."}],
-    edge_after(){ if(S.edgeOutcome==='save')return[{who:'You',tx:"You slide into the next lane, heart slamming, and the car is yours again."}];
-      if(S.edgeOutcome==='clip')return[{who:'',tx:"You wrench it over a beat too late; a mirror clips the wreck as you pass."}];
-      return[{who:'',tx:"No time. The stalled car fills the windscreen."}]; },
-    compare_intro(){ if(S.edgeOutcome==='crash')return[{who:'',tx:"Later. An amber tow-truck light sweeps the wreck. You are unhurt, and cannot stop replaying it."}];
-      return[{who:'You',tx:"Dawn finds you at a rest area, hands not quite steady, the sky going grey to gold."}]; }
+    intro:[{who:'You',tx:"It's a few minutes to midnight. Two hundred kilometres of motorway sit behind you; sixty still lie ahead, and in the dark every one of them looks the same."},
+           {who:'You',tx:"Your eyes have gone hot and gritty. You blink hard, roll your shoulders, and the lane lines drift back into focus. The heater hums, the tyres drone. It would be so easy to let them close, just for a second."}],
+    drive1_after(){ if(S.flags.glanced)return[{who:'',tx:"For a heartbeat the world was the little screen in your hand — and in that heartbeat the tyres found the lane line. The car twitches, a low rumble runs up through the seat, and your head snaps back up."}];
+      if(S.flags.pulledOver)return[{who:'You',tx:"The message can wait. You sit on the hard shoulder a moment, engine ticking, breath slowing, then check your mirror and ease back out into the empty lane."}];
+      return[{who:'You',tx:"Whatever it is, it can wait. You keep your eyes where they belong — on the white line unspooling out of the dark — and let the phone go quiet on its own."}]; },
+    l2_intro(){ const b=[]; if(S.flags.pulledOver)b.push({who:'You',tx:"Rested, a little sharper, you press on. Then the first fat drops of rain freckle the windscreen, and within a minute it's coming down hard."});
+      else if(S.flags.glanced)b.push({who:'You',tx:"Your hands are tight on the wheel now, the near-miss still humming in your chest. And then, as if the night wanted more, the rain begins."});
+      else b.push({who:'You',tx:"The rain starts without warning, fine at first, then heavy, smearing the tail-lights ahead into long red streaks across the glass."});
+      b.push({who:'Car',tx:"A soft chime. On the dash: HIGHWAY ASSIST AVAILABLE. Tired, half-blinded by the rain, you thumb it on — and feel the wheel come alive under your hands, correcting, holding the lane, keeping your speed. For the first time all night you are not the one driving."}); return b; },
+    edge_intro:[{who:'',tx:"Roadworks. Cones funnel the lanes, and out of the rain a stalled car looms dead ahead in yours — no lights but the slow orange tick of its hazards."},
+                {who:'Car',tx:"TAKE OVER NOW. The chime turns urgent and the wheel goes light in your hands. The car has run out of answers. This one is yours — change lanes to get around it: press A or D."}],
+    edge_after(){ if(S.edgeOutcome==='save')return[{who:'You',tx:"You throw it into the next lane, tyres hissing on the wet, heart slamming against your ribs. The stalled car flashes past close enough to touch — and the road opens up clear ahead again."}];
+      if(S.edgeOutcome==='clip')return[{who:'',tx:"You wrench the wheel over, but a beat too late. There's a sharp crack as your mirror catches the wreck, glass spraying, and then you're past — shaking, but still moving."}];
+      return[{who:'',tx:"There's no time. The stalled car swells until it fills the whole windscreen, and then there is only noise and light."}]; },
+    compare_intro(){ if(S.edgeOutcome==='crash')return[{who:'',tx:"Later. An amber tow-truck light sweeps slowly over the wreck. You're sitting on the barrier, a blanket round your shoulders, unhurt — and you cannot stop replaying the half-second where the car handed everything back to you."}];
+      return[{who:'You',tx:"Dawn finds you parked at a rest area, both hands wrapped round a coffee that's gone cold, watching the sky turn from grey to gold. You've been thinking about that wheel going light in your hands ever since."}]; }
   };
 
   /* debrief */
   function driveCall(){return tr({A:'Glanced at the phone',B:'Kept eyes on the road',C:'Pulled over first'}[S.choices.drive1]||'—');}
-  function driveCons(){return {A:{t:tr('68 m blind'),c:'bad'},B:{t:tr('Slowed but alert'),c:''},C:{t:tr('No risk added'),c:'good'}}[S.choices.drive1]||{t:''};}
   function l2Call(){return tr({A:'Blamed the car',B:'Took responsibility',C:'Blamed the company'}[S.choices.l2]||'—');}
-  function l2Cons(){return {A:{t:tr('Misread L2'),c:'bad'},B:{t:tr('Calibrated'),c:'good'},C:{t:tr('Half right'),c:''}}[S.choices.l2]||{t:''};}
-  function edgeCons(){const s=S.reactionMs!=null?(S.reactionMs/1000).toFixed(1)+' s, ':'';
-    return {save:{t:s+tr('clear'),c:'good'},clip:{t:s+tr('grazed'),c:''},crash:{t:tr('Collision'),c:'bad'}}[S.edgeOutcome]||{t:'—'};}
+  function edgeCall(){return S.choices.edge==='dodged'?tr('Changed lanes'):S.choices.edge==='froze'?tr('Froze'):'—';}
   function carCall(){return tr({L0:'Standard (L0)',L2:'Highway assist (L2)',L4:'Robotaxi (L4)'}[S.car]||'—');}
-  function verdict(){const eo=S.edgeOutcome,car=S.car,ok=(eo==='save'||eo==='clip');
-    if(ok&&car==='L4')return tr("You caught the car the instant it gave up, and you would still hand the keys to a robotaxi. You trust the machine because you watched yourself nearly fail, not because a badge promised you would not.");
-    if(ok&&car==='L2')return tr("Your hands were there when it mattered. You would take the same assistance again, eyes open to the catch: it helps right up until the second it cannot, and only your attention covers that second.");
-    if(ok&&car==='L0')return tr("You made the move, and you would rather drive yourself. Tonight taught you the price of attention, and you would rather pay it than lend it to a system that hands the bill back at the worst moment.");
-    if(car==='L4')return tr("The car gave the wheel back at the one moment you could not take it, and you would still choose the one with no wheel at all. Maybe you are right that it should never have asked.");
-    if(car==='L2')return tr("It handed control back and you could not catch it, and you would buy the same level of help tomorrow. That gap between what L2 promises and what it delivers is the whole subject of this project.");
-    return tr("It failed at the edge, and you would rather hold the wheel yourself than trust a handover you cannot count on. That instinct is an honest read of where this technology stands.");}
+  const EXPLAIN={
+    drive1:{
+      A:"Looking down for about two seconds at 108 km/h means roughly 68 m driven with nobody watching the road — most of a football pitch, blind.",
+      B:"You kept your eyes forward. Tired, your reaction slows to about 0.9 s — nearly twice as slow as when you are fresh — but far safer than looking away.",
+      C:"You pulled onto the hard shoulder to read it. Not one metre went unwatched: it cost a minute and added zero risk." },
+    l2:{
+      A:"On a Level 2 system the car steers and brakes, but you are still the driver in the eyes of the law — so blaming the car does not hold. Every consequence lands on you.",
+      B:"Correct, and the hard answer: on L2 you stay responsible for watching it. Drivers on partial automation spend 30%+ of that time with eyes off the road (IIHS, 2024).",
+      C:"For a Level 2 car, product-liability claims against the maker almost never win in court — the driver was the one who was meant to be watching." },
+    edge:{
+      save:"You changed lanes in {t}s — the split-second reflex the car had just handed back to you, the one thing it could not do itself.",
+      clip:"You reacted in {t}s, a fraction too slow, and clipped the wreck. At 108 km/h you cover about 30 m for every second you hesitate.",
+      crash:"You did not move in time and the car drove into the stalled one — automation complacency, the trap this whole chapter is about. Distracted driving killed 3,308 people in the US in 2022 (NHTSA)." },
+    compare:{
+      L0:"You would do all the driving yourself. No help — but no false sense of safety either.",
+      L2:"You would take the same Highway Assist as tonight. It helps right up until the second it cannot, and only your attention covers that second.",
+      L4:"You would hand the keys to a car with no driver. It earns that trust only inside city zones mapped in fine detail — nothing like tonight’s motorway." }
+  };
+  function explainText(id){ const key={drive1:S.choices.drive1,l2:S.choices.l2,edge:S.edgeOutcome,compare:S.car}[id];
+    let s=EXPLAIN[id]&&EXPLAIN[id][key]; if(!s)return '';
+    s=tr(s);
+    if(id==='edge'){const rs=S.reactionMs!=null?(S.reactionMs/1000).toFixed(1):'—';s=s.replace('{t}',rs);}
+    return s; }
+  function openExplain(scene,body){$('db-explain-scene').textContent=scene;$('db-explain-body').textContent=body;$('db-explain').classList.add('show');}
   function renderDebrief(){ save();
-    $('db-trust-v').textContent=Math.round(S.trust);$('db-att-v').textContent=Math.round(S.attention);
-    setTimeout(()=>{$('db-trust-f').style.width=S.trust+'%';$('db-att-f').style.width=S.attention+'%';},90);
-    const rows=[{scene:tr('23:47 · The phone'),call:driveCall(),cons:driveCons()},
-      {scene:tr('00:14 · Who is liable'),call:l2Call(),cons:l2Cons()},
-      {scene:tr('00:31 · The takeover'),call:(S.choices.edge==='dodged'?tr('Changed lanes'):S.choices.edge==='froze'?tr('Froze'):'—'),cons:edgeCons()},
-      {scene:tr('Dawn · Your next car'),call:carCall(),cons:{t:'',c:''}}];
-    $('db-timeline').innerHTML=rows.map(r=>'<div class="db-row"><div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div><div class="rw-cons '+(r.cons.c||'')+'">'+(r.cons.t||'')+'</div></div>').join('');
-    $('db-verdict').textContent=verdict();
+    const rows=[{id:'drive1',scene:tr('23:47 · The phone'),call:driveCall()},
+      {id:'l2',scene:tr('00:14 · Who is liable'),call:l2Call()},
+      {id:'edge',scene:tr('00:31 · The takeover'),call:edgeCall()},
+      {id:'compare',scene:tr('Dawn · Your next car'),call:carCall()}];
+    const tl=$('db-timeline'); tl.innerHTML='';
+    rows.forEach(r=>{const row=document.createElement('div');row.className='db-row';
+      row.innerHTML='<div class="rw-scene">'+r.scene+'</div><div class="rw-call">'+r.call+'</div>';
+      const b=document.createElement('button');b.className='rw-explain';b.textContent=tr('Explain');
+      b.onclick=()=>openExplain(r.scene,explainText(r.id)); row.appendChild(b); tl.appendChild(row);});
     if(window.Glossary)Glossary.wrap($('debrief'));
     $('debrief').classList.add('show');
   }
@@ -1135,6 +1221,8 @@ window.AUDIO=(function(){
     location.href='can_you_trust_your_car_chapter2.html'; }
   $('db-ch2').addEventListener('click',continueCh2);
   $('db-replay').addEventListener('click',()=>location.reload());
+  $('db-explain-close').addEventListener('click',()=>$('db-explain').classList.remove('show'));
+  $('db-explain').addEventListener('click',e=>{ if(e.target===$('db-explain'))$('db-explain').classList.remove('show'); });
 
   /* warm-up: teach the controls by requiring one lane change each way, before the story */
   function warmup(){ return new Promise(res=>{
@@ -1190,7 +1278,7 @@ window.AUDIO=(function(){
         if(bp.classList.contains('ready')){ $('beat-tx').textContent = tr(curBeat.tx); if(window.Glossary)Glossary.wrap($('beat-tx')); setBeatHint(); }   // mid-type switches on the next tick via cur()
       }
       if(curDecision) paintDecision(curDecision);
-      if($('outcome').classList.contains('show') && curOut) paintOutcome(curOut.d,curOut.chips);
+      if($('outcome').classList.contains('show') && curOut) paintOutcome(curOut.d);
       if($('debrief').classList.contains('show')) renderDebrief();
     }catch(e){ console.error('onLangChange',e); }
   };

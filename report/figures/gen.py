@@ -4,7 +4,7 @@
 Redesign v2 — "Meridian" editorial system:
   - serif titles (Georgia) over a sans data face, for a policy-paper feel
   - a three-color argument palette: NAVY = structure, TEAL = measured/positive,
-    CRIMSON = the gap / the demanded standard / tension
+    AZURE = the gap / the demanded standard / tension
   - richer infographic patterns than v1 (momentum flywheel, bullseye + progression
     key, a gap chart that draws the *missing* Chinese data, a cyclical pentagon,
     an energy-label-style autonomy card)
@@ -16,15 +16,16 @@ import math, pathlib
 OUT = pathlib.Path(__file__).parent
 
 # ---- palette -----------------------------------------------------------------
-PAPER, PANEL = "#FFFFFF", "#F6F8FA"
-INK, SUB, MUT = "#1A2330", "#4E5866", "#8A95A3"
-LINE = "#E3E8EE"
-NAVY, NAVY2, NAVY_T = "#1D3557", "#33517A", "#EAEFF6"
-TEAL, TEALD, TEAL_T = "#2A9D8F", "#1F7A6E", "#E2F3F0"
-CRIM, CRIMD, CRIM_T = "#E63946", "#C42C38", "#FBE7E9"
-AMBER = "#E9A23B"
+# Matched to the published site's :root tokens (hpro12.github.io/trusting-autonomous-machines):
+# warm paper, deep navy, teal for measured/positive, and AZURE as the tension / gap accent.
+PAPER, PANEL = "#FBFBF8", "#EEF2F7"       # --bg, --surface-2
+INK, SUB, MUT = "#1A2330", "#48525F", "#7B8695"  # --ink, --sub, --mut
+LINE = "#E2E7EE"                          # --line
+NAVY, NAVY2, NAVY_T = "#14243D", "#0F1B2E", "#EAF0F8"  # --navy, --navy-2
+TEAL, TEALD, TEAL_T = "#2A9D8F", "#1F7A6E", "#E3F3F0"  # --accent, --accent-strong
+AZURE, AZURED, AZURE_T = "#3E6FB0", "#2E5488", "#E4ECF7"  # --azure = the gap / demanded standard / tension
 
-SERIF = 'Georgia,"Iowan Old Style","Times New Roman",serif'
+SERIF = '"Iowan Old Style",Georgia,"Times New Roman",serif'
 SANS = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif'
 
 
@@ -84,7 +85,7 @@ def flywheel():
     nodes = [  # (name, deg, sub, emphasis)
         ("Exposure", 0, "real-world operation", False),
         ("Evidence", 90, "data accumulates", False),
-        ("Transparency", 180, "disclosed openly", True),
+        ("Transparency", 180, "made public", True),
         ("Trust", 270, "public confidence", False),
     ]
     half = math.degrees(math.asin(nr / R)) + 5  # gap so arrows clear the nodes
@@ -249,29 +250,28 @@ def trustgap():
     svg.append(txt(cG, ymid + 34, "no public", 20, SUB, "middle", "600"))
     svg.append(txt(cG, ymid + 60, "dataset", 20, SUB, "middle", "600"))
 
-    # C: standard demanded (crimson)
+    # C: standard demanded (azure)
     dv = 99.5
-    svg.append(f'<rect x="{cC-bw/2}" y="{yv(dv):.1f}" width="{bw}" height="{base-yv(dv):.1f}" rx="7" fill="{CRIM}"/>')
+    svg.append(f'<rect x="{cC-bw/2}" y="{yv(dv):.1f}" width="{bw}" height="{base-yv(dv):.1f}" rx="7" fill="{AZURE}"/>')
 
     # gap bracket between A(top) and C(top)
     gx = cC + bw / 2 + 34
     gy0, gy1 = yv(dv), yv(mv + 8)
-    svg.append(f'<line x1="{gx}" y1="{gy0:.1f}" x2="{gx}" y2="{gy1:.1f}" stroke="{CRIMD}" stroke-width="3.5"/>')
+    svg.append(f'<line x1="{gx}" y1="{gy0:.1f}" x2="{gx}" y2="{gy1:.1f}" stroke="{AZURED}" stroke-width="3.5"/>')
     for yy in (gy0, gy1):
-        svg.append(f'<line x1="{gx-16}" y1="{yy:.1f}" x2="{gx+16}" y2="{yy:.1f}" stroke="{CRIMD}" stroke-width="3.5"/>')
+        svg.append(f'<line x1="{gx-16}" y1="{yy:.1f}" x2="{gx+16}" y2="{yy:.1f}" stroke="{AZURED}" stroke-width="3.5"/>')
     gm = (gy0 + gy1) / 2
-    svg.append(txt(gx + 30, gm - 8, "THE", 30, CRIMD, "start", "800"))
-    svg.append(txt(gx + 30, gm + 28, "TRUST GAP", 30, CRIMD, "start", "800"))
+    svg.append(txt(gx + 30, gm - 8, "THE", 30, AZURED, "start", "800"))
+    svg.append(txt(gx + 30, gm + 28, "TRUST GAP", 30, AZURED, "start", "800"))
     svg.append(txt(gx + 30, gm + 60, "what evidence must close", 18, SUB, "start", "400", serif=True, italic=True))
 
-    # column labels
+    # column labels (title color-coded to its column; no leading dot — it collided)
     def collab(cxc, t1, t2, col):
-        svg.append(f'<circle cx="{cxc-bw/2+14}" cy="{base+40}" r="7" fill="{col}"/>')
-        svg.append(txt(cxc, base + 46, t1, 23, INK, "middle", "700"))
+        svg.append(txt(cxc, base + 46, t1, 23, col, "middle", "800"))
         svg.append(txt(cxc, base + 78, t2, 19, SUB, "middle", "400"))
-    collab(cA, "Measured AV safety", "published operator data", TEAL)
-    collab(cG, "China", "no official disclosure", "#B9C3CE")
-    collab(cC, "Standard demanded", "of a machine (near-perfect)", CRIM)
+    collab(cA, "Measured AV safety", "published operator data", TEALD)
+    collab(cG, "China", "no official disclosure", MUT)
+    collab(cC, "Standard demanded", "of a machine (near-perfect)", AZURED)
 
     # source note
     ny = H - 108
@@ -281,7 +281,7 @@ def trustgap():
     svg.append(txt(96, ny + 32, "safety statistically). Comparable Chinese disengagement / incident data is not public —",
                    19, MUT, "start", "400"))
     svg.append(txt(96, ny + 60, "that the data is missing is itself part of the argument.",
-                   19, CRIMD, "start", "600", serif=True, italic=True))
+                   19, AZURED, "start", "600", serif=True, italic=True))
     svg.append('</svg>')
     return page(W, H, "".join(svg))
 

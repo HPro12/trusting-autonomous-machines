@@ -291,7 +291,7 @@ window.ZH = {
   "A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one.":"前方路边有一个身影在等待。每个传感器都对它有各自的判断。拖动滑块，决定车对每一个传感器的信任程度。",
   "Weighted right, the read holds. All three sensors point the same way.":"权重设得当，这次判断站得住。三个传感器都指向同一个方向。",
   "The read is shaky. The sensors don't fully agree yet.":"判断并不牢靠。传感器之间还没有完全达成一致。",
-  "Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses.":"对向的远光灯灌满了挡风玻璃。摄像头一片惨白，它的置信度随之崩塌。",
+  "Oncoming high-beams flood the windshield. The camera whites out and its confidence collapses.":"对向的远光灯灌满了挡风玻璃。摄像头一片惨白，它的置信度随之崩塌。",
   "CAMERA DEGRADED. What's left is LiDAR and radar. Re-weight them, or let the car decide.":"摄像头已降级。剩下的是激光雷达和雷达。重新分配权重，或者交给车来决定。",
   "Lean on the sensors that can still see, and the figure stays tracked through the glare. That is graceful degradation.":"倚靠仍能看见的传感器，那个身影就能在眩光中被持续追踪。这就是优雅降级。",
   "Camera still blind. An object sits in your lane. LiDAR paints it solid; the camera insists on empty road. You have to call it.":"摄像头仍然致盲。你的车道里有一个物体。激光雷达把它描绘得清清楚楚；摄像头却坚称路面空无一物。你必须做出判断。",
@@ -1030,7 +1030,7 @@ window.AUDIO=(function(){
     see:[ {who:'', tx:"Boxes lock onto the cars around you. Cyan is the camera, blue dots are LiDAR (laser range-finding), amber is radar (radio echoes that gauge distance and speed). When they agree, the number climbs. Blending all three into one answer is called sensor fusion."} ],
     fuse_intro:[ {who:'', tx:"A figure waits at the roadside ahead. Each sensor has an opinion about it. Drag the sliders to decide how much the car trusts each one."} ],
     fuse_after:(c)=>[ {who:'You', tx:(c>=70?"Weighted right, the read holds. All three sensors point the same way.":"The read is shaky. The sensors don't fully agree yet.")} ],
-    fail_intro:[ {who:'', tx:"Oncoming high-beams flood the windscreen. The camera whites out and its confidence collapses."},
+    fail_intro:[ {who:'', tx:"Oncoming high-beams flood the windshield. The camera whites out and its confidence collapses."},
       {who:'Car', tx:"CAMERA DEGRADED. What's left is LiDAR and radar. Re-weight them, or let the car decide."} ],
     fail_after:[ {who:'You', tx:"Lean on the sensors that can still see, and the figure stays tracked through the glare. That is graceful degradation."} ],
     decide_intro:[ {who:'', tx:"Camera still blind. An object sits in your lane. LiDAR paints it solid; the camera insists on empty road. You have to call it."} ]

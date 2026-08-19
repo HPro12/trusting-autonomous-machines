@@ -313,7 +313,7 @@ window.ZH = {
   "You believed the camera's “clear road” and ignored the rest.":"你相信了摄像头的“道路空旷”，无视了其余的一切。",
   "Impact":"撞击",
   "you trusted the blind sensor":"你信任了失明的那个传感器",
-  "A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (NTSB HAR-19/03)":"致盲的摄像头并不报告“安全”——它什么都没报告，而你把这份沉默当成了“一路畅通”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这种失效，在 2018 年夺走了亚利桑那州坦佩一名行人的生命：车在撞击前 5.6 秒就探测到了她，系统却没有对传感器所见做出任何反应。（NTSB HAR-19/03）",
+  "A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (National Transportation Safety Board, report HAR-19/03)":"致盲的摄像头并不报告“安全”——它什么都没报告，而你把这份沉默当成了“一路畅通”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这种失效，在 2018 年夺走了亚利桑那州坦佩一名行人的生命：车在撞击前 5.6 秒就探测到了她，系统却没有对传感器所见做出任何反应。（NTSB HAR-19/03）",
   // — continue / replay —
   "← Choose again":"← 重新选择",
   "Continue →":"继续 →",
@@ -341,7 +341,7 @@ window.ZH = {
   "When the glare blinded the camera your read collapsed to {gc}%, because too much weight still sat on the sensor that could no longer see. Graceful degradation means shifting trust to the sensors that still work the instant one goes dark.":"当眩光致盲摄像头时，你的判断跌到了 {gc}%，因为仍有过多权重压在那个已经看不见的传感器上。优雅降级意味着：某个传感器一失明，就立刻把信任转移到仍然管用的那些上。",
   "LiDAR and radar saw a stalled car the blinded camera could not. You trusted the sensors that could still see — exactly what sensor fusion is for.":"激光雷达和雷达看到了一辆致盲摄像头看不到的抛锚车。你信任了仍能看见的传感器——这正是传感器融合的用意。",
   "You let the fused judgement decide and it slowed in time, but only because the weighting happened to be right. Fusion buys a margin only while the balance holds.":"你把决定交给融合，它及时减了速，但只是因为权重恰好正确。融合换来的余量，只在平衡维持时才成立。",
-  "A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (NTSB HAR-19/03)":"致盲的摄像头报告的是“什么都没有”，而不是“安全”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这道缝隙，在 2018 年夺走了亚利桑那州坦佩一名行人的生命。（NTSB HAR-19/03）",
+  "A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (National Transportation Safety Board, report HAR-19/03)":"致盲的摄像头报告的是“什么都没有”，而不是“安全”。激光雷达和雷达自始至终都看到了那辆抛锚的车。正是这道缝隙，在 2018 年夺走了亚利桑那州坦佩一名行人的生命。（NTSB HAR-19/03）",
   // — document title —
   "Can You Trust Your Car? · Night Drive":"你能信任你的车吗？—— 夜间行驶"
 };
@@ -1049,7 +1049,7 @@ window.AUDIO=(function(){
         {k:'C',t:'Assume the camera is right (false alarm)', outcome:{danger:'high',crash:true,
           did:"You believed the camera's “clear road” and ignored the rest.",
           big:'Impact', label:'you trusted the blind sensor',
-          mean:'A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (NTSB HAR-19/03)'}}
+          mean:'A blinded camera does not report “safe” — it reports nothing at all, and you read the silence as all-clear. LiDAR and radar saw the stalled car the whole time. This is the failure that killed a pedestrian in Tempe, Arizona in 2018: the car detected her 5.6 seconds before impact but the system did not act on what its sensors saw. (National Transportation Safety Board, report HAR-19/03)'}}
       ]}
   };
 
@@ -1064,7 +1064,7 @@ window.AUDIO=(function(){
     decide:{
       A:"LiDAR and radar saw a stalled car the blinded camera could not. You trusted the sensors that could still see — exactly what sensor fusion is for.",
       B:"You let the fused judgement decide and it slowed in time, but only because the weighting happened to be right. Fusion buys a margin only while the balance holds.",
-      C:"A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (NTSB HAR-19/03)" }
+      C:"A blinded camera reports nothing, not safety. LiDAR and radar saw the stalled car the whole time. This is the gap that killed a pedestrian in Tempe, Arizona in 2018. (National Transportation Safety Board, report HAR-19/03)" }
   };
   function explainText(id){ const fc=S.fuseCert!=null?S.fuseCert:0, gc=S.failCert!=null?S.failCert:0;
     const key = id==='fuse' ? (fc>=70?'high':'low') : id==='fail' ? (gc>=60?'high':'low') : S.decision;

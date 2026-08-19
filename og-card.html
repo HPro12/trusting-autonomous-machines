@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  /* 1200×630 Open Graph card — matches the site's navy+teal briefing-paper masthead. */
+  *{margin:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:#E9F0F8;
+    background:
+      radial-gradient(1200px 700px at 84% -12%, rgba(42,157,143,.26), transparent 60%),
+      linear-gradient(180deg,#14243D,#0F1B2E);
+    padding:78px 86px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    letter-spacing:.005em;
+  }
+  .top{display:flex;align-items:center;gap:14px}
+  .dot{width:13px;height:13px;border-radius:3px;background:#2A9D8F;box-shadow:0 0 0 6px rgba(42,157,143,.16)}
+  .eyebrow{font-size:19px;letter-spacing:.24em;text-transform:uppercase;color:#8FD3C8;font-weight:600}
+  h1{
+    font-family:"Iowan Old Style",Georgia,"Times New Roman",serif;
+    font-size:88px;line-height:1.02;font-weight:800;letter-spacing:-.02em;max-width:19ch;
+    background:linear-gradient(180deg,#FFFFFF,#C2CAD8);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .lede{font-size:27px;line-height:1.5;color:#B9C6D8;max-width:40ch;margin-top:26px}
+  .foot{display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid rgba(233,240,248,.16);padding-top:26px}
+  .foot .url{font-size:20px;color:rgba(233,240,248,.66);letter-spacing:.01em}
+  .foot .tag{font-size:18px;color:#8FD3C8;font-weight:600;letter-spacing:.02em}
+</style>
+</head>
+<body>
+  <div class="top">
+    <span class="dot"></span>
+    <span class="eyebrow">A public-interest research project</span>
+  </div>
+  <div>
+    <h1>When should you trust a self-driving car?</h1>
+    <p class="lede">Drive it, see through its sensors, weigh the evidence, and decide for yourself.</p>
+  </div>
+  <div class="foot">
+    <span class="url">hpro12.github.io/trusting-autonomous-machines</span>
+    <span class="tag">Trust the Machine</span>
+  </div>
+</body>
+</html>

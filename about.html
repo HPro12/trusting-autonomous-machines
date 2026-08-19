@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The project · Trust the Machine</title>
+<meta name="description" content="Who built Trust the Machine, why, and how: a public-interest, interview-grounded project about when to trust a self-driving car.">
+
+<!-- social preview -->
+<link rel="canonical" href="https://hpro12.github.io/trusting-autonomous-machines/about.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Trust the Machine">
+<meta property="og:title" content="Trust the Machine — when should you trust a self-driving car?">
+<meta property="og:description" content="An interactive, interview-grounded look at autonomous driving. Drive it, see through its sensors, weigh the evidence, and decide for yourself.">
+<meta property="og:url" content="https://hpro12.github.io/trusting-autonomous-machines/about.html">
+<meta property="og:image" content="https://hpro12.github.io/trusting-autonomous-machines/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trust the Machine — when should you trust a self-driving car?">
+<meta name="twitter:description" content="An interactive, interview-grounded look at autonomous driving. Drive it, see through its sensors, weigh the evidence, and decide for yourself.">
+<meta name="twitter:image" content="https://hpro12.github.io/trusting-autonomous-machines/og-card.png">
+
+<style>
+  /* Light briefing-paper palette — identical tokens to index.html / the report. */
+  :root{
+    --bg:#FBFBF8; --bg-soft:#F1F4F8; --surface:#FFFFFF; --surface-2:#EEF2F7;
+    --line:1px solid #E2E7EE; --line-strong:1px solid #D3DAE4;
+    --ink:#1A2330; --sub:#48525F; --mut:#7B8695;
+    --navy:#14243D; --navy-2:#0F1B2E; --azure:#3E6FB0;
+    --accent:#2A9D8F; --accent-strong:#1F7A6E; --accent-tint:rgba(42,157,143,.12); --accent-line:rgba(42,157,143,.30);
+    --cta-ink:#FFFFFF;
+    --shadow:0 18px 50px rgba(20,36,61,.10); --shadow-soft:0 6px 22px rgba(20,36,61,.07);
+    --ease:cubic-bezier(.22,.68,0,1);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
+    --wrap:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{margin:0; font-family:var(--font); color:var(--ink); background:var(--bg);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden; letter-spacing:.005em;}
+  a{color:inherit}
+  h1,h2,h3,h4{font-family:var(--serif)}
+  ::selection{background:rgba(42,157,143,.22)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:0 clamp(22px,5vw,44px)}
+  .eyebrow{font-family:var(--font); font-size:clamp(11px,1.3vw,13px); letter-spacing:.24em; text-transform:uppercase; color:var(--accent-strong); font-weight:700}
+  .gradtext{background:linear-gradient(180deg,#1A2330,#3C567A); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+
+  /* ---------------- masthead (navy, mirrors interviews.html + the report cover) ---------------- */
+  header{position:relative; overflow:hidden; padding:clamp(78px,14vh,150px) 0 clamp(52px,9vh,82px); color:#E9F0F8;
+    background:radial-gradient(1100px 620px at 82% -10%, rgba(42,157,143,.22), transparent 60%), linear-gradient(180deg,#14243D,#0F1B2E)}
+  header .eyebrow{color:#8FD3C8; margin-bottom:1.5rem}
+  .back{display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:rgba(233,240,248,.72);
+    font-size:13px; letter-spacing:.02em; margin-bottom:clamp(30px,5vh,46px); transition:color .25s var(--ease)}
+  .back:hover{color:#fff}
+  .back svg{width:14px; height:14px}
+  header h1{font-size:clamp(32px,5.6vw,62px); line-height:1.03; font-weight:800; letter-spacing:-.015em;
+    margin:0 0 1.4rem; max-width:19ch;
+    background:linear-gradient(180deg,#FFFFFF,#C2CAD8); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  header .lede{font-size:clamp(16px,1.95vw,21px); line-height:1.62; color:#B9C6D8; max-width:56ch; margin:0}
+
+  /* ---------------- generic section ---------------- */
+  main section{position:relative; padding:clamp(84px,12vh,148px) 0; border-top:var(--line)}
+  .tint{background:radial-gradient(1100px 700px at 84% -10%, rgba(42,157,143,.06), transparent 58%)}
+  .tint-l{background:radial-gradient(1100px 640px at 14% -20%, rgba(42,157,143,.06), transparent 60%)}
+  .sec-head{max-width:60ch}
+  .sec-head .eyebrow{margin-bottom:1.3rem}
+  .sec-head h2{font-size:clamp(28px,4.4vw,50px); line-height:1.06; font-weight:800; margin:0 0 1.4rem; letter-spacing:-.015em}
+  .sec-head h2.shead{font-family:var(--serif); font-size:clamp(20px,2.5vw,28px); line-height:1.15; margin:0 0 1.4rem;
+    color:var(--ink); display:inline-flex; align-items:center; gap:.72rem}
+  .sec-head h2.shead::before{content:""; width:24px; height:3px; border-radius:2px; background:var(--accent); flex:none}
+  .prose p{font-size:clamp(16px,1.55vw,18.5px); line-height:1.7; color:var(--sub); max-width:64ch; margin:0 0 1.25rem}
+  .prose p:last-child{margin-bottom:0}
+  .prose.lead p:first-child{color:var(--ink)}
+
+  /* ---------------- big-number stat band (for "why you should care") ---------------- */
+  .statband{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(30px,5vw,64px); margin:clamp(42px,6vh,68px) 0}
+  .stat{position:relative}
+  .stat .fig{font-size:clamp(46px,8vw,88px); font-weight:800; letter-spacing:-.03em; line-height:.9;
+    background:linear-gradient(180deg,#5B8AD0,#3E6FB0); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  .stat .cap{margin-top:1.05rem; font-size:15px; line-height:1.55; color:var(--sub); max-width:40ch}
+  .stat .src{display:block; margin-top:.7rem; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--mut); line-height:1.5}
+  @media (max-width:640px){ .statband{grid-template-columns:1fr; gap:38px} }
+
+  /* ---------------- method cards ---------------- */
+  .mcards{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(18px,2.4vw,28px); margin-top:clamp(40px,6vh,64px)}
+  .mcard{padding:clamp(24px,2.6vw,32px); border-radius:18px; border:var(--line); background:var(--surface); box-shadow:var(--shadow-soft); display:flex; flex-direction:column}
+  .mcard .n{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700}
+  .mcard h3{font-size:clamp(17px,1.9vw,21px); font-weight:700; line-height:1.2; margin:.7rem 0 .6rem; letter-spacing:-.01em}
+  .mcard p{font-size:14.5px; line-height:1.62; color:var(--sub); margin:0}
+  @media (max-width:820px){ .mcards{grid-template-columns:1fr} }
+
+  .reportlinks{display:flex; flex-wrap:wrap; gap:14px 28px; margin-top:clamp(30px,4.5vh,44px)}
+  .reportlink{display:inline-flex; align-items:center; gap:9px; text-decoration:none; font-size:15px; font-weight:600;
+    color:var(--accent-strong); letter-spacing:.01em; padding-bottom:3px; border-bottom:1px solid var(--accent-line);
+    transition:color .25s var(--ease), gap .25s var(--ease)}
+  .reportlink:hover{color:var(--ink); gap:13px}
+  .reportlink svg{width:16px; height:16px}
+
+  /* ---------------- sources ---------------- */
+  .sources{margin-top:clamp(34px,5vh,50px); display:grid; grid-template-columns:1fr 1fr; gap:26px 44px}
+  .sources .note{grid-column:1/-1; margin:0 0 .2rem; font-size:13px; color:var(--mut); letter-spacing:.01em}
+  .source h4{font-size:15px; font-weight:700; margin:0 0 .35rem; color:var(--ink)}
+  .source p{margin:0; font-size:14px; line-height:1.55; color:var(--sub)}
+  @media (max-width:720px){ .sources{grid-template-columns:1fr; gap:22px} }
+
+  /* ---------------- share ---------------- */
+  .share{text-align:center}
+  .share .sec-head{max-width:none}
+  .share .sec-head h2{margin-left:auto; margin-right:auto; max-width:20ch}
+  .share .prose p{margin-left:auto; margin-right:auto; text-align:center; max-width:52ch}
+  .share-row{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:clamp(30px,4.5vh,44px)}
+  .cta{display:inline-flex; align-items:center; gap:14px; cursor:pointer; border:none; text-decoration:none;
+    padding:13px 15px 13px 24px; border-radius:999px; font-family:var(--font); font-weight:700; font-size:15px;
+    color:var(--cta-ink); background:linear-gradient(180deg,#33B4A4,#2A9D8F);
+    box-shadow:var(--shadow-soft); transition:transform .32s var(--ease), box-shadow .32s var(--ease), filter .32s var(--ease)}
+  .cta:hover{transform:translateY(-2px); box-shadow:var(--shadow); filter:brightness(1.02)}
+  .cta:active{transform:translateY(0) scale(.985)}
+  .cta .arw{width:30px; height:30px; border-radius:999px; display:grid; place-items:center; flex:none; background:rgba(255,255,255,.20); transition:transform .32s var(--ease)}
+  .cta:hover .arw{transform:translateX(2px)}
+  .cta .arw svg{width:15px; height:15px}
+  .share-btn{display:inline-flex; align-items:center; gap:9px; text-decoration:none; cursor:pointer;
+    font-family:var(--font); font-size:14px; font-weight:600; color:var(--sub);
+    padding:11px 18px; border-radius:999px; border:var(--line-strong); background:var(--surface);
+    transition:color .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease)}
+  .share-btn:hover{color:var(--ink); border-color:var(--accent-line); background:var(--surface-2); transform:translateY(-2px)}
+  .share-btn svg{width:15px; height:15px; flex:none}
+  .share-btn[hidden]{display:none}
+
+  /* ---------------- footer ---------------- */
+  footer{border-top:var(--line); padding:clamp(56px,9vh,88px) 0}
+  footer .flinks{display:flex; flex-wrap:wrap; gap:14px 28px; margin-bottom:1.4rem}
+  footer p{font-size:13px; line-height:1.7; color:var(--mut); margin:0; max-width:64ch}
+
+  /* ---------------- reveal-on-scroll ---------------- */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .85s var(--ease), transform .85s var(--ease)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none}
+    .cta,.share-btn,.reportlink,.back{transition:none}
+  }
+
+  /* ---------------- language toggle (shared across all pages) ---------------- */
+  #langtoggle{position:fixed; top:14px; right:14px; z-index:100;
+    font:600 12.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; letter-spacing:.02em;
+    color:var(--ink); background:rgba(255,255,255,.82); border:1px solid #D3DAE4; border-radius:999px;
+    padding:9px 14px; cursor:pointer; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    box-shadow:var(--shadow-soft); transition:color .2s,border-color .2s,background .2s}
+  #langtoggle:hover{color:#000; border-color:#B9C3D0; background:#fff}
+</style>
+</head>
+<body>
+
+<button id="langtoggle" type="button" aria-label="切换语言 / Switch language">中文</button>
+
+<!-- ============================ MASTHEAD ============================ -->
+<header>
+  <div class="wrap">
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      <span data-i18n>Trust the Machine</span>
+    </a>
+    <div class="eyebrow" data-i18n>The project · who, why, how</div>
+    <h1 data-i18n>About this project</h1>
+    <p class="lede" data-i18n>A public-interest project built around one hard question: when should any of us trust a self-driving car, and how would we know? This page covers who made it, why it exists, and how I researched it.</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ WHY YOU SHOULD CARE ============================ -->
+<section class="tint-l">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>Why you should care</h2>
+    </div>
+    <div class="prose lead reveal">
+      <p data-i18n>You don't have to own a self-driving car to live with the consequences of one. You share the road with them, you vote for the people who write their rules, and one day you may sit in the back seat with no one at the wheel. The technology is reaching public roads faster than most people's understanding of it, and that gap is where trust breaks.</p>
+      <p data-i18n>There's a second reason, quieter and closer to home. Most cars sold today with "self-driving" features are Level 2: the car steers and brakes, but you are driving, every second. Plenty of people trust them like Level 4, the driverless kind private owners can't buy yet. That confusion is the line between a system that helps you drive and one you can hand your life to. Learning to tell the levels apart costs you nothing, and it may matter more than almost anything else you know about a car.</p>
+    </div>
+    <div class="statband">
+      <div class="stat reveal">
+        <div class="fig">68<span style="font-size:.5em;font-weight:700;letter-spacing:0"> m</span></div>
+        <p class="cap" data-i18n>driven blind during a two-second glance at your phone, at highway speed.</p>
+        <span class="src" data-i18n>National Highway Traffic Safety Administration · Virginia Tech Transportation Institute</span>
+      </div>
+      <div class="stat reveal">
+        <div class="fig">2<span style="font-size:.5em;font-weight:700;letter-spacing:0" data-i18n> of 6</span></div>
+        <p class="cap" data-i18n>autonomy levels are on the road today. Level 2 you drive; Level 4 drives itself. Everything hard lives in the gap between them.</p>
+        <span class="src" data-i18n>SAE International levels</span>
+      </div>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>Underneath all of it sits one more number: 248,000 lives lost on China's roads every year, the baseline every machine has to beat. Ultimately, autonomous driving is a public decision about whose judgment we replace, and on what evidence. You're one of the people who gets to make it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHY I STARTED ============================ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>How it started</h2>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>I watched a self-driving system struggle on a small road in the United States. Nothing dramatic happened. The car hesitated, second-guessed itself, and recovered. But I couldn't let go of the obvious question: is this safe enough? Doubt about one car pulled me down a much longer road, through crash data, sensors, regulation, ethics, and the strange distance between what these systems can do and what people believe they can do. It ended with me in China, interviewing the people who build and run these cars, because I wanted the whole picture instead of the marketing version of it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THE QUESTION ============================ -->
+<section class="tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>The question</h2>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>Ask an honest engineer whether a car is safe, and the honest answer is another question: safe where, safe when, and safe compared to what? Safety isn't a switch a vehicle flips on or off. So I stopped asking whether autonomous driving is safe and started asking something harder and more useful: when, and how much, should we trust it, and what would we need to see before we did?</p>
+      <p data-i18n>The cars are already good enough to be on the road. The open question is whether the rest of us, riders, regulators, and neighbors, have the evidence and the understanding to trust them for the right reasons. That is the question I built this whole project to sit inside.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ METHOD ============================ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>How I did it</h2>
+      <p style="font-size:clamp(16px,1.55vw,18.5px);line-height:1.7;color:var(--sub);margin:0" data-i18n>I didn't want to stack one more opinion on top of the headlines. So the project rests on two things: what practitioners told me directly, and research careful enough to trace.</p>
+    </div>
+    <div class="mcards">
+      <div class="mcard reveal">
+        <div class="n" data-i18n>Primary interviews</div>
+        <h3 data-i18n>Nine voices from inside the industry</h3>
+        <p data-i18n>Nine semi-structured interviews with autonomous-driving professionals across China, run in Chinese over 2025 and 2026: robotaxi operators, perception and planning engineers, data and deployment specialists, product managers, and a commercialization lead. I cite each of them by role, never by name, because candor was the price of usefulness and anonymity was the price of candor.</p>
+      </div>
+      <div class="mcard reveal">
+        <div class="n" data-i18n>Desk research</div>
+        <h3 data-i18n>A landscape you can trace</h3>
+        <p data-i18n>A reading of the regulatory and technical landscape as of 2026, organized around a knowledge graph I built across the interviews and their supporting material, so every claim traces back to a source.</p>
+      </div>
+      <div class="mcard reveal">
+        <div class="n" data-i18n>What's real, what's staged</div>
+        <h3 data-i18n>Invented drama, real numbers</h3>
+        <p data-i18n>The interactive chapters dramatize crashes and testimony so you feel the stakes. The numbers behind them, and the insights from the interviews, are real.</p>
+      </div>
+    </div>
+    <div class="reportlinks reveal">
+      <a class="reportlink" href="interviews.html">
+        <span data-i18n>Read the interview summaries</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="reportlink" href="report/trust_report.html">
+        <span data-i18n>Read the policy report</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHO'S BEHIND THIS ============================ -->
+<section class="tint">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>Who's behind this</h2>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>My name is Haoyu Zhang (张皓禹), and I'm a student at Phillips Academy Andover. I grew up between Shanghai, Hong Kong, and the United States, which is probably why a question about an American road sent me looking for answers on Chinese ones. I'm not an industry insider, and this project doesn't pretend to be neutral about why it exists. I wanted to understand something that unsettled me, and the surest way I know to understand something is to build my way straight through it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CREDITS & THANKS ============================ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>Credits &amp; thanks</h2>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>This project would not exist without the nine practitioners who gave me their time and their honesty. They stay anonymous here by design, described only by role, but nearly everything here rests on what they were willing to tell me. Thank you.</p>
+      <p data-i18n>The statistics throughout trace to the public sources listed below. I built the experience as plain HTML, with no build step and no tracking, so it runs from anywhere and belongs to no platform.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SOURCES ============================ -->
+<section class="tint-l">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>Sources</h2>
+    </div>
+    <div class="sources reveal">
+      <p class="note" data-i18n>Full names on first mention; the interactive chapters and the report carry the same sources inline.</p>
+      <div class="source">
+        <h4 data-i18n>Reaction time and driver distraction</h4>
+        <p data-i18n>National Highway Traffic Safety Administration (NHTSA) and the Virginia Tech Transportation Institute (VTTI).</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>Driverless-fleet safety</h4>
+        <p data-i18n>Waymo and Swiss Re, measured against human drivers over the same miles.</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>The human baseline</h4>
+        <p data-i18n>World Health Organization (WHO), road-traffic deaths, 2023.</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>Miles needed to prove safety</h4>
+        <p data-i18n>The RAND Corporation, on the distance required to show a car is as safe as a human.</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>Automated-driving crash investigation</h4>
+        <p data-i18n>The National Transportation Safety Board (NTSB).</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>The autonomy levels</h4>
+        <p data-i18n>SAE International, Level 0 through Level 5.</p>
+      </div>
+      <div class="source">
+        <h4 data-i18n>Regulatory and technical landscape</h4>
+        <p data-i18n>Detailed with citations in the policy report.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SHARE ============================ -->
+<section class="share">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="shead" data-i18n>Pass it on</h2>
+    </div>
+    <div class="prose reveal">
+      <p data-i18n>Trust grows when more people have looked at the question. The most useful thing you can do here is send this to one person, and let them ride the curve themselves.</p>
+    </div>
+    <div class="share-row reveal">
+      <button class="cta" id="share-copy" type="button">
+        <span id="share-copy-label" data-i18n>Copy link</span>
+        <span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+      </button>
+      <button class="share-btn" id="share-native" type="button" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        <span data-i18n>Share</span>
+      </button>
+      <a class="share-btn" id="share-x" href="#" target="_blank" rel="noopener">X</a>
+      <a class="share-btn" id="share-li" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="share-btn" id="share-wb" href="#" target="_blank" rel="noopener"><span data-i18n>Weibo</span></a>
+      <a class="share-btn" id="share-em" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <span data-i18n>Email</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer>
+  <div class="wrap">
+    <div class="flinks">
+      <a class="reportlink" href="index.html">
+        <span data-i18n>The interactive experience</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="reportlink" href="interviews.html">
+        <span data-i18n>The interview summaries</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="reportlink" href="report/trust_report.html">
+        <span data-i18n>The policy report</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <p data-i18n>Trust the Machine is a public-interest research initiative. The drama in the experience is invented; the numbers and the insights behind them are not.</p>
+  </div>
+</footer>
+
+<script>
+/* ============================ i18n (same engine as index.html) ============================
+   English is the source of truth in the markup. ZH maps normalized-English -> Simplified
+   Chinese. [data-i18n] elements swap innerHTML. Language persists in localStorage['ttm.lang']
+   so the choice carries across every page. */
+window.ZH = {
+  // masthead
+  "Trust the Machine":"信任机器",
+  "The project · who, why, how":"这个项目 · 谁、为何、如何",
+  "About this project":"关于这个项目",
+  "A public-interest project built around one hard question: when should any of us trust a self-driving car, and how would we know? This page covers who made it, why it exists, and how I researched it.":"一个公益项目，围绕一个难题而建：我们究竟该在何时信任一辆自动驾驶汽车？又凭什么去判断？这一页讲清楚：是谁做的，为什么做，以及我是怎样研究的。",
+  // why you should care
+  "Why you should care":"为什么你该在意",
+  "You don't have to own a self-driving car to live with the consequences of one. You share the road with them, you vote for the people who write their rules, and one day you may sit in the back seat with no one at the wheel. The technology is reaching public roads faster than most people's understanding of it, and that gap is where trust breaks.":"你不必拥有一辆自动驾驶汽车，也一样要承受它带来的后果。你和它们共用道路，你投票选出为它们立规矩的人，也许有朝一日你会坐进后座，而前面没有人握着方向盘。这项技术驶上公共道路的速度，快过大多数人对它的理解，而信任正是在这道落差里崩塌的。",
+  "There's a second reason, quieter and closer to home. Most cars sold today with \"self-driving\" features are Level 2: the car steers and brakes, but you are driving, every second. Plenty of people trust them like Level 4, the driverless kind private owners can't buy yet. That confusion is the line between a system that helps you drive and one you can hand your life to. Learning to tell the levels apart costs you nothing, and it may matter more than almost anything else you know about a car.":"还有第二个理由，更安静，也更贴身。今天在售、带“自动驾驶”功能的车，大多是二级（Level 2）：车会转向、会刹车，但每一秒都是你在开。可很多人却把它们当成四级（Level 4）来信任，而四级那种无人驾驶，私人车主现在还买不到。这份混淆，正是“帮你开车”和“可以把命交给它”之间的那条界线。学会分辨这些级别，不花你一分钱，却可能比你对一辆车了解的几乎任何事都更重要。",
+  "driven blind during a two-second glance at your phone, at highway speed.":"在高速上低头看两秒手机，你就这样盲开了这么远。",
+  "National Highway Traffic Safety Administration · Virginia Tech Transportation Institute":"美国国家公路交通安全管理局 · 弗吉尼亚理工交通研究所",
+  "autonomy levels are on the road today. Level 2 you drive; Level 4 drives itself. Everything hard lives in the gap between them.":"个自动驾驶级别如今真正上路。二级你来开，四级它自己开，所有的难题都藏在两者之间。",
+  "of 6":"／共 6 级",
+  "SAE International levels":"国际自动机工程师学会（SAE International）分级",
+  "Underneath all of it sits one more number: 248,000 lives lost on China's roads every year, the baseline every machine has to beat. Ultimately, autonomous driving is a public decision about whose judgment we replace, and on what evidence. You're one of the people who gets to make it.":"而在这一切之下，还压着一个数字：每年有 248,000 条生命消逝在中国的道路上，这是每一台机器都必须超越的基准。归根结底，自动驾驶是一个公共选择：我们要用机器替代谁的判断，又凭什么证据。而你，正是有权作出这个选择的人之一。",
+  // origin
+  "How it started":"如何开始的",
+  "I watched a self-driving system struggle on a small road in the United States. Nothing dramatic happened. The car hesitated, second-guessed itself, and recovered. But I couldn't let go of the obvious question: is this safe enough? Doubt about one car pulled me down a much longer road, through crash data, sensors, regulation, ethics, and the strange distance between what these systems can do and what people believe they can do. It ended with me in China, interviewing the people who build and run these cars, because I wanted the whole picture instead of the marketing version of it.":"我在美国的一条小路上，看着一套自动驾驶系统手忙脚乱。没有惊险的场面。车迟疑了一下，自我怀疑了一下，然后又恢复了正常。可我放不下那个再明显不过的问题：这样够安全吗？对一辆车的怀疑，把我带上了一条长得多的路，穿过事故数据、传感器、监管、伦理，以及这些系统“能做什么”与人们“以为它能做什么”之间那道奇怪的距离。这条路的终点，是我在中国采访那些造车、运营这些车的人，因为我想要的是完整的图景，而不是营销版本。",
+  // the question
+  "The question":"要回答的问题",
+  "Ask an honest engineer whether a car is safe, and the honest answer is another question: safe where, safe when, and safe compared to what? Safety isn't a switch a vehicle flips on or off. So I stopped asking whether autonomous driving is safe and started asking something harder and more useful: when, and how much, should we trust it, and what would we need to see before we did?":"去问一个诚实的工程师某辆车安不安全，诚实的回答会是另一个问题：在哪儿安全，什么时候安全，又是跟谁比才算安全？安全不是车能一下开、一下关的开关。于是我不再问自动驾驶“是否安全”，转而去问一个更难、也更有用的问题：我们该在何时、以多大程度去信任它，而在此之前又需要看到什么？",
+  "The cars are already good enough to be on the road. The open question is whether the rest of us, riders, regulators, and neighbors, have the evidence and the understanding to trust them for the right reasons. That is the question I built this whole project to sit inside.":"这些车已经好到可以上路了。悬而未决的是——我们其余的人，乘客、监管者、街坊邻居，是否掌握了足够的证据与理解，能出于正当的理由去信任它们。这，正是我建起整个项目所要安放的问题。",
+  // method
+  "How I did it":"我是怎么做的",
+  "I didn't want to stack one more opinion on top of the headlines. So the project rests on two things: what practitioners told me directly, and research careful enough to trace.":"我不想在头条新闻上再摞一份个人观点。所以这个项目立足于两样东西：从业者亲口告诉我的话，以及严谨到可以溯源的研究。",
+  "Primary interviews":"一手访谈",
+  "Nine voices from inside the industry":"来自行业内部的九个声音",
+  "Nine semi-structured interviews with autonomous-driving professionals across China, run in Chinese over 2025 and 2026: robotaxi operators, perception and planning engineers, data and deployment specialists, product managers, and a commercialization lead. I cite each of them by role, never by name, because candor was the price of usefulness and anonymity was the price of candor.":"对中国各地自动驾驶从业者的九次半结构化访谈，用中文进行，时间跨越 2025 与 2026 年：Robotaxi 运营者、感知与规划工程师、数据与部署专家、产品经理，以及一位商业化负责人。我只以角色称呼每一个人，绝不指名道姓，因为坦诚的代价是有用，而匿名是坦诚的代价。",
+  "Desk research":"案头研究",
+  "A landscape you can trace":"一张可以溯源的图景",
+  "A reading of the regulatory and technical landscape as of 2026, organized around a knowledge graph I built across the interviews and their supporting material, so every claim traces back to a source.":"对截至 2026 年监管与技术格局的梳理，围绕一张我贯穿访谈及其支撑材料搭建的知识图谱来组织，好让每一个论断都能回溯到出处。",
+  "What's real, what's staged":"哪些是真，哪些是演",
+  "Invented drama, real numbers":"戏是编的，数字是真的",
+  "The interactive chapters dramatize crashes and testimony so you feel the stakes. The numbers behind them, and the insights from the interviews, are real.":"互动章节把事故和证词戏剧化，是为了让你亲身感受到利害。可它们背后的数字，以及从访谈中得来的洞见，都是真的。",
+  "Read the interview summaries":"阅读访谈摘要",
+  "Read the policy report":"阅读政策报告",
+  // author
+  "Who's behind this":"这个项目背后的人",
+  "My name is Haoyu Zhang (张皓禹), and I'm a student at Phillips Academy Andover. I grew up between Shanghai, Hong Kong, and the United States, which is probably why a question about an American road sent me looking for answers on Chinese ones. I'm not an industry insider, and this project doesn't pretend to be neutral about why it exists. I wanted to understand something that unsettled me, and the surest way I know to understand something is to build my way straight through it.":"我叫张皓禹（Haoyu Zhang），是菲利普斯学院安多佛（Phillips Academy Andover）的一名学生。我在上海、香港和美国之间长大，大概正因如此，一个关于美国道路的问题，才会把我推去中国的道路上寻找答案。我不是行业内部人士，这个项目也不打算假装对自己为何存在保持中立。我想弄懂一件让我不安的事，而我所知道的、最靠得住的弄懂方式，就是亲手一路把它做出来。",
+  // credits
+  "Credits &amp; thanks":"致谢",
+  "This project would not exist without the nine practitioners who gave me their time and their honesty. They stay anonymous here by design, described only by role, but nearly everything here rests on what they were willing to tell me. Thank you.":"没有那九位把时间和坦诚交给我的从业者，就不会有这个项目。他们在这里刻意保持匿名，只以角色示人，但这里几乎所有内容，都立足于他们愿意告诉我的话。谢谢你们。",
+  "The statistics throughout trace to the public sources listed below. I built the experience as plain HTML, with no build step and no tracking, so it runs from anywhere and belongs to no platform.":"全篇的统计数字都可追溯到下面列出的公开来源。整个体验由我用纯 HTML 写成，没有构建步骤，也没有任何追踪，所以它能在任何地方运行，不属于任何平台。",
+  // sources
+  "Sources":"资料来源",
+  "Full names on first mention; the interactive chapters and the report carry the same sources inline.":"首次出现时给出全称；互动章节与报告在正文中标注的是同样的来源。",
+  "Reaction time and driver distraction":"反应时间与驾驶分心",
+  "National Highway Traffic Safety Administration (NHTSA) and the Virginia Tech Transportation Institute (VTTI).":"美国国家公路交通安全管理局（NHTSA）与弗吉尼亚理工交通研究所（VTTI）。",
+  "Driverless-fleet safety":"无人车队安全性",
+  "Waymo and Swiss Re, measured against human drivers over the same miles.":"Waymo 与瑞士再保险（Swiss Re），在相同里程下与人类驾驶者对照。",
+  "The human baseline":"人类基准",
+  "World Health Organization (WHO), road-traffic deaths, 2023.":"世界卫生组织（WHO），道路交通死亡人数，2023 年。",
+  "Miles needed to prove safety":"证明安全所需的里程",
+  "The RAND Corporation, on the distance required to show a car is as safe as a human.":"兰德公司（RAND Corporation），关于证明一辆车与人类同样安全所需的距离。",
+  "Automated-driving crash investigation":"自动驾驶事故调查",
+  "The National Transportation Safety Board (NTSB).":"美国国家运输安全委员会（NTSB）。",
+  "The autonomy levels":"自动驾驶分级",
+  "SAE International, Level 0 through Level 5.":"国际自动机工程师学会（SAE International），从零级到五级。",
+  "Regulatory and technical landscape":"监管与技术格局",
+  "Detailed with citations in the policy report.":"在政策报告中附引用详述。",
+  // share
+  "Pass it on":"转发出去",
+  "Trust grows when more people have looked at the question. The most useful thing you can do here is send this to one person, and let them ride the curve themselves.":"当更多人认真看过这个问题，信任才会生长。你在这里能做的最有用的事，就是把它发给一个人，让他自己去走过那条曲线。",
+  "Copy link":"复制链接",
+  "Share":"分享",
+  "Weibo":"微博",
+  "Email":"邮件",
+  // footer
+  "The interactive experience":"互动体验",
+  "The interview summaries":"访谈摘要",
+  "The policy report":"政策报告",
+  "Trust the Machine is a public-interest research initiative. The drama in the experience is invented; the numbers and the insights behind them are not.":"《信任机器》是一个公益研究项目。体验中的戏剧情节是虚构的，但其背后的数字与洞见不是。"
+};
+(function(){
+  var LKEY='ttm.lang';
+  var TITLE_EN="The project · Trust the Machine", TITLE_ZH="这个项目 · 信任机器";
+  function norm(s){ return (s||"").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim(); }
+  try{ window.LANG = localStorage.getItem(LKEY)==='zh' ? 'zh' : 'en'; }catch(e){ window.LANG='en'; }
+  window.tr = function(s){ var z=window.ZH[norm(s)]; return (window.LANG==='zh'&&z!=null) ? z : s; };
+  var origin = new WeakMap();
+  function applyStatic(){
+    document.documentElement.lang = window.LANG==='zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      if(!origin.has(el)) origin.set(el, el.innerHTML);
+      var en=origin.get(el), z=window.ZH[norm(en)];
+      el.innerHTML = (window.LANG==='zh' && z!=null) ? z : en;
+    });
+    document.title = window.LANG==='zh' ? TITLE_ZH : TITLE_EN;
+    var b=document.getElementById('langtoggle'); if(b) b.textContent = window.LANG==='zh' ? 'EN' : '中文';
+  }
+  window.applyI18n = function(){ applyStatic(); };
+  window.toggleLang = function(){
+    window.LANG = window.LANG==='zh' ? 'en' : 'zh';
+    try{ localStorage.setItem(LKEY, window.LANG); }catch(e){}
+    window.applyI18n();
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    var b=document.getElementById('langtoggle'); if(b) b.addEventListener('click', window.toggleLang);
+    window.applyI18n();
+  });
+})();
+
+/* ============================ reveal-on-scroll ============================ */
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in')}); return; }
+  var io=new IntersectionObserver(function(ents){
+    ents.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  },{rootMargin:'0px 0px -10% 0px', threshold:.08});
+  els.forEach(function(e){ io.observe(e); });
+})();
+
+/* ============================ share ============================ */
+(function(){
+  var CANON="https://hpro12.github.io/trusting-autonomous-machines/";
+  var TXT="Trust the Machine: when should you trust a self-driving car?";
+  function url(){ return location.protocol.indexOf('http')===0 ? location.href : CANON; }
+  var e=encodeURIComponent;
+  function wire(){
+    var u=url(), et=e(TXT), eu=e(u);
+    var x=document.getElementById('share-x'); if(x) x.href="https://twitter.com/intent/tweet?text="+et+"&url="+eu;
+    var li=document.getElementById('share-li'); if(li) li.href="https://www.linkedin.com/sharing/share-offsite/?url="+eu;
+    var wb=document.getElementById('share-wb'); if(wb) wb.href="https://service.weibo.com/share/share.php?url="+eu+"&title="+et;
+    var em=document.getElementById('share-em'); if(em) em.href="mailto:?subject="+et+"&body="+et+"%0A%0A"+eu;
+  }
+  wire();
+  var copy=document.getElementById('share-copy');
+  if(copy) copy.addEventListener('click', function(){
+    // ponytail: native clipboard; no library. Falls back to selecting nothing if unsupported.
+    if(!navigator.clipboard) return;
+    navigator.clipboard.writeText(url()).then(function(){
+      var lbl=document.getElementById('share-copy-label'); if(!lbl) return;
+      lbl.textContent = window.LANG==='zh' ? '链接已复制' : 'Link copied';
+      setTimeout(function(){ if(window.applyI18n) window.applyI18n(); }, 1600);
+    });
+  });
+  var nat=document.getElementById('share-native');
+  if(nat && navigator.share){
+    nat.hidden=false;
+    nat.addEventListener('click', function(){
+      navigator.share({title:"Trust the Machine", text:TXT, url:url()}).catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>

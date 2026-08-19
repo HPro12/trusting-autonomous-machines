@@ -16,3 +16,10 @@ idx-welcome.png
 # Derived/scratch report files (unpacked .docx, backups)
 report/unpacked/
 report/*.backup.docx
+
+# Working files — public repo ships final product only.
+# Full copies live in the private HPro12/trust-the-machine archive.
+PRODUCT.md
+graphify-out/
+report/*
+!report/trust_report.html
